@@ -40,6 +40,107 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .tag-filter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+        }
+
+        .tag-filter label {
+            color: white;
+            font-size: 0.9em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .tag-filter-dropdown {
+            position: relative;
+        }
+
+        .tag-dropdown-btn {
+            background: white;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 0.9em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 150px;
+        }
+
+        .tag-dropdown-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .tag-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            min-width: 200px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            margin-top: 4px;
+        }
+
+        .tag-dropdown-menu.active {
+            display: block;
+        }
+
+        .tag-dropdown-header {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 8px;
+        }
+
+        .tag-dropdown-header button {
+            flex: 1;
+            padding: 4px 8px;
+            font-size: 0.85em;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .tag-dropdown-header button:hover {
+            background: #f5f5f5;
+        }
+
+        .tag-checkbox-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .tag-checkbox-item:hover {
+            background: #f9f9f9;
+        }
+
+        .tag-checkbox-item input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
         .stats {
             background: rgba(255, 255, 255, 0.1);
             color: white;
@@ -47,7 +148,6 @@
             border-radius: 8px;
             text-align: center;
             font-size: 0.9em;
-            margin-bottom: 10px;
         }
 
         .words-container {
@@ -86,6 +186,7 @@
             align-items: center;
             gap: 12px;
             min-width: 0;
+            cursor: pointer;
         }
 
         .word-tag {
@@ -158,39 +259,6 @@
             line-height: 1.4;
         }
 
-        .tag-filter {
-            background: rgba(255, 255, 255, 0.15);
-            border-radius: 8px;
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            color: white;
-        }
-
-        .tag-filter h3 {
-            font-size: 0.9em;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .tag-options {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .tag-checkbox {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-        }
-
-        .tag-checkbox input[type="checkbox"] {
-            cursor: pointer;
-            accent-color: #667eea;
-        }
-
         ::-webkit-scrollbar {
             width: 4px;
         }
@@ -220,18 +288,29 @@
             <h1>📚 英文學習系統</h1>
         </header>
 
-        <div class="tag-filter" id="tagFilter">
-            <h3>選擇單元</h3>
-            <div class="tag-options" id="tagOptions"></div>
+        <div class="controls">
+            <div class="tag-filter">
+                <label>選擇單元：</label>
+                <div class="tag-filter-dropdown">
+                    <button class="tag-dropdown-btn" onclick="toggleDropdown()">全部 <span>▼</span></button>
+                    <div class="tag-dropdown-menu" id="tagDropdownMenu">
+                        <div class="tag-dropdown-header">
+                            <button onclick="selectAllTags()">全部</button>
+                            <button onclick="clearAllTags()">清除</button>
+                        </div>
+                        <div id="tagCheckboxList"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="stats" id="stats"></div>
         </div>
-
-        <div class="stats" id="stats"></div>
 
         <div class="words-container" id="wordsContainer"></div>
     </div>
 
     <script>
         let allWords = [];
+        let uniqueTags = [];
         let selectedTags = new Set();
 
         fetch('output.json?t=' + new Date().getTime())
@@ -239,37 +318,95 @@
             .then(data => {
                 allWords = data;
 
-                // 提取所有唯一的tag
-                const uniqueTags = [...new Set(allWords.map(w => w.tag).filter(t => t))].sort();
+                // 提取所有唯一的tag，保持原始順序
+                const tagOrder = {};
+                allWords.forEach(w => {
+                    if (w.tag && !(w.tag in tagOrder)) {
+                        tagOrder[w.tag] = Object.keys(tagOrder).length;
+                    }
+                });
+                uniqueTags = Object.keys(tagOrder).sort((a, b) => tagOrder[a] - tagOrder[b]);
                 selectedTags = new Set(uniqueTags);
 
-                // 创建tag过滤器
-                const tagOptions = document.getElementById('tagOptions');
+                // 建立勾選式下拉選單
+                const checkboxList = document.getElementById('tagCheckboxList');
                 uniqueTags.forEach(tag => {
-                    const label = document.createElement('label');
-                    label.className = 'tag-checkbox';
-                    label.innerHTML = `
-                        <input type="checkbox" value="${tag}" checked onchange="updateFilter()">
-                        <span>${tag}</span>
-                    `;
-                    tagOptions.appendChild(label);
+                    const item = document.createElement('div');
+                    item.className = 'tag-checkbox-item';
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = tag;
+                    checkbox.checked = true;
+                    checkbox.onchange = updateFilter;
+                    const span = document.createElement('span');
+                    span.textContent = tag;
+                    item.appendChild(checkbox);
+                    item.appendChild(span);
+                    item.onclick = () => {
+                        checkbox.checked = !checkbox.checked;
+                        updateFilter();
+                    };
+                    checkboxList.appendChild(item);
                 });
 
-                updateFilter();
+                renderWords();
             })
             .catch(e => {
                 document.getElementById('wordsContainer').innerHTML = '❌ 無法讀取 output.json';
             });
 
+        function toggleDropdown() {
+            const menu = document.getElementById('tagDropdownMenu');
+            menu.classList.toggle('active');
+        }
+
+        function selectAllTags() {
+            selectedTags.clear();
+            uniqueTags.forEach(tag => selectedTags.add(tag));
+            document.querySelectorAll('.tag-checkbox-item input').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateFilter();
+        }
+
+        function clearAllTags() {
+            selectedTags.clear();
+            document.querySelectorAll('.tag-checkbox-item input').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateFilter();
+        }
+
         function updateFilter() {
             selectedTags.clear();
-            document.querySelectorAll('.tag-checkbox input').forEach(checkbox => {
+            document.querySelectorAll('.tag-checkbox-item input').forEach(checkbox => {
                 if (checkbox.checked) {
                     selectedTags.add(checkbox.value);
                 }
             });
+            updateDropdownButton();
             renderWords();
         }
+
+        function updateDropdownButton() {
+            const btn = document.querySelector('.tag-dropdown-btn');
+            let text = '';
+            if (selectedTags.size === 0) {
+                text = '清除';
+            } else if (selectedTags.size === uniqueTags.length) {
+                text = '全部';
+            } else {
+                text = `已選擇 ${selectedTags.size} 個`;
+            }
+            btn.innerHTML = `${text} <span>▼</span>`;
+        }
+
+        document.addEventListener('click', (e) => {
+            const filter = document.querySelector('.tag-filter');
+            if (!filter.contains(e.target)) {
+                document.getElementById('tagDropdownMenu').classList.remove('active');
+            }
+        });
 
         function playPronunciation(word) {
             const utterance = new SpeechSynthesisUtterance(word);
@@ -282,9 +419,9 @@
             const container = document.getElementById('wordsContainer');
             container.innerHTML = '';
 
-            // 根据选中的tag过滤单词
+            // 根據選中的tag過濾單字
             const filteredWords = allWords.filter(word =>
-                !word.tag || selectedTags.has(word.tag)
+                selectedTags.size === 0 || !word.tag || selectedTags.has(word.tag)
             );
 
             document.getElementById('stats').textContent = `共 ${filteredWords.length} 項`;
@@ -293,7 +430,7 @@
                 const row = document.createElement('div');
                 row.className = 'word-row';
                 row.innerHTML = `
-                    <div class="word-left" style="cursor: pointer;" onclick="playPronunciation('${word.單字.replace(/'/g, "\\'")}')">
+                    <div class="word-left" onclick="playPronunciation('${word.單字.replace(/'/g, "\\'")}')">
                         ${word.tag ? `<span class="word-tag">${word.tag}</span>` : ''}
                         <span class="word-word">${word.單字}</span>
                         <span class="word-phonetic">${word.音標}</span>
