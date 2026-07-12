@@ -238,8 +238,22 @@
             background: #bbdefb;
         }
 
+        .word-star {
+            flex: 0 0 40px;
+            text-align: center;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 12px 8px;
+            user-select: none;
+            color: #ffa500;
+        }
+
+        .word-star:hover {
+            transform: scale(1.2);
+        }
+
         .word-left {
-            flex: 0 0 50%;
+            flex: 1;
             padding: 12px 15px;
             display: flex;
             align-items: center;
@@ -312,7 +326,7 @@
         }
 
         .word-right {
-            flex: 0 0 50%;
+            flex: 1;
             border-left: 1px solid #ddd;
             padding: 12px 15px;
             overflow: hidden;
@@ -659,24 +673,53 @@
             filteredWords.forEach((word, index) => {
                 const row = document.createElement('div');
                 row.className = 'word-row';
-                row.innerHTML = `
-                    <div class="word-left" onclick="playPronunciation('${word.單字.replace(/'/g, "\\'")}')">
-                        ${word.sheet || word.tag ? `<span class="word-tag"><div class="word-tag-sheet">${word.sheet || ''}</div><div class="word-tag-tag">${word.tag || ''}</div></span>` : ''}
-                        <span class="word-word">${word.單字}</span>
-                        <span class="word-phonetic">${word.音標}</span>
-                        <span class="word-pos">${word.詞性}</span>
-                        <span class="word-chinese">${word.中文}</span>
+
+                // 創建星號按鈕
+                const starBtn = document.createElement('div');
+                starBtn.className = 'word-star';
+                const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                const isFavorited = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                starBtn.textContent = isFavorited ? '★' : '☆';
+                starBtn.dataset.wordKey = wordKey;
+                starBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const isFav = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                    if (isFav) {
+                        localStorage.removeItem(`favorite_${wordKey}`);
+                        starBtn.textContent = '☆';
+                    } else {
+                        localStorage.setItem(`favorite_${wordKey}`, 'true');
+                        starBtn.textContent = '★';
+                    }
+                };
+
+                // 創建左側內容
+                const wordLeft = document.createElement('div');
+                wordLeft.className = 'word-left';
+                wordLeft.onclick = () => playPronunciation(word.單字);
+                wordLeft.innerHTML = `
+                    ${word.sheet || word.tag ? `<span class="word-tag"><div class="word-tag-sheet">${word.sheet || ''}</div><div class="word-tag-tag">${word.tag || ''}</div></span>` : ''}
+                    <span class="word-word">${word.單字}</span>
+                    <span class="word-phonetic">${word.音標}</span>
+                    <span class="word-pos">${word.詞性}</span>
+                    <span class="word-chinese">${word.中文}</span>
+                `;
+
+                // 創建右側內容
+                const wordRight = document.createElement('div');
+                wordRight.className = 'word-right';
+                wordRight.innerHTML = `
+                    <div class="content-half">
+                        <div class="content-text">${word.例句}</div>
                     </div>
-                    <div class="word-right">
-                        <div class="content-half">
-                            <div class="content-text">${word.例句}</div>
-                        </div>
-                        <div class="content-half">
-                            <div class="content-text">${word.翻譯}</div>
-                        </div>
+                    <div class="content-half">
+                        <div class="content-text">${word.翻譯}</div>
                     </div>
                 `;
 
+                row.appendChild(starBtn);
+                row.appendChild(wordLeft);
+                row.appendChild(wordRight);
                 container.appendChild(row);
             });
         }
