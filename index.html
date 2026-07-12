@@ -78,6 +78,267 @@
             background: #45a049;
         }
 
+        .quiz-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-panel {
+            text-align: center;
+        }
+
+        .quiz-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .quiz-controls label {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        #quizSheetCheckboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .quiz-sheet-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quiz-sheet-item input {
+            cursor: pointer;
+        }
+
+        .quiz-sheet-item label {
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: normal;
+        }
+
+        .start-quiz-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 30px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .start-quiz-btn:hover {
+            background: #0b7dda;
+        }
+
+        .quiz-session {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .quiz-progress {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .quiz-question {
+            text-align: center;
+        }
+
+        .quiz-question-text {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            justify-content: center;
+            font-size: 1.3em;
+        }
+
+        .quiz-chinese {
+            font-size: 1.5em;
+            font-weight: 600;
+        }
+
+        .quiz-pos {
+            font-size: 0.8em;
+            color: white;
+            background: #2196F3;
+            padding: 4px 10px;
+            border-radius: 3px;
+        }
+
+        .quiz-input-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: -25px;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            flex: 1;
+        }
+
+        #quizInput {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        #quizInput:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .feedback-correct {
+            background: #4CAF50;
+            color: black;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .feedback-wrong {
+            color: red;
+            margin-bottom: 10px;
+            font-weight: 600;
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .feedback-error {
+            background: #f44336;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .quiz-bottom {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            margin-top: auto;
+            padding-top: 0px;
+        }
+
+        .quiz-feedback {
+            min-height: 60px;
+            flex: 1;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .quiz-feedback-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .next-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 24px;
+            font-size: 0.95em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .next-btn:hover {
+            background: #0b7dda;
+        }
+
+        .next-btn:active {
+            transform: scale(0.98);
+        }
+
+        .quiz-result {
+            text-align: center;
+        }
+
+        .result-header {
+            margin-bottom: 30px;
+        }
+
+        .result-header h2 {
+            margin-bottom: 20px;
+        }
+
+        .result-score {
+            font-size: 2em;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .result-words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .result-word {
+            padding: 8px 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .result-word.correct {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .result-word.wrong {
+            background: #f44336;
+            color: white;
+        }
+
+        .back-btn {
+            background: #666;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 30px;
+            font-size: 1em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background: #555;
+        }
+
         .tag-filter {
             display: flex;
             align-items: center;
@@ -438,6 +699,7 @@
                 <select id="modeSelect" onchange="changeMode(this.value)">
                     <option value="normal">一般</option>
                     <option value="review">複習</option>
+                    <option value="quiz">測驗</option>
                 </select>
             </div>
             <div class="tag-filter" id="tagFilterContainer">
@@ -454,13 +716,61 @@
         </div>
 
         <div class="words-container" id="wordsContainer"></div>
+
+        <!-- 測驗界面 -->
+        <div class="quiz-container" id="quizContainer" style="display: none;">
+            <!-- 測驗控制面板 -->
+            <div class="quiz-panel" id="quizPanel" style="display: none;">
+                <div class="quiz-controls">
+                    <label>選擇測驗單元：</label>
+                    <div id="quizSheetCheckboxes"></div>
+                    <button class="start-quiz-btn" onclick="startQuiz()">開始測驗</button>
+                </div>
+            </div>
+
+            <!-- 測驗進行中 -->
+            <div class="quiz-session" id="quizSession" style="display: none;">
+                <div class="quiz-progress">
+                    <span id="quizProgress">1/10</span>
+                </div>
+                <div class="quiz-question">
+                    <div class="quiz-question-text">
+                        <span id="quizChinese"></span>
+                        <span id="quizPos" class="quiz-pos"></span>
+                    </div>
+                </div>
+                <div class="quiz-input-area">
+                    <input type="text" id="quizInput" placeholder="輸入英文單字" onkeypress="handleQuizInput(event)">
+                    <div id="quizAnswer" style="display: none; font-size: 1.2em; font-weight: 600; color: red; margin-top: 5px;"></div>
+                    <div class="quiz-bottom">
+                        <div class="quiz-feedback" id="quizFeedback"></div>
+                        <button class="next-btn" id="nextBtn" onclick="nextQuestion()" style="display: none;">下一題</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 測驗結果 -->
+            <div class="quiz-result" id="quizResult" style="display: none;">
+                <div class="result-header">
+                    <h2>測驗結果</h2>
+                    <div class="result-score" id="resultScore"></div>
+                </div>
+                <div class="result-words" id="resultWords"></div>
+                <button class="back-btn" onclick="backToQuizPanel()">返回</button>
+            </div>
+        </div>
     </div>
 
     <script>
         let allWords = [];
         let sheetData = {};
         let selectedTags = new Map(); // {sheetName: Set<tag>}
-        let currentMode = 'normal'; // 'normal' or 'review'
+        let currentMode = 'normal'; // 'normal' or 'review' or 'quiz'
+
+        // 測驗相關變數
+        let quizWords = [];
+        let quizIndex = 0;
+        let quizResults = [];
 
         fetch('output.json?t=' + new Date().getTime())
             .then(r => r.json())
@@ -613,16 +923,30 @@
 
         function changeMode(mode) {
             currentMode = mode;
+            const wordsContainer = document.getElementById('wordsContainer');
+            const quizContainer = document.getElementById('quizContainer');
             const tagFilterContainer = document.getElementById('tagFilterContainer');
             const refreshBtn = document.getElementById('refreshBtn');
+
             if (mode === 'review') {
+                wordsContainer.style.display = 'block';
+                quizContainer.style.display = 'none';
                 tagFilterContainer.style.display = 'none';
                 refreshBtn.style.display = 'block';
+                renderWords();
+            } else if (mode === 'quiz') {
+                wordsContainer.style.display = 'none';
+                quizContainer.style.display = 'flex';
+                tagFilterContainer.style.display = 'none';
+                refreshBtn.style.display = 'none';
+                initQuizPanel();
             } else {
+                wordsContainer.style.display = 'block';
+                quizContainer.style.display = 'none';
                 tagFilterContainer.style.display = 'flex';
                 refreshBtn.style.display = 'none';
+                renderWords();
             }
-            renderWords();
         }
 
         function refreshReview() {
@@ -802,6 +1126,156 @@
                 row.appendChild(wordRight);
                 container.appendChild(row);
             });
+        }
+
+        // 測驗相關函數
+        function initQuizPanel() {
+            const quizPanel = document.getElementById('quizPanel');
+            const quizCheckboxesContainer = document.getElementById('quizSheetCheckboxes');
+            quizCheckboxesContainer.innerHTML = '';
+
+            Object.keys(sheetData).forEach(sheetName => {
+                const div = document.createElement('div');
+                div.className = 'quiz-sheet-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `quiz-${sheetName}`;
+                checkbox.dataset.sheet = sheetName;
+                checkbox.checked = true;
+
+                const label = document.createElement('label');
+                label.htmlFor = `quiz-${sheetName}`;
+                label.textContent = sheetName;
+
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                quizCheckboxesContainer.appendChild(div);
+            });
+
+            document.getElementById('quizPanel').style.display = 'block';
+            document.getElementById('quizSession').style.display = 'none';
+            document.getElementById('quizResult').style.display = 'none';
+        }
+
+        function startQuiz() {
+            // 獲取勾選的sheets
+            const selectedSheets = new Set();
+            document.querySelectorAll('#quizSheetCheckboxes input:checked').forEach(checkbox => {
+                selectedSheets.add(checkbox.dataset.sheet);
+            });
+
+            if (selectedSheets.size === 0) {
+                alert('請至少選擇一個單元');
+                return;
+            }
+
+            // 收集要測驗的單詞
+            quizWords = allWords.filter(word => selectedSheets.has(word.sheet));
+
+            if (quizWords.length === 0) {
+                alert('選定的單元中沒有單詞');
+                return;
+            }
+
+            // 隨機排列
+            quizWords.sort(() => Math.random() - 0.5);
+
+            // 初始化結果
+            quizResults = quizWords.map(word => ({
+                word: word,
+                isCorrect: null,
+                userAnswer: ''
+            }));
+
+            quizIndex = 0;
+            document.getElementById('quizPanel').style.display = 'none';
+            document.getElementById('quizSession').style.display = 'flex';
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            const word = quizWords[quizIndex];
+            document.getElementById('quizProgress').textContent = `${quizIndex + 1}/${quizWords.length}`;
+            document.getElementById('quizChinese').textContent = word.中文;
+            document.getElementById('quizPos').textContent = word.詞性;
+            document.getElementById('quizInput').value = '';
+            document.getElementById('quizFeedback').innerHTML = '';
+            document.getElementById('quizAnswer').style.display = 'none';
+            document.getElementById('quizInput').disabled = false;
+            document.getElementById('nextBtn').style.display = 'none';
+            document.getElementById('quizInput').focus();
+        }
+
+        function handleQuizInput(event) {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+
+            const userAnswer = document.getElementById('quizInput').value.trim().toLowerCase();
+            const word = quizWords[quizIndex];
+            const isCorrect = userAnswer === word.單字.toLowerCase();
+            quizResults[quizIndex].isCorrect = isCorrect;
+            quizResults[quizIndex].userAnswer = userAnswer;
+
+            const feedbackDiv = document.getElementById('quizFeedback');
+            feedbackDiv.innerHTML = '';
+
+            if (isCorrect) {
+                const correctDiv = document.createElement('div');
+                correctDiv.className = 'feedback-correct';
+                correctDiv.textContent = '✓ 正確';
+                feedbackDiv.appendChild(correctDiv);
+            } else {
+                // 显示正确答案
+                document.getElementById('quizAnswer').textContent = word.單字;
+                document.getElementById('quizAnswer').style.display = 'block';
+
+                // 只显示错误状态
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'feedback-error';
+                errorDiv.textContent = '✗ 錯誤';
+                feedbackDiv.appendChild(errorDiv);
+            }
+
+            // 禁用輸入框，顯示下一題按鈕
+            document.getElementById('quizInput').disabled = true;
+            document.getElementById('nextBtn').style.display = 'block';
+        }
+
+        function nextQuestion() {
+            quizIndex++;
+            if (quizIndex < quizWords.length) {
+                showQuizQuestion();
+            } else {
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            document.getElementById('quizSession').style.display = 'none';
+            document.getElementById('quizResult').style.display = 'block';
+
+            const correctCount = quizResults.filter(r => r.isCorrect).length;
+            const accuracy = Math.round((correctCount / quizResults.length) * 100);
+
+            document.getElementById('resultScore').innerHTML = `
+                <div>正確率: ${accuracy}%</div>
+                <div style="font-size: 0.8em; color: #666;">正確: ${correctCount} / ${quizResults.length}</div>
+            `;
+
+            const resultWordsDiv = document.getElementById('resultWords');
+            resultWordsDiv.innerHTML = '';
+
+            quizResults.forEach(result => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = `result-word ${result.isCorrect ? 'correct' : 'wrong'}`;
+                wordDiv.textContent = result.word.單字;
+                resultWordsDiv.appendChild(wordDiv);
+            });
+        }
+
+        function backToQuizPanel() {
+            initQuizPanel();
         }
     </script>
 </body>
