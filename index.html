@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>英文學習系統</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            padding: 10px;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            padding: 10px 0;
+        }
+
+        header h1 {
+            font-size: 1.8em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .words-container {
+            flex: 1;
+            overflow-y: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .word-row {
+            display: flex;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+            height: auto;
+            align-items: center;
+        }
+
+        .word-row:nth-child(odd) {
+            background: #e3f2fd;
+        }
+
+        .word-row:nth-child(even) {
+            background: #f5f9ff;
+        }
+
+        .word-row:hover {
+            background: #bbdefb;
+        }
+
+        .word-left {
+            flex: 1;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .word-tag {
+            background: #667eea;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.75em;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .word-word {
+            font-weight: bold;
+            color: #333;
+            min-width: 100px;
+            flex-shrink: 0;
+        }
+
+        .word-phonetic {
+            color: #667eea;
+            font-size: 0.9em;
+            min-width: 120px;
+            flex-shrink: 0;
+        }
+
+        .word-pos {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.8em;
+            color: #666;
+            min-width: 50px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .word-chinese {
+            color: #555;
+            flex: 1;
+            min-width: 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .word-right {
+            width: 50%;
+            border-left: 1px solid #ddd;
+            padding: 12px 15px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .content-half {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            min-width: 0;
+            overflow-y: auto;
+        }
+
+        .content-text {
+            color: #333;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .tag-filter {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .tag-filter h3 {
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .tag-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .tag-checkbox input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 2px;
+        }
+
+        @media (max-width: 1024px) {
+            .word-phonetic {
+                display: none;
+            }
+
+            .word-right {
+                width: 100%;
+                border-left: none;
+                border-top: 1px solid #ddd;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 英文學習系統</h1>
+        </header>
+
+        <div class="tag-filter" id="tagFilter">
+            <h3>選擇單元</h3>
+            <div class="tag-options" id="tagOptions"></div>
+        </div>
+
+        <div class="stats" id="stats"></div>
+
+        <div class="words-container" id="wordsContainer"></div>
+    </div>
+
+    <script>
+        let allWords = [];
+        let selectedTags = new Set();
+
+        fetch('output.json?t=' + new Date().getTime())
+            .then(r => r.json())
+            .then(data => {
+                allWords = data;
+
+                // 提取所有唯一的tag
+                const uniqueTags = [...new Set(allWords.map(w => w.tag).filter(t => t))].sort();
+                selectedTags = new Set(uniqueTags);
+
+                // 创建tag过滤器
+                const tagOptions = document.getElementById('tagOptions');
+                uniqueTags.forEach(tag => {
+                    const label = document.createElement('label');
+                    label.className = 'tag-checkbox';
+                    label.innerHTML = `
+                        <input type="checkbox" value="${tag}" checked onchange="updateFilter()">
+                        <span>${tag}</span>
+                    `;
+                    tagOptions.appendChild(label);
+                });
+
+                updateFilter();
+            })
+            .catch(e => {
+                document.getElementById('wordsContainer').innerHTML = '❌ 無法讀取 output.json';
+            });
+
+        function updateFilter() {
+            selectedTags.clear();
+            document.querySelectorAll('.tag-checkbox input').forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedTags.add(checkbox.value);
+                }
+            });
+            renderWords();
+        }
+
+        function playPronunciation(word) {
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function renderWords() {
+            const container = document.getElementById('wordsContainer');
+            container.innerHTML = '';
+
+            // 根据选中的tag过滤单词
+            const filteredWords = allWords.filter(word =>
+                !word.tag || selectedTags.has(word.tag)
+            );
+
+            document.getElementById('stats').textContent = `共 ${filteredWords.length} 項`;
+
+            filteredWords.forEach((word, index) => {
+                const row = document.createElement('div');
+                row.className = 'word-row';
+                row.innerHTML = `
+                    <div class="word-left" style="cursor: pointer;" onclick="playPronunciation('${word.單字.replace(/'/g, "\\'")}')">
+                        ${word.tag ? `<span class="word-tag">${word.tag}</span>` : ''}
+                        <span class="word-word">${word.單字}</span>
+                        <span class="word-phonetic">${word.音標}</span>
+                        <span class="word-pos">${word.詞性}</span>
+                        <span class="word-chinese">${word.中文}</span>
+                    </div>
+                    <div class="word-right">
+                        <div class="content-half">
+                            <div class="content-text">${word.例句}</div>
+                        </div>
+                        <div class="content-half">
+                            <div class="content-text">${word.翻譯}</div>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>

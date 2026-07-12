@@ -19,11 +19,10 @@ const worksheet = workbook.Sheets[sheetName];
 // 轉換為JSON
 const rawData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
 
-// 跳過第一行（標題行）並過濾空行
+// 過濾空行並清理 __EMPTY 列
 const jsonData = rawData
-  .slice(1)
   .filter(row => {
-    // 過濾掉只有 __EMPTY 或 __EMPTY_1 的列
+    // 過濾掉只有 __EMPTY 的列
     const hasContent = Object.entries(row).some(([key, val]) => {
       return !key.includes('__EMPTY') && val !== '' && val !== null && val !== undefined;
     });
