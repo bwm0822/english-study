@@ -39,9 +39,12 @@ const jsonData = rawData
     return cleaned;
   });
 
-// 輸出到文件
+// 輸出到文件，格式為 {sheetName: [...]}
 const outputPath = path.join(__dirname, 'output.json');
-fs.writeFileSync(outputPath, JSON.stringify(jsonData, null, 2), 'utf-8');
+const output = {
+  [sheetName]: jsonData
+};
+fs.writeFileSync(outputPath, JSON.stringify(output, null, 2), 'utf-8');
 
 console.log(`✓ 轉換成功！`);
 console.log(`Sheet: ${sheetName}`);

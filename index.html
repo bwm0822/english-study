@@ -29,17 +29,6 @@
             box-sizing: border-box;
         }
 
-        header {
-            text-align: center;
-            color: white;
-            padding: 10px 0;
-        }
-
-        header h1 {
-            font-size: 1.8em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
         .controls {
             display: flex;
             align-items: center;
@@ -92,8 +81,8 @@
             border-radius: 4px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 100;
-            min-width: 200px;
-            max-height: 300px;
+            min-width: 300px;
+            max-height: 400px;
             overflow-y: auto;
             display: none;
             margin-top: 4px;
@@ -103,33 +92,73 @@
             display: block;
         }
 
-        .tag-dropdown-header {
-            padding: 8px 12px;
+        .sheet-item {
             border-bottom: 1px solid #eee;
-            display: flex;
-            gap: 8px;
         }
 
-        .tag-dropdown-header button {
-            flex: 1;
-            padding: 4px 8px;
-            font-size: 0.85em;
-            border: 1px solid #ddd;
-            background: white;
-            border-radius: 3px;
+        .sheet-item-header {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            gap: 8px;
+            background: #f9f9f9;
+            font-weight: 600;
+            font-size: 0.9em;
             cursor: pointer;
         }
 
-        .tag-dropdown-header button:hover {
+        .sheet-item-header:hover {
+            background: #f0f0f0;
+        }
+
+        .sheet-toggle {
+            width: 20px;
+            text-align: center;
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .sheet-name {
+            flex: 1;
+        }
+
+        .sheet-buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .sheet-buttons button {
+            padding: 2px 8px;
+            font-size: 0.8em;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+
+        .sheet-buttons button:hover {
             background: #f5f5f5;
+        }
+
+        .sheet-content {
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+        }
+
+        .sheet-content.expanded {
+            display: block;
+            max-height: 1000px;
         }
 
         .tag-checkbox-item {
             display: flex;
             align-items: center;
-            padding: 8px 12px;
+            padding: 6px 12px;
+            padding-left: 30px;
             gap: 8px;
             cursor: pointer;
+            font-size: 0.9em;
         }
 
         .tag-checkbox-item:hover {
@@ -139,6 +168,8 @@
         .tag-checkbox-item input[type="checkbox"] {
             cursor: pointer;
             accent-color: #667eea;
+            width: 16px;
+            height: 16px;
         }
 
         .stats {
@@ -180,13 +211,14 @@
         }
 
         .word-left {
-            flex: 1;
+            flex: 0 0 50%;
             padding: 12px 15px;
             display: flex;
             align-items: center;
             gap: 12px;
             min-width: 0;
             cursor: pointer;
+            overflow: hidden;
         }
 
         .word-tag {
@@ -234,7 +266,7 @@
         }
 
         .word-right {
-            width: 50%;
+            flex: 0 0 50%;
             border-left: 1px solid #ddd;
             padding: 12px 15px;
             overflow: hidden;
@@ -242,6 +274,7 @@
             flex-direction: column;
             gap: 10px;
             justify-content: center;
+            min-width: 0;
         }
 
         .content-half {
@@ -259,13 +292,26 @@
             line-height: 1.4;
         }
 
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #667eea #f5f5f5;
+        }
+
         ::-webkit-scrollbar {
             width: 4px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f5f5f5;
         }
 
         ::-webkit-scrollbar-thumb {
             background: #667eea;
             border-radius: 2px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5568d3;
         }
 
         @media (max-width: 1024px) {
@@ -284,21 +330,13 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>📚 英文學習系統</h1>
-        </header>
-
         <div class="controls">
             <div class="tag-filter">
                 <label>選擇單元：</label>
                 <div class="tag-filter-dropdown">
                     <button class="tag-dropdown-btn" onclick="toggleDropdown()">全部 <span>▼</span></button>
                     <div class="tag-dropdown-menu" id="tagDropdownMenu">
-                        <div class="tag-dropdown-header">
-                            <button onclick="selectAllTags()">全部</button>
-                            <button onclick="clearAllTags()">清除</button>
-                        </div>
-                        <div id="tagCheckboxList"></div>
+                        <div id="sheetGroupsContainer"></div>
                     </div>
                 </div>
             </div>
@@ -310,43 +348,87 @@
 
     <script>
         let allWords = [];
-        let uniqueTags = [];
+        let sheetData = {};
         let selectedTags = new Set();
 
         fetch('output.json?t=' + new Date().getTime())
             .then(r => r.json())
             .then(data => {
-                allWords = data;
+                sheetData = data;
+                allWords = [];
 
-                // 提取所有唯一的tag，保持原始順序
-                const tagOrder = {};
-                allWords.forEach(w => {
-                    if (w.tag && !(w.tag in tagOrder)) {
-                        tagOrder[w.tag] = Object.keys(tagOrder).length;
+                // 建立分組下拉選單
+                const container = document.getElementById('sheetGroupsContainer');
+
+                Object.entries(sheetData).forEach(([sheetName, words]) => {
+                    if (Array.isArray(words)) {
+                        // 建立該sheet的所有tag
+                        const sheetTags = [...new Set(words.map(w => w.tag))];
+
+                        // 添加到allWords
+                        allWords = allWords.concat(words);
+
+                        // 建立sheet項目
+                        const sheetItem = document.createElement('div');
+                        sheetItem.className = 'sheet-item';
+
+                        // Sheet標題（可展開）
+                        const sheetHeader = document.createElement('div');
+                        sheetHeader.className = 'sheet-item-header';
+                        sheetHeader.innerHTML = `
+                            <span class="sheet-toggle">▶</span>
+                            <span class="sheet-name">${sheetName}</span>
+                            <div class="sheet-buttons">
+                                <button onclick="selectAllInSheet(event, '${sheetName}')">全選</button>
+                                <button onclick="clearAllInSheet(event, '${sheetName}')">清除</button>
+                            </div>
+                        `;
+
+                        // Sheet內容
+                        const sheetContent = document.createElement('div');
+                        sheetContent.className = 'sheet-content';
+
+                        // 該sheet的所有tag
+                        sheetTags.forEach(tag => {
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.value = tag;
+                            checkbox.checked = true;
+                            checkbox.dataset.sheet = sheetName;
+                            checkbox.onchange = updateFilter;
+
+                            const label = document.createElement('div');
+                            label.className = 'tag-checkbox-item';
+                            label.appendChild(checkbox);
+                            const span = document.createElement('span');
+                            span.textContent = tag;
+                            label.appendChild(span);
+
+                            label.onclick = (e) => {
+                                e.stopPropagation();
+                                checkbox.checked = !checkbox.checked;
+                                updateFilter();
+                            };
+
+                            sheetContent.appendChild(label);
+
+                            selectedTags.add(tag);
+                        });
+
+                        // Sheet展開/收起邏輯
+                        sheetHeader.onclick = (e) => {
+                            if (e.target.tagName !== 'BUTTON') {
+                                e.stopPropagation();
+                                const toggle = sheetHeader.querySelector('.sheet-toggle');
+                                sheetContent.classList.toggle('expanded');
+                                toggle.textContent = sheetContent.classList.contains('expanded') ? '▼' : '▶';
+                            }
+                        };
+
+                        sheetItem.appendChild(sheetHeader);
+                        sheetItem.appendChild(sheetContent);
+                        container.appendChild(sheetItem);
                     }
-                });
-                uniqueTags = Object.keys(tagOrder).sort((a, b) => tagOrder[a] - tagOrder[b]);
-                selectedTags = new Set(uniqueTags);
-
-                // 建立勾選式下拉選單
-                const checkboxList = document.getElementById('tagCheckboxList');
-                uniqueTags.forEach(tag => {
-                    const item = document.createElement('div');
-                    item.className = 'tag-checkbox-item';
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.value = tag;
-                    checkbox.checked = true;
-                    checkbox.onchange = updateFilter;
-                    const span = document.createElement('span');
-                    span.textContent = tag;
-                    item.appendChild(checkbox);
-                    item.appendChild(span);
-                    item.onclick = () => {
-                        checkbox.checked = !checkbox.checked;
-                        updateFilter();
-                    };
-                    checkboxList.appendChild(item);
                 });
 
                 renderWords();
@@ -360,18 +442,19 @@
             menu.classList.toggle('active');
         }
 
-        function selectAllTags() {
-            selectedTags.clear();
-            uniqueTags.forEach(tag => selectedTags.add(tag));
-            document.querySelectorAll('.tag-checkbox-item input').forEach(checkbox => {
+        function selectAllInSheet(event, sheetName) {
+            event.stopPropagation();
+            const checkboxes = document.querySelectorAll(`.sheet-content input[data-sheet="${sheetName}"]`);
+            checkboxes.forEach(checkbox => {
                 checkbox.checked = true;
             });
             updateFilter();
         }
 
-        function clearAllTags() {
-            selectedTags.clear();
-            document.querySelectorAll('.tag-checkbox-item input').forEach(checkbox => {
+        function clearAllInSheet(event, sheetName) {
+            event.stopPropagation();
+            const checkboxes = document.querySelectorAll(`.sheet-content input[data-sheet="${sheetName}"]`);
+            checkboxes.forEach(checkbox => {
                 checkbox.checked = false;
             });
             updateFilter();
@@ -390,15 +473,11 @@
 
         function updateDropdownButton() {
             const btn = document.querySelector('.tag-dropdown-btn');
-            let text = '';
             if (selectedTags.size === 0) {
-                text = '清除';
-            } else if (selectedTags.size === uniqueTags.length) {
-                text = '全部';
+                btn.innerHTML = '清除 <span>▼</span>';
             } else {
-                text = `已選擇 ${selectedTags.size} 個`;
+                btn.innerHTML = `已選擇 ${selectedTags.size} 個 <span>▼</span>`;
             }
-            btn.innerHTML = `${text} <span>▼</span>`;
         }
 
         document.addEventListener('click', (e) => {
@@ -409,10 +488,18 @@
         });
 
         function playPronunciation(word) {
+            const SpeechSynthesisUtterance = window.SpeechSynthesisUtterance || window.webkitSpeechSynthesisUtterance;
+            const speechSynthesis = window.speechSynthesis || window.webkitSpeechSynthesis;
+
+            if (!SpeechSynthesisUtterance || !speechSynthesis) {
+                console.log('Web Speech API not supported');
+                return;
+            }
+
             const utterance = new SpeechSynthesisUtterance(word);
             utterance.lang = 'en-US';
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.speak(utterance);
+            speechSynthesis.cancel();
+            speechSynthesis.speak(utterance);
         }
 
         function renderWords() {
@@ -421,7 +508,7 @@
 
             // 根據選中的tag過濾單字
             const filteredWords = allWords.filter(word =>
-                selectedTags.size === 0 || !word.tag || selectedTags.has(word.tag)
+                selectedTags.size === 0 || selectedTags.has(word.tag)
             );
 
             document.getElementById('stats').textContent = `共 ${filteredWords.length} 項`;
