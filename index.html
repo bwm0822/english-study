@@ -36,6 +36,48 @@
             margin-bottom: 10px;
         }
 
+        .mode-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .mode-selector label {
+            color: white;
+            font-size: 0.9em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .mode-selector select {
+            background: white;
+            color: #333;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+
+        .mode-selector select:hover {
+            background: #f5f5f5;
+        }
+
+        .refresh-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            font-size: 0.9em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .refresh-btn:hover {
+            background: #45a049;
+        }
+
         .tag-filter {
             display: flex;
             align-items: center;
@@ -391,7 +433,14 @@
 <body>
     <div class="container">
         <div class="controls">
-            <div class="tag-filter">
+            <div class="mode-selector">
+                <label>模式：</label>
+                <select id="modeSelect" onchange="changeMode(this.value)">
+                    <option value="normal">一般</option>
+                    <option value="review">複習</option>
+                </select>
+            </div>
+            <div class="tag-filter" id="tagFilterContainer">
                 <label>選擇單元：</label>
                 <div class="tag-filter-dropdown">
                     <button class="tag-dropdown-btn" onclick="toggleDropdown()">全部 <span>▼</span></button>
@@ -401,6 +450,7 @@
                 </div>
             </div>
             <div class="stats" id="stats"></div>
+            <button class="refresh-btn" id="refreshBtn" onclick="refreshReview()" style="display: none; margin-left: auto;">刷新</button>
         </div>
 
         <div class="words-container" id="wordsContainer"></div>
@@ -410,6 +460,7 @@
         let allWords = [];
         let sheetData = {};
         let selectedTags = new Map(); // {sheetName: Set<tag>}
+        let currentMode = 'normal'; // 'normal' or 'review'
 
         fetch('output.json?t=' + new Date().getTime())
             .then(r => r.json())
@@ -560,6 +611,25 @@
                 document.getElementById('wordsContainer').innerHTML = '❌ 無法讀取 output.json';
             });
 
+        function changeMode(mode) {
+            currentMode = mode;
+            const tagFilterContainer = document.getElementById('tagFilterContainer');
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (mode === 'review') {
+                tagFilterContainer.style.display = 'none';
+                refreshBtn.style.display = 'block';
+            } else {
+                tagFilterContainer.style.display = 'flex';
+                refreshBtn.style.display = 'none';
+            }
+            renderWords();
+        }
+
+        function refreshReview() {
+            // 刷新複習模式的單詞
+            renderWords();
+        }
+
         function toggleDropdown() {
             const menu = document.getElementById('tagDropdownMenu');
             menu.classList.toggle('active');
@@ -658,15 +728,25 @@
                 }
             });
 
-            // 根據選中的sheet+tag過濾單字
-            const filteredWords = allWords.filter(word => {
-                // 如果sheet checkbox unchecked，忽略該sheet
-                if (!enabledSheets.has(word.sheet)) {
-                    return false;
-                }
-                const sheetTags = selectedTags.get(word.sheet);
-                return sheetTags && sheetTags.has(word.tag);
-            });
+            // 根據模式和選中的sheet+tag過濾單字
+            let filteredWords;
+            if (currentMode === 'review') {
+                // 複習模式：只顯示有星號的單字
+                filteredWords = allWords.filter(word => {
+                    const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    return localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                });
+            } else {
+                // 一般模式：根據sheet+tag過濾
+                filteredWords = allWords.filter(word => {
+                    // 如果sheet checkbox unchecked，忽略該sheet
+                    if (!enabledSheets.has(word.sheet)) {
+                        return false;
+                    }
+                    const sheetTags = selectedTags.get(word.sheet);
+                    return sheetTags && sheetTags.has(word.tag);
+                });
+            }
 
             document.getElementById('stats').textContent = `共 ${filteredWords.length} 項`;
 
