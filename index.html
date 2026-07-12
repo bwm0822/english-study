@@ -152,9 +152,33 @@
             padding: 20px;
         }
 
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
         .quiz-progress {
             font-size: 0.9em;
             color: #666;
+        }
+
+        .cancel-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 16px;
+            font-size: 0.9em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .cancel-btn:hover {
+            background: #da190b;
         }
 
         .quiz-question {
@@ -237,6 +261,7 @@
             display: flex;
             flex-direction: row;
             align-items: center;
+            justify-content: space-between;
             gap: 20px;
             width: 100%;
             margin-top: auto;
@@ -245,7 +270,6 @@
 
         .quiz-feedback {
             min-height: 60px;
-            flex: 1;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -730,8 +754,11 @@
 
             <!-- 測驗進行中 -->
             <div class="quiz-session" id="quizSession" style="display: none;">
-                <div class="quiz-progress">
-                    <span id="quizProgress">1/10</span>
+                <div class="quiz-header">
+                    <div class="quiz-progress">
+                        <span id="quizProgress">1/10</span>
+                    </div>
+                    <button class="cancel-btn" onclick="cancelQuiz()">取消</button>
                 </div>
                 <div class="quiz-question">
                     <div class="quiz-question-text">
@@ -1276,6 +1303,14 @@
 
         function backToQuizPanel() {
             initQuizPanel();
+        }
+
+        function cancelQuiz() {
+            if (confirm('確定要取消測驗嗎？')) {
+                document.getElementById('quizPanel').style.display = 'block';
+                document.getElementById('quizSession').style.display = 'none';
+                document.getElementById('quizResult').style.display = 'none';
+            }
         }
     </script>
 </body>
