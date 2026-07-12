@@ -82,8 +82,9 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 100;
             min-width: 300px;
-            max-height: 400px;
+            max-height: calc(100vh - 150px);
             overflow-y: auto;
+            overflow-x: visible;
             display: none;
             margin-top: 4px;
         }
@@ -94,6 +95,7 @@
 
         .sheet-item {
             border-bottom: 1px solid #eee;
+            position: relative;
         }
 
         .sheet-item-header {
@@ -105,10 +107,24 @@
             font-weight: 600;
             font-size: 0.9em;
             cursor: pointer;
+            position: relative;
         }
 
         .sheet-item-header:hover {
             background: #f0f0f0;
+        }
+
+        .sheet-item-header::after {
+            content: '▶';
+            position: absolute;
+            right: 8px;
+            font-size: 0.7em;
+            color: #999;
+            transition: transform 0.2s;
+        }
+
+        .sheet-item-header.expanded::after {
+            transform: rotate(90deg);
         }
 
         .sheet-toggle {
@@ -136,15 +152,21 @@
             background: #f5f5f5;
         }
 
-        .sheet-content {
+        .sheet-submenu {
+            position: fixed;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 200;
+            min-width: 150px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
             display: none;
-            max-height: 0;
-            overflow: hidden;
         }
 
-        .sheet-content.expanded {
+        .sheet-submenu.expanded {
             display: block;
-            max-height: 1000px;
         }
 
         .tag-checkbox-item {
@@ -398,16 +420,27 @@
                         toggleSpan.className = 'sheet-toggle';
                         toggleSpan.textContent = '▶';
 
+                        const sheetCheckbox = document.createElement('input');
+                        sheetCheckbox.type = 'checkbox';
+                        sheetCheckbox.checked = true;
+                        sheetCheckbox.dataset.sheetName = sheetName;
+                        sheetCheckbox.onchange = updateFilter;
+                        sheetCheckbox.onclick = (e) => {
+                            e.stopPropagation();
+                        };
+
                         const nameSpan = document.createElement('span');
                         nameSpan.className = 'sheet-name';
                         nameSpan.textContent = sheetName;
 
-                        sheetHeader.appendChild(toggleSpan);
+                        sheetHeader.appendChild(sheetCheckbox);
                         sheetHeader.appendChild(nameSpan);
 
-                        // Sheet內容
-                        const sheetContent = document.createElement('div');
-                        sheetContent.className = 'sheet-content';
+                        // 創建獨立的第二選單
+                        const sheetSubmenu = document.createElement('div');
+                        sheetSubmenu.className = 'sheet-submenu';
+                        sheetSubmenu.dataset.sheetName = sheetName;
+                        document.body.appendChild(sheetSubmenu);
 
                         // 按鈕行
                         const buttonsRow = document.createElement('div');
@@ -430,7 +463,7 @@
 
                         buttonsRow.appendChild(selectBtn);
                         buttonsRow.appendChild(clearBtn);
-                        sheetContent.appendChild(buttonsRow);
+                        sheetSubmenu.appendChild(buttonsRow);
 
                         // 該sheet的所有tag
                         sheetTags.forEach(tag => {
@@ -457,26 +490,48 @@
                                 updateFilter();
                             };
 
-                            sheetContent.appendChild(label);
+                            sheetSubmenu.appendChild(label);
                         });
 
-                        // Sheet展開/收起邏輯
+                        // Sheet展開/收起邏輯 - 顯示/隱藏獨立的submenu
                         sheetHeader.onclick = (e) => {
-                            if (e.target.tagName !== 'BUTTON') {
+                            if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT') {
                                 e.stopPropagation();
-                                const toggle = sheetHeader.querySelector('.sheet-toggle');
-                                sheetContent.classList.toggle('expanded');
-                                toggle.textContent = sheetContent.classList.contains('expanded') ? '▼' : '▶';
+
+                                // 關閉其他所有的submenu
+                                document.querySelectorAll('.sheet-submenu.expanded').forEach(submenu => {
+                                    if (submenu !== sheetSubmenu) {
+                                        submenu.classList.remove('expanded');
+                                    }
+                                });
+
+                                // Toggle當前的submenu
+                                sheetSubmenu.classList.toggle('expanded');
+
+                                // 如果打開，計算位置並顯示在sheetHeader的右邊
+                                if (sheetSubmenu.classList.contains('expanded')) {
+                                    const rect = sheetHeader.getBoundingClientRect();
+                                    sheetSubmenu.style.top = rect.top + 'px';
+                                    sheetSubmenu.style.left = (rect.right + 5) + 'px';
+                                }
                             }
                         };
 
                         sheetItem.appendChild(sheetHeader);
-                        sheetItem.appendChild(sheetContent);
                         container.appendChild(sheetItem);
                     }
                 });
 
                 renderWords();
+
+                // 點擊頁面其他地方時關閉所有的submenu
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.sheet-item-header') && !e.target.closest('.sheet-submenu')) {
+                        document.querySelectorAll('.sheet-submenu.expanded').forEach(submenu => {
+                            submenu.classList.remove('expanded');
+                        });
+                    }
+                });
             })
             .catch(e => {
                 document.getElementById('wordsContainer').innerHTML = '❌ 無法讀取 output.json';
@@ -512,10 +567,19 @@
                 tags.clear();
             });
 
+            // 先檢查sheet checkbox，如果unchecked則skip該sheet
+            const enabledSheets = new Set();
+            document.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
+                if (sheetCheckbox.checked) {
+                    enabledSheets.add(sheetCheckbox.dataset.sheetName);
+                }
+            });
+
+            // 只處理enabled sheets的tag checkbox
             document.querySelectorAll('.tag-checkbox-item input').forEach(checkbox => {
                 if (checkbox.checked) {
                     const sheetName = checkbox.dataset.sheet;
-                    if (selectedTags.has(sheetName)) {
+                    if (enabledSheets.has(sheetName) && selectedTags.has(sheetName)) {
                         selectedTags.get(sheetName).add(checkbox.value);
                     }
                 }
@@ -563,8 +627,20 @@
             const container = document.getElementById('wordsContainer');
             container.innerHTML = '';
 
+            // 檢查enabled sheets
+            const enabledSheets = new Set();
+            document.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
+                if (sheetCheckbox.checked) {
+                    enabledSheets.add(sheetCheckbox.dataset.sheetName);
+                }
+            });
+
             // 根據選中的sheet+tag過濾單字
             const filteredWords = allWords.filter(word => {
+                // 如果sheet checkbox unchecked，忽略該sheet
+                if (!enabledSheets.has(word.sheet)) {
+                    return false;
+                }
                 const sheetTags = selectedTags.get(word.sheet);
                 return sheetTags && sheetTags.has(word.tag);
             });
