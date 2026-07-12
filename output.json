@@ -1,0 +1,4002 @@
+[
+  {
+    "單字": "coast",
+    "音標": "[kost]",
+    "詞性": "n.",
+    "中文": "海岸",
+    "輸入": "coast",
+    "結果": "正確",
+    "例句": "We walked along the coast.",
+    "翻譯": "我們沿著海岸散步。"
+  },
+  {
+    "單字": "organize",
+    "音標": "['ɔrɡə,naɪz]",
+    "詞性": "v.",
+    "中文": "安排",
+    "輸入": "organize",
+    "結果": "正確",
+    "例句": "She helped organize the party.",
+    "翻譯": "她幫忙安排了這場派對。"
+  },
+  {
+    "單字": "plate",
+    "音標": "[plet]",
+    "詞性": "n.",
+    "中文": "盤子",
+    "輸入": "plate",
+    "結果": "正確",
+    "例句": "He put the cake on a plate.",
+    "翻譯": "他把蛋糕放在盤子裡。"
+  },
+  {
+    "單字": "regard",
+    "音標": "[rɪ'ɡɑrd]",
+    "詞性": "v.",
+    "中文": "看待",
+    "輸入": "regard",
+    "結果": "正確",
+    "例句": "I regard him as my best friend.",
+    "翻譯": "我將他視為我最好的朋友。"
+  },
+  {
+    "單字": "method",
+    "音標": "['mɛθəd]",
+    "詞性": "n.",
+    "中文": "方法",
+    "輸入": "method",
+    "結果": "正確",
+    "例句": "What is the best method to learn English?",
+    "翻譯": "什麼是學習英文最好的方法？"
+  },
+  {
+    "單字": "attack",
+    "音標": "[ə'tæk]",
+    "詞性": "v.",
+    "中文": "攻擊",
+    "輸入": "attack",
+    "結果": "正確",
+    "例句": "The dog didn't attack anyone.",
+    "翻譯": "那隻狗沒有攻擊任何人。"
+  },
+  {
+    "單字": "figure",
+    "音標": "['fɪɡjɚ]",
+    "詞性": "n.",
+    "中文": "數字",
+    "輸入": "figure",
+    "結果": "正確",
+    "例句": "She has a slim figure.",
+    "翻譯": "她身材苗條。"
+  },
+  {
+    "單字": "double",
+    "音標": "['dʌb!]",
+    "詞性": "v.",
+    "中文": "使加倍",
+    "輸入": "double",
+    "結果": "正確",
+    "例句": "The price of the house doubled.",
+    "翻譯": "這棟房子的價格翻了一倍。"
+  },
+  {
+    "單字": "simple",
+    "音標": "['sɪmp!]",
+    "詞性": "adj.",
+    "中文": "簡單的",
+    "輸入": "simple",
+    "結果": "正確",
+    "例句": "The question is very simple.",
+    "翻譯": "這個問題非常簡單。"
+  },
+  {
+    "單字": "finger",
+    "音標": "['fɪŋɡɚ]",
+    "詞性": "n.",
+    "中文": "手指",
+    "輸入": "finger",
+    "結果": "正確",
+    "例句": "He cut his finger by accident.",
+    "翻譯": "他不小心割傷了手指。"
+  },
+  {
+    "單字": "chief",
+    "音標": "[tʃif]",
+    "詞性": "adj.",
+    "中文": "首要的",
+    "輸入": "chief",
+    "結果": "正確",
+    "例句": "This is the chief reason for the problem.",
+    "翻譯": "這是該問題的主要原因。"
+  },
+  {
+    "單字": "shower",
+    "音標": "['aʊɚ]",
+    "詞性": "n.",
+    "中文": "淋浴",
+    "輸入": "shower",
+    "結果": "正確",
+    "例句": "I usually take a shower in the morning.",
+    "翻譯": "我通常在早上洗澡。"
+  },
+  {
+    "單字": "real",
+    "音標": "[rɪəl]",
+    "詞性": "adj.",
+    "中文": "實體的",
+    "輸入": "real",
+    "結果": "正確",
+    "例句": "Is this a real diamond?",
+    "翻譯": "這是真的鑽石嗎？"
+  },
+  {
+    "單字": "letter",
+    "音標": "['lɛtɚ]",
+    "詞性": "n.",
+    "中文": "信",
+    "輸入": "letter",
+    "結果": "正確",
+    "例句": "She wrote a letter to her grandmother.",
+    "翻譯": "她寫了一封信給她的祖母。"
+  },
+  {
+    "單字": "huge",
+    "音標": "[hjudʒ]",
+    "詞性": "adj.",
+    "中文": "龐大的",
+    "輸入": "huge",
+    "結果": "正確",
+    "例句": "They live in a huge house.",
+    "翻譯": "他們住在一棟大房子裡。"
+  },
+  {
+    "單字": "center",
+    "音標": "['sɛntɚ]",
+    "詞性": "n.",
+    "中文": "中心",
+    "輸入": "center",
+    "結果": "正確",
+    "例句": "There is a park in the center of the town.",
+    "翻譯": "鎮中心有一個公園。"
+  },
+  {
+    "單字": "lose",
+    "音標": "[luz]",
+    "詞性": "v.",
+    "中文": "損失",
+    "輸入": "lose",
+    "結果": "正確",
+    "例句": "Be careful not to lose your keys.",
+    "翻譯": "小心不要弄丟你的鑰匙。"
+  },
+  {
+    "單字": "from now on",
+    "音標": "[frəm naʊ ɑn]",
+    "詞性": "ph.",
+    "中文": "從現在開始",
+    "輸入": "from now on",
+    "結果": "正確",
+    "例句": "From now on, I will exercise every day.",
+    "翻譯": "從現在開始，我每天都會運動。"
+  },
+  {
+    "單字": "omit",
+    "音標": "[o'mɪt]",
+    "詞性": "v.",
+    "中文": "遺漏",
+    "輸入": "omit",
+    "結果": "正確",
+    "例句": "You can omit the details.",
+    "翻譯": "你可以省略這些細節。"
+  },
+  {
+    "單字": "in the beginning",
+    "音標": "[ɪn ðə bɪ'ɡɪnɪŋ]",
+    "詞性": "ph.",
+    "中文": "剛開始時",
+    "輸入": "in the beginning",
+    "結果": "正確",
+    "例句": "In the beginning, everyone was nervous.",
+    "翻譯": "剛開始的時候，每個人都很緊張。"
+  },
+  {
+    "單字": "pack",
+    "音標": "[pæk]",
+    "詞性": "v.",
+    "中文": "打包",
+    "輸入": "pack",
+    "結果": "正確",
+    "例句": "I need to pack my bags tonight.",
+    "翻譯": "我今天晚上需要打包行李。"
+  },
+  {
+    "單字": "all the time",
+    "音標": "[ɔl ðə taɪm]",
+    "詞性": "ph.",
+    "中文": "一直",
+    "輸入": "all the time",
+    "結果": "正確",
+    "例句": "He listens to music all the time.",
+    "翻譯": "他一直都在聽音樂。"
+  },
+  {
+    "單字": "earn",
+    "音標": "[ɝn]",
+    "詞性": "v.",
+    "中文": "賺得",
+    "輸入": "earn",
+    "結果": "正確",
+    "例句": "She earns a lot of money.",
+    "翻譯": "她賺很多錢。"
+  },
+  {
+    "單字": "first of all",
+    "音標": "[fɝst əv ɔl]",
+    "詞性": "ph.",
+    "中文": "首先",
+    "輸入": "first of all",
+    "結果": "正確",
+    "例句": "First of all, let me thank you all.",
+    "翻譯": "首先，讓我感謝大家。"
+  },
+  {
+    "單字": "especially",
+    "音標": "[ə'spɛʃəlɪ]",
+    "詞性": "adv.",
+    "中文": "特別地",
+    "輸入": "especially",
+    "結果": "正確",
+    "例句": "I love fruit, especially apples.",
+    "翻譯": "我喜歡水果，特別是蘋果。"
+  },
+  {
+    "單字": "worry",
+    "音標": "['wɝɪ]",
+    "詞性": "v.",
+    "中文": "使擔憂",
+    "輸入": "worry",
+    "結果": "正確",
+    "例句": "Don't worry about the results.",
+    "翻譯": "別擔心結果。"
+  },
+  {
+    "單字": "certainly",
+    "音標": "['sɝtənlɪ]",
+    "詞性": "adv.",
+    "中文": "當然",
+    "輸入": "certainly",
+    "結果": "正確",
+    "例句": "I will certainly come to your party.",
+    "翻譯": "我一定會去裝加你的派對。"
+  },
+  {
+    "單字": "supply",
+    "音標": "[sə'plaɪ]",
+    "詞性": "v.",
+    "中文": "提供",
+    "輸入": "supply",
+    "結果": "正確",
+    "例句": "The school supplies books to students.",
+    "翻譯": "學校向學生提供書籍。"
+  },
+  {
+    "單字": "nearly",
+    "音標": "['nɪrlɪ]",
+    "詞性": "adv.",
+    "中文": "差點",
+    "輸入": "nearly",
+    "結果": "正確",
+    "例句": "It is nearly dark now.",
+    "翻譯": "現在天快黑了。"
+  },
+  {
+    "單字": "dry",
+    "音標": "[draɪ]",
+    "詞性": "v.",
+    "中文": "弄乾",
+    "輸入": "dry",
+    "結果": "正確",
+    "例句": "Hang your clothes up to dry.",
+    "翻譯": "把你的衣服掛起來弄乾。"
+  },
+  {
+    "單字": "actually",
+    "音標": "['æktʃʊəlɪ]",
+    "詞性": "adv.",
+    "中文": "實際上",
+    "輸入": "actually",
+    "結果": "正確",
+    "例句": "Actually, I don't know the answer.",
+    "翻譯": "實際上，我不知道答案。"
+  },
+  {
+    "單字": "copy",
+    "音標": "['kɑpɪ]",
+    "詞性": "v.",
+    "中文": "抄寫",
+    "輸入": "copy",
+    "結果": "正確",
+    "例句": "Please copy these words into your notebook.",
+    "翻譯": "請將這些單字抄寫到你的筆記本上。"
+  },
+  {
+    "單字": "give up",
+    "音標": "[ɡɪv ʌp]",
+    "詞性": "ph.",
+    "中文": "放棄",
+    "輸入": "give up",
+    "結果": "正確",
+    "例句": "Never give up your dreams.",
+    "翻譯": "永遠不要放棄你的夢想。"
+  },
+  {
+    "單字": "mistake",
+    "音標": "[mɪ'stek]",
+    "詞性": "n.",
+    "中文": "錯誤",
+    "輸入": "mistake",
+    "結果": "正確",
+    "例句": "I made a big mistake.",
+    "翻譯": "我犯了一個大錯誤。"
+  },
+  {
+    "單字": "knock down",
+    "音標": "[nɑk daʊn]",
+    "詞性": "ph.",
+    "中文": "摧毀",
+    "輸入": "knock down",
+    "結果": "正確",
+    "例句": "The car knocked down the fence.",
+    "翻譯": "汽車撞倒了圍欄。"
+  },
+  {
+    "單字": "moment",
+    "音標": "['momənt]",
+    "詞性": "n.",
+    "中文": "片刻",
+    "輸入": "moment",
+    "結果": "正確",
+    "例句": "Please wait a moment.",
+    "翻譯": "請稍等片刻。"
+  },
+  {
+    "單字": "try",
+    "音標": "[traɪ]",
+    "詞性": "ph.",
+    "中文": "適用",
+    "輸入": "try",
+    "結果": "正確",
+    "例句": "You should try this new restaurant.",
+    "翻譯": "你應該嘗試這家新餐廳。"
+  },
+  {
+    "單字": "subject",
+    "音標": "['sʌbdʒɪkt]",
+    "詞性": "n.",
+    "中文": "主題",
+    "輸入": "subject",
+    "結果": "正確",
+    "例句": "What is your favorite subject?",
+    "翻譯": "你最喜歡的科目是什麼？"
+  },
+  {
+    "單字": "fill out",
+    "音標": "[fɪl aʊt]",
+    "詞性": "ph.",
+    "中文": "填寫",
+    "輸入": "fill out",
+    "結果": "正確",
+    "例句": "Please fill out this form.",
+    "翻譯": "請填寫這張表格。"
+  },
+  {
+    "單字": "decision",
+    "音標": "[dɪ'sɪʒən]",
+    "詞性": "n.",
+    "中文": "決定",
+    "輸入": "decision",
+    "結果": "正確",
+    "例句": "It was a difficult decision.",
+    "翻譯": "這是一個困難的決定。"
+  },
+  {
+    "單字": "result",
+    "音標": "[rɪˈzʌlt]",
+    "詞性": "v.",
+    "中文": "發生；產生",
+    "輸入": "",
+    "結果": "",
+    "例句": "The accident resulted from his carelessness.",
+    "翻譯": "這場事故是由於 his 的粗心造成的。"
+  },
+  {
+    "單字": "hotel",
+    "音標": "[hoˈtɛl]",
+    "詞性": "n.",
+    "中文": "飯店",
+    "輸入": "",
+    "結果": "",
+    "例句": "We stayed at a luxury hotel by the beach.",
+    "翻譯": "我們住在一間海邊的豪華飯店。"
+  },
+  {
+    "單字": "search",
+    "音標": "[sɝtʃ]",
+    "詞性": "v.",
+    "中文": "搜索",
+    "輸入": "",
+    "結果": "",
+    "例句": "The police searched the house for clues.",
+    "翻譯": "警方在房子裡搜尋線索。"
+  },
+  {
+    "單字": "diary",
+    "音標": "[ˈdaɪərɪ]",
+    "詞性": "n.",
+    "中文": "日記",
+    "輸入": "",
+    "結果": "",
+    "例句": "She keeps a diary to record her daily life.",
+    "翻譯": "她寫日記來記錄她的日常生活。"
+  },
+  {
+    "單字": "laugh",
+    "音標": "[læf]",
+    "詞性": "v.",
+    "中文": "笑",
+    "輸入": "",
+    "結果": "",
+    "例句": "The funny joke made everyone laugh.",
+    "翻譯": "這個搞笑的笑話讓每個人都笑了。"
+  },
+  {
+    "單字": "stamp",
+    "音標": "[stæmp]",
+    "詞性": "n.",
+    "中文": "郵票",
+    "輸入": "",
+    "結果": "",
+    "例句": "Don't forget to put a stamp on the letter.",
+    "翻譯": "別忘了在信上貼上郵票。"
+  },
+  {
+    "單字": "arrive",
+    "音標": "[əˈraɪv]",
+    "詞性": "v.",
+    "中文": "抵達",
+    "輸入": "",
+    "結果": "",
+    "例句": "What time will the train arrive at the station?",
+    "翻譯": "火車什麼時候會抵達車站？"
+  },
+  {
+    "單字": "button",
+    "音標": "[ˈbʌtn]",
+    "詞性": "n.",
+    "中文": "鈕扣",
+    "輸入": "",
+    "結果": "",
+    "例句": "He fastened the top button of his shirt.",
+    "翻譯": "他扣上了襯衫最上面的鈕扣。"
+  },
+  {
+    "單字": "beyond",
+    "音標": "[bɪˈjɑnd]",
+    "詞性": "adv.",
+    "中文": "超出",
+    "輸入": "",
+    "結果": "",
+    "例句": "The beauty of the valley was beyond words.",
+    "翻譯": "山谷的美麗是無法用言語形容的。"
+  },
+  {
+    "單字": "compete",
+    "音標": "[kəmˈpit]",
+    "詞性": "v.",
+    "中文": "競爭",
+    "輸入": "",
+    "結果": "",
+    "例句": "Many athletes compete in the Olympic Games.",
+    "翻譯": "許多運動員在奧運會中競爭。"
+  },
+  {
+    "單字": "straight",
+    "音標": "[stret]",
+    "詞性": "adv.",
+    "中文": "筆直地",
+    "輸入": "",
+    "結果": "",
+    "例句": "Go straight ahead and you will see the bank.",
+    "翻譯": "往前直走，你就會看到銀行。"
+  },
+  {
+    "單字": "depend",
+    "音標": "[dɪˈpɛnd]",
+    "詞性": "v.",
+    "中文": "依靠",
+    "輸入": "",
+    "結果": "",
+    "例句": "Children depend on their parents for food.",
+    "翻譯": "孩子們依靠父母提供食物。"
+  },
+  {
+    "單字": "abroad",
+    "音標": "[əˈbrɔd]",
+    "詞性": "adv.",
+    "中文": "在國外",
+    "輸入": "",
+    "結果": "",
+    "例句": "She plans to study abroad next year.",
+    "翻譯": "她計劃明年去國外留學。"
+  },
+  {
+    "單字": "cough",
+    "音標": "[kɔf]",
+    "詞性": "v.",
+    "中文": "咳嗽",
+    "輸入": "",
+    "結果": "",
+    "例句": "The smoke made him cough heavily.",
+    "翻譯": "煙霧讓他咳得很厲害。"
+  },
+  {
+    "單字": "upstairs",
+    "音標": "[ˈʌpˈstɛrz]",
+    "詞性": "adv.",
+    "中文": "在樓上",
+    "輸入": "",
+    "結果": "",
+    "例句": "My bedroom is located upstairs.",
+    "翻譯": "我的臥室位於樓上。"
+  },
+  {
+    "單字": "belong",
+    "音標": "[bɪˈlɔŋ]",
+    "詞性": "v.",
+    "中文": "屬於",
+    "輸入": "",
+    "結果": "",
+    "例句": "Does this blue umbrella belong to you?",
+    "翻譯": "這把藍色的傘是屬於你的嗎？"
+  },
+  {
+    "單字": "close to",
+    "音標": "[klos tu]",
+    "詞性": "ph.",
+    "中文": "接近",
+    "輸入": "",
+    "結果": "",
+    "例句": "Our house is very close to the subway station.",
+    "翻譯": "我們家非常接近捷運站。"
+  },
+  {
+    "單字": "look at",
+    "音標": "[lʊk æt]",
+    "詞性": "ph.",
+    "中文": "看一看",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please look at the blackboard carefully.",
+    "翻譯": "請仔細看一看黑板。"
+  },
+  {
+    "單字": "famous for",
+    "音標": "[ˈfeməs fɔr]",
+    "詞性": "ph.",
+    "中文": "以......聞名",
+    "輸入": "",
+    "結果": "",
+    "例句": "Taiwan is famous for its delicious night market food.",
+    "翻譯": "台灣以美味的夜市小吃聞名。"
+  },
+  {
+    "單字": "go with",
+    "音標": "[ɡo wɪð]",
+    "詞性": "ph.",
+    "中文": "與......相配",
+    "輸入": "",
+    "結果": "",
+    "例句": "This red tie doesn't go with your shirt.",
+    "翻譯": "這條紅領帶與你的襯衫不相配。"
+  },
+  {
+    "單字": "afraid of",
+    "音標": "[əˈfred ʌv]",
+    "詞性": "ph.",
+    "中文": "害怕",
+    "輸入": "",
+    "結果": "",
+    "例句": "Many little children are afraid of the dark.",
+    "翻譯": "許多小孩子害怕黑暗。"
+  },
+  {
+    "單字": "wait for",
+    "音標": "[wet fɔr]",
+    "詞性": "ph.",
+    "中文": "等待",
+    "輸入": "",
+    "結果": "",
+    "例句": "We had to wait for the bus for an hour.",
+    "翻譯": "我們不得不等公車等了一個小時。"
+  },
+  {
+    "單字": "sorry about",
+    "音標": "[ˈsɑrɪ əˈbaʊt]",
+    "詞性": "ph.",
+    "中文": "為......感到抱歉",
+    "輸入": "",
+    "結果": "",
+    "例句": "I am truly sorry about the mistake I made.",
+    "翻譯": "我為我犯的錯誤感到抱歉。"
+  },
+  {
+    "單字": "get over",
+    "音標": "[ɡɛt ˈovɚ]",
+    "詞性": "ph.",
+    "中文": "克服",
+    "輸入": "",
+    "結果": "",
+    "例句": "It took her a long time to get over the failure.",
+    "翻譯": "她花了很長時間才克服這次失敗。"
+  },
+  {
+    "單字": "future",
+    "音標": "[ˈfjutʃɚ]",
+    "詞性": "n.",
+    "中文": "未來",
+    "輸入": "",
+    "結果": "",
+    "例句": "Who knows what will happen in the future?",
+    "翻譯": "誰知道未來會發生什麼事？"
+  },
+  {
+    "單字": "bored",
+    "音標": "[bɔrd]",
+    "詞性": "adj.",
+    "中文": "感到無聊的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The students felt bored during the long lecture.",
+    "翻譯": "學生們在漫長而冗長的演講中感到無聊。"
+  },
+  {
+    "單字": "courage",
+    "音標": "[ˈkɝɪdʒ]",
+    "詞性": "n.",
+    "中文": "勇氣",
+    "輸入": "",
+    "結果": "",
+    "例句": "It takes courage to speak in front of a crowd.",
+    "翻譯": "在人群面前講話需要勇氣。"
+  },
+  {
+    "單字": "interested",
+    "音標": "[ˈɪntərɪstɪd]",
+    "詞性": "adj.",
+    "中文": "感興趣的",
+    "輸入": "",
+    "結果": "",
+    "例句": "He is deeply interested in history.",
+    "翻譯": "他對歷史非常感興趣。"
+  },
+  {
+    "單字": "truth",
+    "音標": "[truθ]",
+    "詞性": "n.",
+    "中文": "真相",
+    "輸入": "",
+    "結果": "",
+    "例句": "You must tell the judge the whole truth.",
+    "翻譯": "你必須告訴法官所有的真相。"
+  },
+  {
+    "單字": "excited",
+    "音標": "[ɪkˈsaɪtɪd]",
+    "詞性": "adj.",
+    "中文": "興奮的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The kids were excited about going to the zoo.",
+    "翻譯": "孩子們對去動物園感到興奮。"
+  },
+  {
+    "單字": "honesty",
+    "音標": "[ˈɑnɪstɪ]",
+    "詞性": "n.",
+    "中文": "誠實",
+    "輸入": "",
+    "結果": "",
+    "例句": "Honesty is always the best policy.",
+    "翻譯": "誠實總是最好的對策。"
+  },
+  {
+    "單字": "pleased",
+    "音標": "[plizd]",
+    "詞性": "adj.",
+    "中文": "開心的",
+    "輸入": "",
+    "結果": "",
+    "例句": "She was pleased with her exam results.",
+    "翻譯": "她對自己的考試結果感到開心。"
+  },
+  {
+    "單字": "score",
+    "音標": "[skɔr]",
+    "詞性": "v.",
+    "中文": "得(分)",
+    "輸入": "",
+    "結果": "",
+    "例句": "Our team managed to score a goal in the final minute.",
+    "翻譯": "我們隊在最後一分鐘成功得分。"
+  },
+  {
+    "單字": "user",
+    "音標": "[ˈjuzɚ]",
+    "詞性": "n.",
+    "中文": "使用者",
+    "輸入": "",
+    "結果": "",
+    "例句": "The software is easy for the average user to learn.",
+    "翻譯": "這款軟體對一般使用者來說很容易學習。"
+  },
+  {
+    "單字": "waste",
+    "音標": "[west]",
+    "詞性": "v.",
+    "中文": "浪費",
+    "輸入": "",
+    "結果": "",
+    "例句": "Don't waste your time on video games.",
+    "翻譯": "不要在電子遊戲上浪費你的時間。"
+  },
+  {
+    "單字": "leader",
+    "音標": "[ˈlidɚ]",
+    "詞性": "n.",
+    "中文": "領導者",
+    "輸入": "",
+    "結果": "",
+    "例句": "A good leader listens to everyone's opinions.",
+    "翻譯": "一個好的領導者會傾聽每個人的意見。"
+  },
+  {
+    "單字": "discuss",
+    "音標": "[dɪˈskʌs]",
+    "詞性": "v.",
+    "中文": "討論",
+    "輸入": "",
+    "結果": "",
+    "例句": "We need to discuss the new project tomorrow.",
+    "翻譯": "我們明天需要討論這個新項目。"
+  },
+  {
+    "單字": "chapter",
+    "音標": "[ˈtʃæptɚ]",
+    "詞性": "n.",
+    "中文": "章節",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please read the third chapter of the book.",
+    "翻譯": "請閱讀這本書的第三章節。"
+  },
+  {
+    "單字": "elect",
+    "音標": "[ɪˈlɛkt]",
+    "詞性": "v.",
+    "中文": "推選",
+    "輸入": "",
+    "結果": "",
+    "例句": "The citizens will elect a new president next month.",
+    "翻譯": "公民們下個月將推選出一位新總統。"
+  },
+  {
+    "單字": "spider",
+    "音標": "[ˈspaɪdɚ]",
+    "詞性": "n.",
+    "中文": "蜘蛛",
+    "輸入": "",
+    "結果": "",
+    "例句": "A large spider spun a web in the corner.",
+    "翻譯": "一隻大蜘蛛在角落裡織了網。"
+  },
+  {
+    "單字": "talent",
+    "音標": "[ˈtælənt]",
+    "詞性": "n.",
+    "中文": "天賦",
+    "輸入": "",
+    "結果": "",
+    "例句": "She has a remarkable talent for music.",
+    "翻譯": "她在音樂方面有著非凡的天賦。"
+  },
+  {
+    "單字": "super",
+    "音標": "[ˈsupɚ]",
+    "詞性": "adj.",
+    "中文": "出色的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The movie we watched last night was super.",
+    "翻譯": "我們昨晚看的那部電影太出色的。"
+  },
+  {
+    "單字": "purpose",
+    "音標": "[ˈpɝpəs]",
+    "詞性": "n.",
+    "中文": "目的",
+    "輸入": "",
+    "結果": "",
+    "例句": "What is the purpose of your visit to Taiwan?",
+    "翻譯": "你訪問台灣的目的甚麼？"
+  },
+  {
+    "單字": "alike",
+    "音標": "[əˈlaɪk]",
+    "詞性": "adj.",
+    "中文": "相像的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The two sisters look very much alike.",
+    "翻譯": "這對姐妹長得非常相像。"
+  },
+  {
+    "單字": "campus",
+    "音標": "[ˈkæmpəs]",
+    "詞性": "n.",
+    "中文": "校園",
+    "輸入": "",
+    "結果": "",
+    "例句": "Students love to gather on the university campus.",
+    "翻譯": "學生們喜歡聚集在大學校園。"
+  },
+  {
+    "單字": "poor",
+    "音標": "[pʊr]",
+    "詞性": "adj.",
+    "中文": "貧窮的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The charity helps poor families in the area.",
+    "翻譯": "該慈善機構幫助該地區的貧窮家庭。"
+  },
+  {
+    "單字": "industry",
+    "音標": "[ˈɪndəstrɪ]",
+    "詞性": "n.",
+    "中文": "工業",
+    "輸入": "",
+    "結果": "",
+    "例句": "The car industry plays an important role in the economy.",
+    "翻譯": "汽車工業在經濟中扮演重要角色。"
+  },
+  {
+    "單字": "overseas",
+    "音標": "[ˈovɚˈsiz]",
+    "詞性": "adj.",
+    "中文": "來自海外的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The company expanded into overseas markets.",
+    "翻譯": "該公司將業務擴展到了海外市場。"
+  },
+  {
+    "單字": "agree",
+    "音標": "[əˈɡri]",
+    "詞性": "v.",
+    "中文": "同意",
+    "輸入": "",
+    "結果": "",
+    "例句": "I fully agree with your plan.",
+    "翻譯": "我完全同意你的計劃。"
+  },
+  {
+    "單字": "shut",
+    "音標": "[ʃʌt]",
+    "詞性": "v.",
+    "中文": "關閉",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please shut the door when you leave.",
+    "翻譯": "離開時請關閉車門。"
+  },
+  {
+    "單字": "object",
+    "音標": "[əbˈdʒɛkt]",
+    "詞性": "v.",
+    "中文": "反對",
+    "輸入": "",
+    "結果": "",
+    "例句": "Many people object to the new law.",
+    "翻譯": "許多人反對這項新法律。"
+  },
+  {
+    "單字": "feed",
+    "音標": "[fid]",
+    "詞性": "v.",
+    "中文": "餵食",
+    "輸入": "",
+    "結果": "",
+    "例句": "Don't forget to feed the dog tonight.",
+    "翻譯": "今晚別忘了餵食那隻狗。"
+  },
+  {
+    "單字": "refuse",
+    "音標": "[rɪˈfjuz]",
+    "詞性": "v.",
+    "中文": "拒絕",
+    "輸入": "",
+    "結果": "",
+    "例句": "She refused to accept his money.",
+    "翻譯": "她拒絕接受他的錢。"
+  },
+  {
+    "單字": "lend",
+    "音標": "[lɛnd]",
+    "詞性": "v.",
+    "中文": "借出",
+    "輸入": "",
+    "結果": "",
+    "例句": "Can you lend me your pen for a second?",
+    "翻譯": "你能把你的筆借出我一下嗎？"
+  },
+  {
+    "單字": "survive",
+    "音標": "[sɚˈvaɪv]",
+    "詞性": "v.",
+    "中文": "倖存",
+    "輸入": "",
+    "結果": "",
+    "例句": "Few plants can survive in such a harsh desert.",
+    "翻譯": "很少有植物能在如此惡劣的沙漠中倖存。"
+  },
+  {
+    "單字": "blow",
+    "音標": "[blo]",
+    "詞性": "v.",
+    "中文": "吹",
+    "輸入": "",
+    "結果": "",
+    "例句": "A cold wind began to blow from the north.",
+    "翻譯": "寒風開始從北方吹來。"
+  },
+  {
+    "單字": "put up with",
+    "音標": "[pʊt ʌp wɪð]",
+    "詞性": "ph.",
+    "中文": "忍受",
+    "輸入": "",
+    "結果": "",
+    "例句": "I cannot put up with his bad behavior anymore.",
+    "翻譯": "我再也無法忍受他的糟糕行為了。"
+  },
+  {
+    "單字": "uniform",
+    "音標": "[ˈjunəˌfɔrm]",
+    "詞性": "n.",
+    "中文": "制服",
+    "輸入": "",
+    "結果": "",
+    "例句": "Students are required to wear school uniform.",
+    "翻譯": "學生被要求穿著學校制服。"
+  },
+  {
+    "單字": "watch out for",
+    "音標": "[wɑtʃ aʊt fɔr]",
+    "詞性": "ph.",
+    "中文": "留意",
+    "輸入": "",
+    "結果": "",
+    "例句": "You should watch out for pickpockets in crowded places.",
+    "翻譯": "在擁擠的地方你應該留意扒手。"
+  },
+  {
+    "單字": "chemical",
+    "音標": "[ˈkɛmɪk!]",
+    "詞性": "n.",
+    "中文": "化學物品",
+    "輸入": "",
+    "結果": "",
+    "例句": "The factory was fined for releasing a toxic chemical into the river.",
+    "翻譯": "該工廠因向河流排放有毒化學物品而被罰款。"
+  },
+  {
+    "單字": "keep away from",
+    "音標": "[kip əˈwe frəm]",
+    "詞性": "ph.",
+    "中文": "遠離",
+    "輸入": "",
+    "結果": "",
+    "例句": "You should keep away from fire to stay safe.",
+    "翻譯": "你應該遠離火源以保持安全。"
+  },
+  {
+    "單字": "instrument",
+    "音標": "[ˈɪnstrəmənt]",
+    "詞性": "n.",
+    "中文": "儀器",
+    "輸入": "",
+    "結果": "",
+    "例句": "The scientist calibrated the laboratory instrument.",
+    "翻譯": "科學家校準了實驗室的儀器。"
+  },
+  {
+    "單字": "come up with",
+    "音標": "[kʌm ʌp wɪð]",
+    "詞性": "ph.",
+    "中文": "想出",
+    "輸入": "",
+    "結果": "",
+    "例句": "She managed to come up with a brilliant solution.",
+    "翻譯": "她成功地想出了一個極妙的解決方案。"
+  },
+  {
+    "單字": "department",
+    "音標": "[dɪˈpɑrtmənt]",
+    "詞性": "n.",
+    "中文": "部門",
+    "輸入": "",
+    "結果": "",
+    "例句": "He works in the marketing department.",
+    "翻譯": "他在行銷部門工作。"
+  },
+  {
+    "單字": "avoid",
+    "音標": "[əˈvɔɪd]",
+    "詞性": "v.",
+    "中文": "避開",
+    "輸入": "",
+    "結果": "",
+    "例句": "Try to avoid driving during the rush hour.",
+    "翻譯": "儘量避開在尖峰時段開車。"
+  },
+  {
+    "單字": "at present",
+    "音標": "[æt ˈprɛznt]",
+    "詞性": "ph.",
+    "中文": "現在",
+    "輸入": "",
+    "結果": "",
+    "例句": "At present, she is busy preparing for her exams.",
+    "翻譯": "現在，她正忙於準備考試。"
+  },
+  {
+    "單字": "solve",
+    "音標": "[sɑlv]",
+    "詞性": "v.",
+    "中文": "解答",
+    "輸入": "",
+    "結果": "",
+    "例句": "The detective is trying to solve the mystery.",
+    "翻譯": "偵探正試圖解答這個謎團。"
+  },
+  {
+    "單字": "on foot",
+    "音標": "[ɑn fʊt]",
+    "詞性": "ph.",
+    "中文": "走路",
+    "輸入": "",
+    "結果": "",
+    "例句": "Since it was a nice day, we went there on foot.",
+    "翻譯": "既然天氣很好，我們就走路去了那裡。"
+  },
+  {
+    "單字": "praise",
+    "音標": "[prez]",
+    "詞性": "v.",
+    "中文": "表揚",
+    "輸入": "",
+    "結果": "",
+    "例句": "The teacher praised the students for their hard work.",
+    "翻譯": "老師表揚了學生們的努力。"
+  },
+  {
+    "單字": "for sale",
+    "音標": "[fɔr sel]",
+    "詞性": "ph.",
+    "中文": "待售",
+    "輸入": "",
+    "結果": "",
+    "例句": "That beautiful house on the corner is now for sale.",
+    "翻譯": "角落裡的那棟漂亮房子現在正待售。"
+  },
+  {
+    "單字": "except",
+    "音標": "[ɪkˈsɛpt]",
+    "詞性": "v.",
+    "中文": "預料",
+    "輸入": "",
+    "結果": "",
+    "例句": "The company expects to see a profit this year.",
+    "翻譯": "公司預料今年會看到利潤。"
+  },
+  {
+    "單字": "in person",
+    "音標": "[ɪn ˈpɝsn]",
+    "詞性": "ph.",
+    "中文": "本人",
+    "輸入": "",
+    "結果": "",
+    "例句": "You need to sign the document in person.",
+    "翻譯": "你需要本人親自簽署這份文件。"
+  },
+  {
+    "單字": "weight",
+    "音標": "[wet]",
+    "詞性": "n.",
+    "中文": "體重",
+    "輸入": "",
+    "結果": "",
+    "例句": "He is trying to lose some weight by exercising.",
+    "翻譯": "他正試圖藉由運動來減輕一些體重。"
+  },
+  {
+    "單字": "cheap",
+    "音標": "[tʃip]",
+    "詞性": "adj.",
+    "中文": "便宜的",
+    "輸入": "",
+    "結果": "",
+    "例句": "This market sells cheap fruits and vegetables.",
+    "翻譯": "這個市場販售便宜的水果和蔬菜。"
+  },
+  {
+    "單字": "memory",
+    "音標": "[ˈmɛmərɪ]",
+    "詞性": "n.",
+    "中文": "記憶",
+    "輸入": "",
+    "結果": "",
+    "例句": "She has a wonderful memory for faces.",
+    "翻譯": "她對人臉有著極好的記憶。"
+  },
+  {
+    "單字": "honest",
+    "音標": "[ˈɑnɪst]",
+    "詞性": "adj.",
+    "中文": "誠實的",
+    "輸入": "",
+    "結果": "",
+    "例句": "Thank you for being completely honest with me.",
+    "翻譯": "謝謝你對我完全誠實。"
+  },
+  {
+    "單字": "respect",
+    "音標": "[rɪˈspɛkt]",
+    "詞性": "n.",
+    "中文": "尊重",
+    "輸入": "",
+    "結果": "",
+    "例句": "We should show respect to old people.",
+    "翻譯": "我們應該對老人表示尊重。"
+  },
+  {
+    "單字": "selfish",
+    "音標": "[ˈsɛlfɪʃ]",
+    "詞性": "adj.",
+    "中文": "自私的",
+    "輸入": "",
+    "結果": "",
+    "例句": "It was selfish of him to take all the food.",
+    "翻譯": "他把所有的食物都拿走真是太自私的。"
+  },
+  {
+    "單字": "envy",
+    "音標": "[ˈɛnvɪ]",
+    "詞性": "n.",
+    "中文": "嫉妒",
+    "輸入": "",
+    "結果": "",
+    "例句": "Her success filled her colleagues with envy.",
+    "翻譯": "她的成功讓她的同事們充滿了嫉妒。"
+  },
+  {
+    "單字": "formal",
+    "音標": "[ˈfɔrməl]",
+    "詞性": "adj.",
+    "中文": "正式的",
+    "輸入": "",
+    "結果": "",
+    "例句": "He wore a formal suit to the wedding.",
+    "翻譯": "他穿著一套正式的西裝去參加婚禮。"
+  },
+  {
+    "單字": "novel",
+    "音標": "[ˈnɑv!]",
+    "詞性": "n.",
+    "中文": "小說",
+    "輸入": "",
+    "結果": "",
+    "例句": "He is reading an interesting science fiction novel.",
+    "翻譯": "他正在看一本有趣的科幻小說。"
+  },
+  {
+    "單字": "stress",
+    "音標": "[strɛs]",
+    "詞性": "v.",
+    "中文": "使壓力大",
+    "輸入": "",
+    "結果": "",
+    "例句": "The upcoming final exams stressed her out completely.",
+    "翻譯": "即將到來的期末考使她壓力大。"
+  },
+  {
+    "單字": "wheel",
+    "音標": "[hwil]",
+    "詞性": "n.",
+    "中文": "輪子",
+    "輸入": "",
+    "結果": "",
+    "例句": "The front wheel of the bicycle was damaged.",
+    "翻譯": "自行車的前輪子損壞了。"
+  },
+  {
+    "單字": "obey",
+    "音標": "[oˈbe]",
+    "詞性": "v.",
+    "中文": "遵守",
+    "輸入": "",
+    "結果": "",
+    "例句": "Drivers must obey traffic rules at all times.",
+    "翻譯": "駕駛人必須隨時遵守交通規則。"
+  },
+  {
+    "單字": "shore",
+    "音標": "[ʃɔr]",
+    "詞性": "n.",
+    "中文": "岸(邊)",
+    "輸入": "",
+    "結果": "",
+    "例句": "We walked along the shore of the lake.",
+    "翻譯": "我們沿著湖岸邊散步。"
+  },
+  {
+    "單字": "deal",
+    "音標": "[dil]",
+    "詞性": "v.",
+    "中文": "交易",
+    "輸入": "",
+    "結果": "",
+    "例句": "The two businessmen closed a major deal yesterday.",
+    "翻譯": "這兩位商人昨天達成了一筆重大交易。"
+  },
+  {
+    "單字": "principle",
+    "音標": "[ˈprɪnsəp!]",
+    "詞性": "n.",
+    "中文": "原則",
+    "輸入": "",
+    "結果": "",
+    "例句": "He is a man of high moral principle.",
+    "翻譯": "是一個具有高尚道德原則的人。"
+  },
+  {
+    "單字": "row",
+    "音標": "[ro]",
+    "詞性": "v.",
+    "中文": "划(船)",
+    "輸入": "",
+    "結果": "",
+    "例句": "They decided to row a boat across the river.",
+    "翻譯": "他們決定划船渡河。"
+  },
+  {
+    "單字": "modern",
+    "音標": "[ˈmɑdɚn]",
+    "詞性": "adj.",
+    "中文": "現在的",
+    "輸入": "",
+    "結果": "",
+    "例句": "Modern technology has changed our lives completely.",
+    "翻譯": "現在的科技完全改變了我們的生活。"
+  },
+  {
+    "單字": "warm up",
+    "音標": "[wɔrm ʌp]",
+    "詞性": "ph.",
+    "中文": "熱身",
+    "輸入": "",
+    "結果": "",
+    "例句": "It's important to warm up before exercising.",
+    "翻譯": "運動前先熱身是很重要的。"
+  },
+  {
+    "單字": "sudden",
+    "音標": "[ˈsʌdn]",
+    "詞性": "adj.",
+    "中文": "突然的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The sudden rain shower caught us without umbrellas.",
+    "翻譯": "突然的一場陣雨讓我們措手不及，沒帶傘。"
+  },
+  {
+    "單字": "check in",
+    "音標": "[tʃɛk ɪn]",
+    "詞性": "ph.",
+    "中文": "辦理住房；登機",
+    "輸入": "",
+    "結果": "",
+    "例句": "Passengers need to check in two hours before the flight.",
+    "翻譯": "乘客需要在起飛前兩小時辦理登機。"
+  },
+  {
+    "單字": "usual",
+    "音標": "[ˈjuʒʊəl]",
+    "詞性": "adj.",
+    "中文": "平常的",
+    "輸入": "",
+    "結果": "",
+    "例句": "He arrived at his usual time this morning.",
+    "翻譯": "今天早上他像平常的時間一樣抵達。"
+  },
+  {
+    "單字": "line up",
+    "音標": "[laɪn ʌp]",
+    "詞性": "ph.",
+    "中文": "排隊",
+    "輸入": "",
+    "結果": "",
+    "例句": "People had to line up to buy concert tickets.",
+    "翻譯": "人們不得不排隊購買演唱會門票。"
+  },
+  {
+    "單字": "humid",
+    "音標": "[ˈhjumɪd]",
+    "詞性": "adj.",
+    "中文": "潮濕的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The weather in summer is often very hot and humid.",
+    "翻譯": "夏天的天氣通常非常炎熱且潮濕。"
+  },
+  {
+    "單字": "drop by",
+    "音標": "[drɑp baɪ]",
+    "詞性": "ph.",
+    "中文": "順道來訪",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please drop by my office whenever you are free.",
+    "翻譯": "有空時請隨時順道來訪我的辦公室。"
+  },
+  {
+    "單字": "festival",
+    "音標": "[ˈfɛstəv!]",
+    "詞性": "n.",
+    "中文": "節慶",
+    "輸入": "",
+    "結果": "",
+    "例句": "The Lantern Festival is a traditional holiday.",
+    "翻譯": "元宵節是一個傳統的節慶。"
+  },
+  {
+    "單字": "carry",
+    "音標": "[ˈkærɪ]",
+    "詞性": "v.",
+    "中文": "攜帶",
+    "輸入": "",
+    "結果": "",
+    "例句": "She always carries a small umbrella in her bag.",
+    "翻譯": "她總是隨身在包包裡攜帶一把小傘。"
+  },
+  {
+    "單字": "video",
+    "音標": "[ˈvɪdɪo]",
+    "詞性": "n.",
+    "中文": "影片",
+    "輸入": "",
+    "結果": "",
+    "例句": "They watched a funny video on the internet.",
+    "翻譯": "網路上觀看了一段搞笑影片。"
+  },
+  {
+    "單字": "follow",
+    "音標": "[ˈfɑlo]",
+    "詞性": "v.",
+    "中文": "跟隨",
+    "輸入": "",
+    "結果": "",
+    "例句": "The little dog followed him everywhere he went.",
+    "翻譯": "不論他去哪裡，那隻小狗都跟隨他。"
+  },
+  {
+    "單字": "element",
+    "音標": "[ˈɛləmənt]",
+    "詞性": "n.",
+    "中文": "要素",
+    "輸入": "",
+    "結果": "",
+    "例句": "Trust is an essential element of friendship.",
+    "翻譯": "信任是友誼不可或缺的要素。"
+  },
+  {
+    "單字": "desert",
+    "音標": "[dɪˈzɝt]",
+    "詞性": "v.",
+    "中文": "拋棄",
+    "輸入": "",
+    "結果": "",
+    "例句": "The soldier decided to desert his army.",
+    "翻譯": "這名士兵決定拋棄他的軍隊。"
+  },
+  {
+    "單字": "captain",
+    "音標": "[ˈkæptɪn]",
+    "詞性": "n.",
+    "中文": "隊長",
+    "輸入": "",
+    "結果": "",
+    "例句": "He was chosen as the captain of the football team.",
+    "翻譯": "被選為足球隊的隊長。"
+  },
+  {
+    "單字": "behave",
+    "音標": "[bɪˈhev]",
+    "詞性": "v.",
+    "中文": "守規則",
+    "輸入": "",
+    "結果": "",
+    "例句": "The children were told to behave in the restaurant.",
+    "翻譯": "孩子們被告知在餐廳裡要守規則。"
+  },
+  {
+    "單字": "lock",
+    "音標": "[lɑk]",
+    "詞性": "v.",
+    "中文": "鎖",
+    "輸入": "",
+    "結果": "",
+    "例句": "Don't forget to lock the door before you leave.",
+    "翻譯": "離開前別忘了鎖門。"
+  },
+  {
+    "單字": "customer",
+    "音標": "[ˈkʌstəmɚ]",
+    "詞性": "n.",
+    "中文": "顧客",
+    "輸入": "",
+    "結果": "",
+    "例句": "The shop assistant is serving a customer now.",
+    "翻譯": "店員現在正在為一位顧客服務。"
+  },
+  {
+    "單字": "count",
+    "音標": "[kaʊnt]",
+    "詞性": "v.",
+    "中文": "計數；算",
+    "輸入": "",
+    "結果": "",
+    "例句": "Can you count from one to ten in English?",
+    "翻譯": "你能用英文從一計數到十嗎？"
+  },
+  {
+    "單字": "farmer",
+    "音標": "[ˈfɑrmɚ]",
+    "詞性": "n.",
+    "中文": "農夫",
+    "輸入": "",
+    "結果": "",
+    "例句": "The farmer grows organic vegetables on his land.",
+    "翻譯": "農夫在他的土地上種植有機蔬菜。"
+  },
+  {
+    "單字": "fry",
+    "音標": "[fraɪ]",
+    "詞性": "v.",
+    "中文": "油煎；炸",
+    "輸入": "",
+    "結果": "",
+    "例句": "She plans to fry some fish for dinner tonight.",
+    "翻譯": "打算今晚油煎一些魚做晚飯。"
+  },
+  {
+    "單字": "singer",
+    "音標": "[ˈsɪŋɚ]",
+    "詞性": "n.",
+    "中文": "歌手",
+    "輸入": "",
+    "結果": "",
+    "例句": "She is a very popular pop singer in Taiwan.",
+    "翻譯": "在台灣是一位非常受歡迎的流行歌手。"
+  },
+  {
+    "單字": "boil",
+    "音標": "[bɔɪl]",
+    "詞性": "v.",
+    "中文": "烹煮",
+    "輸入": "",
+    "結果": "",
+    "例句": "You need to boil the water before drinking it.",
+    "翻譯": "飲用前你需要先將水烹煮開。"
+  },
+  {
+    "單字": "banker",
+    "音標": "[ˈbæŋkɚ]",
+    "詞性": "n.",
+    "中文": "銀行家",
+    "輸入": "",
+    "結果": "",
+    "例句": "His father is a successful banker in New York.",
+    "翻譯": "他的父親是紐約一位成功的銀行家。"
+  },
+  {
+    "單字": "by mistake",
+    "音標": "[baɪ mɪˈstek]",
+    "詞性": "adv.",
+    "中文": "意外地；不小",
+    "輸入": "",
+    "結果": "",
+    "例句": "I took your umbrella by mistake this morning.",
+    "翻譯": "今天早上我意外地拿錯了你的傘。"
+  },
+  {
+    "單字": "finally",
+    "音標": "[ˈfaɪnəlɪ]",
+    "詞性": "adv.",
+    "中文": "終於",
+    "輸入": "",
+    "結果": "",
+    "例句": "After hours of searching, they finally found the keys.",
+    "翻譯": "經過幾個小時的搜尋，他們終於找到了鑰匙。"
+  },
+  {
+    "單字": "above all",
+    "音標": "[əˈbʌv ɔl]",
+    "詞性": "adv.",
+    "中文": "首要",
+    "輸入": "",
+    "結果": "",
+    "例句": "Above all, you must remain calm during an emergency.",
+    "翻譯": "首要的是，在緊急情況下你必須保持冷靜。"
+  },
+  {
+    "單字": "quickly",
+    "音標": "[ˈkwɪklɪ]",
+    "詞性": "adv.",
+    "中文": "很快地",
+    "輸入": "",
+    "結果": "",
+    "例句": "He finished his homework quickly to go play.",
+    "翻譯": "很快地完成了作業，以便去玩耍。"
+  },
+  {
+    "單字": "at rest",
+    "音標": "[æt rɛst]",
+    "詞性": "adv.",
+    "中文": "靜止地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The patient needs to remain at rest for a few days.",
+    "翻譯": "病人需要靜止地休息幾天。"
+  },
+  {
+    "單字": "early",
+    "音標": "[ˈɝlɪ]",
+    "詞性": "adv.",
+    "中文": "早地",
+    "輸入": "",
+    "結果": "",
+    "例句": "She woke up early to catch the first train.",
+    "翻譯": "早地起床以趕上第一班火車。"
+  },
+  {
+    "單字": "for fun",
+    "音標": "[fɔr fʌn]",
+    "詞性": "adv.",
+    "中文": "為了好玩",
+    "輸入": "",
+    "結果": "",
+    "例句": "He plays the guitar just for fun, not for money.",
+    "翻譯": "彈吉他只是為了好玩，而不是為了賺錢。"
+  },
+  {
+    "單字": "mostly",
+    "音標": "[ˈmostlɪ]",
+    "詞性": "adv.",
+    "中文": "主要地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The students in this class are mostly from Taipei.",
+    "翻譯": "這個班級的學生主要地來自台北。"
+  },
+  {
+    "單字": "decorate",
+    "音標": "[ˈdɛkəˌret]",
+    "詞性": "v.",
+    "中文": "裝飾",
+    "輸入": "",
+    "結果": "",
+    "例句": "They decorated the living room with colorful balloons.",
+    "翻譯": "他們用五彩繽紛的氣球裝飾客廳。"
+  },
+  {
+    "單字": "break",
+    "音標": "[brek]",
+    "詞性": "v.",
+    "中文": "弄壞",
+    "輸入": "",
+    "結果": "",
+    "例句": "Be careful not to break that expensive glass vase.",
+    "翻譯": "小心不要弄壞那個昂貴的玻璃花瓶。"
+  },
+  {
+    "單字": "prepare",
+    "音標": "[prɪˈpɛr]",
+    "詞性": "v.",
+    "中文": "準備",
+    "輸入": "",
+    "結果": "",
+    "例句": "She spent the whole afternoon preparing for the meeting.",
+    "翻譯": "她花了一整個下午準備會議。"
+  },
+  {
+    "單字": "fix",
+    "音標": "[fɪks]",
+    "詞性": "v.",
+    "中文": "修理",
+    "輸入": "",
+    "結果": "",
+    "例句": "The mechanic managed to fix my car in an hour.",
+    "翻譯": "技工在一個小時內成功修理好了我的車。"
+  },
+  {
+    "單字": "achieve",
+    "音標": "[əˈtʃiv]",
+    "詞性": "v.",
+    "中文": "達成",
+    "輸入": "",
+    "結果": "",
+    "例句": "You can achieve your goals if you work hard enough.",
+    "翻譯": "如果你夠努力，你就能達成你的目標。"
+  },
+  {
+    "單字": "type",
+    "音標": "[taɪp]",
+    "詞性": "v.",
+    "中文": "打字",
+    "輸入": "",
+    "結果": "",
+    "例句": "She can type very quickly without looking at the keyboard.",
+    "翻譯": "她可以非常快速地打字而不用看鍵盤。"
+  },
+  {
+    "單字": "insist",
+    "音標": "[ɪnˈsɪst]",
+    "詞性": "v.",
+    "中文": "堅持",
+    "輸入": "",
+    "結果": "",
+    "例句": "He insisted on paying for the dinner tonight.",
+    "翻譯": "堅持今晚由他付晚飯錢。"
+  },
+  {
+    "單字": "lift",
+    "音標": "[lɪft]",
+    "詞性": "v.",
+    "中文": "舉起",
+    "輸入": "",
+    "結果": "",
+    "例句": "This heavy box is too difficult for me to lift.",
+    "翻譯": "這個沉重的箱子對我來說太難舉起了。"
+  },
+  {
+    "單字": "in season",
+    "音標": "[ɪn ˈsizn]",
+    "詞性": "ph.",
+    "中文": "令另的",
+    "輸入": "",
+    "結果": "",
+    "例句": "Strawberries are currently in season and very sweet.",
+    "翻譯": "草莓目前正值令另的季節，非常甜。"
+  },
+  {
+    "單字": "turn down",
+    "音標": "[tɝn daʊn]",
+    "詞性": "ph.",
+    "中文": "拒絕",
+    "輸入": "",
+    "結果": "",
+    "例句": "She turned down his invitation to the party.",
+    "翻譯": "拒絕了他參加派對的邀請。"
+  },
+  {
+    "單字": "for free",
+    "音標": "[fɔr fri]",
+    "詞性": "ph.",
+    "中文": "免費",
+    "輸入": "",
+    "結果": "",
+    "例句": "Children under five can enter the museum for free.",
+    "翻譯": "五歲以下兒童可以免費進入博物館。"
+  },
+  {
+    "單字": "cheat on",
+    "音標": "[tʃit ɑn]",
+    "詞性": "ph.",
+    "中文": "對......不忠",
+    "輸入": "",
+    "結果": "",
+    "例句": "He promised never to cheat on his wife.",
+    "翻譯": "他承諾永遠不會對他的妻子不忠。"
+  },
+  {
+    "單字": "in time",
+    "音標": "[ɪn taɪm]",
+    "詞性": "ph.",
+    "中文": "及時",
+    "輸入": "",
+    "結果": "",
+    "例句": "Luckily, the ambulance arrived just in time.",
+    "翻譯": "幸運的是，救護車及時趕到了。"
+  },
+  {
+    "單字": "believe in",
+    "音標": "[bɪˈliv ɪn]",
+    "詞性": "ph.",
+    "中文": "相信......存在",
+    "輸入": "",
+    "結果": "",
+    "例句": "Do you believe in ghosts?",
+    "翻譯": "你相信鬼魂存在嗎？"
+  },
+  {
+    "單字": "as usual",
+    "音標": "[æz ˈjuʒʊəl]",
+    "詞性": "ph.",
+    "中文": "照例",
+    "輸入": "",
+    "結果": "",
+    "例句": "He woke up at six o'clock as usual.",
+    "翻譯": "早晨六點鐘他照例醒來。"
+  },
+  {
+    "單字": "laugh at",
+    "音標": "[læf æt]",
+    "詞性": "ph.",
+    "中文": "嘲笑",
+    "輸入": "",
+    "結果": "",
+    "例句": "It's impolite to laugh at other people's mistakes.",
+    "翻譯": "嘲笑別人的錯誤是不禮貌的。"
+  },
+  {
+    "單字": "paper",
+    "音標": "[ˈpepɚ]",
+    "詞性": "n.",
+    "中文": "論文",
+    "輸入": "",
+    "結果": "",
+    "例句": "He needs to submit his history paper by Friday.",
+    "翻譯": "他需要在週五前提交他的歷史論文。"
+  },
+  {
+    "單字": "painter",
+    "音標": "[ˈpentɚ]",
+    "詞性": "n.",
+    "中文": "畫家",
+    "輸入": "",
+    "結果": "",
+    "例句": "The famous painter displayed his artwork in the gallery.",
+    "翻譯": "知名畫家在畫廊展示了他的藝術作品。"
+  },
+  {
+    "單字": "medicine",
+    "音標": "[[ˈmɛdəsɪn]]",
+    "詞性": "n.",
+    "中文": "藥物",
+    "輸入": "",
+    "結果": "",
+    "例句": "Don't forget to take your medicine after meals.",
+    "翻譯": "飯後別忘了服用你的藥物。"
+  },
+  {
+    "單字": "barber",
+    "音標": "[ˈbɑrbɚ]",
+    "詞性": "n.",
+    "中文": "理髮師",
+    "輸入": "",
+    "結果": "",
+    "例句": "He went to the local barber for a haircut.",
+    "翻譯": "他去當地的理髮師那裡理髮。"
+  },
+  {
+    "單字": "opinion",
+    "音標": "[əˈpɪnjən]",
+    "詞性": "n.",
+    "中文": "意見",
+    "輸入": "",
+    "結果": "",
+    "例句": "What is your opinion on this political issue?",
+    "翻譯": "你對這個政治議題的有什麼意見？"
+  },
+  {
+    "單字": "owner",
+    "音標": "[ˈonɚ]",
+    "詞性": "n.",
+    "中文": "所有者",
+    "輸入": "",
+    "結果": "",
+    "例句": "She is the proud owner of a new car.",
+    "翻譯": "是一輛新車的驕傲所有者。"
+  },
+  {
+    "單字": "exercise",
+    "音標": "[ˈɛksɚˌsaɪz]",
+    "詞性": "n.",
+    "中文": "運動",
+    "輸入": "",
+    "結果": "",
+    "例句": "Regular exercise is good for your health.",
+    "翻譯": "規律的運動對你的健康有益。"
+  },
+  {
+    "單字": "hunter",
+    "音標": "[ˈhʌntɚ]",
+    "詞性": "n.",
+    "中文": "獵人",
+    "輸入": "",
+    "結果": "",
+    "例句": "The hunter tracked the wild deer through the forest.",
+    "翻譯": "獵人在森林裡追蹤野鹿。"
+  },
+  {
+    "單字": "rest",
+    "音標": "[rɛst]",
+    "詞性": "v.",
+    "中文": "休息",
+    "輸入": "",
+    "結果": "",
+    "例句": "You should rest for a while after running.",
+    "翻譯": "跑步後你應該休息一會兒。"
+  },
+  {
+    "單字": "local",
+    "音標": "[ˈlokəl]",
+    "詞性": "adj.",
+    "中文": "當地的",
+    "輸入": "",
+    "結果": "",
+    "例句": "We love to try local food when traveling.",
+    "翻譯": "旅遊時我們喜歡品嚐當地的美食。"
+  },
+  {
+    "單字": "kick",
+    "音標": "[kɪk]",
+    "詞性": "v.",
+    "中文": "踢",
+    "輸入": "",
+    "結果": "",
+    "例句": "The soccer player managed to kick the ball into the net.",
+    "翻譯": "足球運動員成功地將球踢進了網窩。"
+  },
+  {
+    "單字": "narrow",
+    "音標": "[ˈnæro]",
+    "詞性": "adj.",
+    "中文": "狹窄的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The car could barely fit through the narrow street.",
+    "翻譯": "汽車勉強能通過這條狹窄的街道。"
+  },
+  {
+    "單字": "sail",
+    "音標": "[sel]",
+    "詞性": "v.",
+    "中文": "航行",
+    "輸入": "",
+    "結果": "",
+    "例句": "They plan to sail around the world next year.",
+    "翻譯": "他們計劃明年環球航行。"
+  },
+  {
+    "單字": "different",
+    "音標": "[ˈdɪfərənt]",
+    "詞性": "adj.",
+    "中文": "不同的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The twins have very different personalities.",
+    "翻譯": "這對雙胞胎有著非常不同的個性。"
+  },
+  {
+    "單字": "vote",
+    "音標": "[vot]",
+    "詞性": "v.",
+    "中文": "投票",
+    "輸入": "",
+    "結果": "",
+    "例句": "Citizens went to the stations to vote for the mayor.",
+    "翻譯": "公民們前往站點投票選舉市長。"
+  },
+  {
+    "單字": "similar",
+    "音標": "[ˈsɪməlɚ]",
+    "詞性": "adj.",
+    "中文": "相似的",
+    "輸入": "",
+    "結果": "",
+    "例句": "My phone is very similar to yours in design.",
+    "翻譯": "我的手機在設計上和你的非常相似。"
+  },
+  {
+    "單字": "curiously",
+    "音標": "[ˈkjʊrɪəslɪ]",
+    "詞性": "adv.",
+    "中文": "好奇地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The little puppy looked at the mirror curiously.",
+    "翻譯": "小狗好奇地看著鏡子。"
+  },
+  {
+    "單字": "character",
+    "音標": "[ˈkærɪktɚ]",
+    "詞性": "n.",
+    "中文": "角色",
+    "輸入": "",
+    "結果": "",
+    "例句": "He played a hero character in the movie.",
+    "翻譯": "他在電影中飾演了一個英雄角色。"
+  },
+  {
+    "單字": "generously",
+    "音標": "[ˈdʒɛnərəslɪ]",
+    "詞性": "adv.",
+    "中文": "大方地",
+    "輸入": "",
+    "結果": "",
+    "例句": "She generously donated a lot of money to the charity.",
+    "翻譯": "大方地向慈善機構捐贈了大量資金。"
+  },
+  {
+    "單字": "umbrella",
+    "音標": "[ʌmˈbrɛlə]",
+    "詞性": "n.",
+    "中文": "雨傘",
+    "輸入": "",
+    "結果": "",
+    "例句": "Don't forget to bring an umbrella; it's raining outside.",
+    "翻譯": "別忘了帶把雨傘，外面下雨了。"
+  },
+  {
+    "單字": "suddenly",
+    "音標": "[ˈsʌdnlɪ]",
+    "詞性": "adv.",
+    "中文": "突然地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The lights suddenly went out during the storm.",
+    "翻譯": "暴風雨中燈火突然地熄滅了。"
+  },
+  {
+    "單字": "magazine",
+    "音標": "[ˌmæɡəˈzin]",
+    "詞性": "n.",
+    "中文": "雜誌",
+    "輸入": "",
+    "結果": "",
+    "例句": "She loves to read fashion magazines in her free time.",
+    "翻譯": "她閒暇時喜歡閱讀時尚雜誌。"
+  },
+  {
+    "單字": "happily",
+    "音標": "[ˈhæpəlɪ]",
+    "詞性": "adv.",
+    "中文": "開心心地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The children played happily in the backyard.",
+    "翻譯": "孩子們在後院開心心地玩耍。"
+  },
+  {
+    "單字": "entrance",
+    "音標": "[ˈɛntrəns]",
+    "詞性": "n.",
+    "中文": "入口",
+    "輸入": "",
+    "結果": "",
+    "例句": "The main entrance of the building is locked at night.",
+    "翻譯": "大樓的主入口晚上是鎖著的。"
+  },
+  {
+    "單字": "wedding",
+    "音標": "[ˈwɛdɪŋ]",
+    "詞性": "n.",
+    "中文": "婚禮",
+    "輸入": "",
+    "結果": "",
+    "例句": "They invited all their friends to their wedding.",
+    "翻譯": "他們邀請了所有的朋友來參加他們的婚禮。"
+  },
+  {
+    "單字": "invent",
+    "音標": "[ɪnˈvɛnt]",
+    "詞性": "v.",
+    "中文": "發明",
+    "輸入": "",
+    "結果": "",
+    "例句": "Thomas Edison managed to invent the light bulb.",
+    "翻譯": "湯瑪斯·愛迪生成功發明了電燈泡。"
+  },
+  {
+    "單字": "kitchen",
+    "音標": "[ˈkɪtʃən]",
+    "詞性": "n.",
+    "中文": "廚房",
+    "輸入": "",
+    "結果": "",
+    "例句": "My mother is busy cooking dinner in the kitchen.",
+    "翻譯": "我母親正忙著在廚房做晚飯。"
+  },
+  {
+    "單字": "recycle",
+    "音標": "[riˈsaɪk!]",
+    "詞性": "v.",
+    "中文": "回收利用",
+    "輸入": "",
+    "結果": "",
+    "例句": "We should recycle plastic bottles to protect the environment.",
+    "翻譯": "我們應該回收利用塑膠瓶以保護環境。"
+  },
+  {
+    "單字": "prison",
+    "音標": "[ˈprɪzn]",
+    "詞性": "n.",
+    "中文": "監獄",
+    "輸入": "",
+    "結果": "",
+    "例句": "The thief was caught and sent to prison for his crime.",
+    "翻譯": "小偷被抓並因其罪行被送進監獄。"
+  },
+  {
+    "單字": "board",
+    "音標": "[bɔrd]",
+    "詞性": "v.",
+    "中文": "登上",
+    "輸入": "",
+    "結果": "",
+    "例句": "Passengers are requested to board the plane now.",
+    "翻譯": "請乘客們現在面登上飛機。"
+  },
+  {
+    "單字": "building",
+    "音標": "[ˈbɪldɪŋ]",
+    "詞性": "n.",
+    "中文": "大樓",
+    "輸入": "",
+    "結果": "",
+    "例句": "Taipei 101 is a famous landmark building in Taiwan.",
+    "翻譯": "台北101是台灣著名的大樓地標。"
+  },
+  {
+    "單字": "confuse",
+    "音標": "[kənˈfjuz]",
+    "詞性": "v.",
+    "中文": "混淆",
+    "輸入": "",
+    "結果": "",
+    "例句": "The identical twins often confuse their teachers.",
+    "翻譯": "這對同卵雙胞胎經常混淆他們的老師。"
+  },
+  {
+    "單字": "engine",
+    "音標": "[ˈɛndʒən]",
+    "詞性": "n.",
+    "中文": "引擎",
+    "輸入": "",
+    "結果": "",
+    "例句": "The engineer is inspecting the car engine.",
+    "翻譯": "工程師正在檢查汽車引擎。"
+  },
+  {
+    "單字": "comment",
+    "音標": "[ˈkɑmɛnt]",
+    "詞性": "v.",
+    "中文": "評論",
+    "輸入": "",
+    "結果": "",
+    "例句": "He refused to comment on the ongoing investigation.",
+    "翻譯": "他拒絕對於正在進行的調查發表評論。"
+  },
+  {
+    "單字": "alarm",
+    "音標": "[əˈlɑrm]",
+    "詞性": "n.",
+    "中文": "鬧鐘",
+    "輸入": "",
+    "結果": "",
+    "例句": "My alarm clock goes off at 6:00 every morning.",
+    "翻譯": "我的鬧鐘每天早上6點響起。"
+  },
+  {
+    "單字": "succeed",
+    "音標": "[səkˈsid]",
+    "詞性": "v.",
+    "中文": "成功",
+    "輸入": "",
+    "結果": "",
+    "例句": "If you work hard, you will eventually succeed.",
+    "翻譯": "如果你努力工作，你最終會成功的。"
+  },
+  {
+    "單字": "onion",
+    "音標": "[ˈʌnjən]",
+    "詞性": "n.",
+    "中文": "洋蔥",
+    "輸入": "",
+    "結果": "",
+    "例句": "She chopped an onion to put into the soup.",
+    "翻譯": "她切了一個洋蔥放進湯裡。"
+  },
+  {
+    "單字": "travel",
+    "音標": "[ˈtræv!]",
+    "詞性": "v.",
+    "中文": "旅行",
+    "輸入": "",
+    "結果": "",
+    "例句": "They love to travel to different countries during holidays.",
+    "翻譯": "他們喜歡在假期期間去不同的國家旅行。"
+  },
+  {
+    "單字": "image",
+    "音標": "[ˈɪmɪdʒ]",
+    "詞性": "n.",
+    "中文": "圖像",
+    "輸入": "",
+    "結果": "",
+    "例句": "The camera captured a very clear image of the bird.",
+    "翻譯": "相機捕捉到了那隻鳥非常清晰的圖像。"
+  },
+  {
+    "單字": "finish",
+    "音標": "[ˈfɪnɪʃ]",
+    "詞性": "v.",
+    "中文": "結束",
+    "輸入": "",
+    "結果": "",
+    "例句": "He needs to finish his homework before dinner.",
+    "翻譯": "他需要在晚飯前結束作業。"
+  },
+  {
+    "單字": "beautiful",
+    "音標": "[ˈbjutəfəl]",
+    "詞性": "adj.",
+    "中文": "美麗的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The view from the top of the mountain is beautiful.",
+    "翻譯": "山頂上的風景非常美麗。"
+  },
+  {
+    "單字": "every other day",
+    "音標": "[ˈɛvrɪ ˈʌðɚ de]",
+    "詞性": "ph.",
+    "中文": "每隔一天",
+    "輸入": "",
+    "結果": "",
+    "例句": "He goes to the gym to exercise every other day.",
+    "翻譯": "他每隔一天去健身房運動一次。"
+  },
+  {
+    "單字": "yummy",
+    "音標": "[ˈjʌmɪ]",
+    "詞性": "adj.",
+    "中文": "很好吃的",
+    "輸入": "",
+    "結果": "",
+    "例句": "My grandmother baked a yummy strawberry cake.",
+    "翻譯": "我祖母烤了一個很好吃的草莓蛋糕。"
+  },
+  {
+    "單字": "around the clock",
+    "音標": "[əˈraʊnd ðə klɑk]",
+    "詞性": "ph.",
+    "中文": "不分晝夜地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The convenience store is open around the clock.",
+    "翻譯": "這家便利商店不分晝夜地營業。"
+  },
+  {
+    "單字": "impossible",
+    "音標": "[ɪmˈpɑsəb!]",
+    "詞性": "adj.",
+    "中文": "不可能的",
+    "輸入": "",
+    "結果": "",
+    "例句": "It is impossible to finish all this work in one hour.",
+    "翻譯": "在一個小時內完成所有這些工作是不可能的。"
+  },
+  {
+    "單字": "now and then",
+    "音標": "[naʊ ænd ðɛn]",
+    "詞性": "ph.",
+    "中文": "偶爾",
+    "輸入": "",
+    "結果": "",
+    "例句": "He still visits his hometown every now and then.",
+    "翻譯": "他偶爾還是會回他的家鄉看看。"
+  },
+  {
+    "單字": "traditional",
+    "音標": "[trəˈdɪʃən!]",
+    "詞性": "adj.",
+    "中文": "傳統的",
+    "輸入": "",
+    "結果": "",
+    "例句": "We celebrate the festival with traditional food.",
+    "翻譯": "我們用傳統的食物來慶祝節日。"
+  },
+  {
+    "單字": "out of date",
+    "音標": "[aʊt ʌv det]",
+    "詞性": "ph.",
+    "中文": "過時的",
+    "輸入": "",
+    "結果": "",
+    "例句": "This computer software is completely out of date.",
+    "翻譯": "這款電腦軟體已經完全過時的。"
+  },
+  {
+    "單字": "forgive",
+    "音標": "[fɚˈɡɪv]",
+    "詞性": "v.",
+    "中文": "原諒",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please forgive me for forgetting your birthday.",
+    "翻譯": "請原諒我忘記了你的生日。"
+  },
+  {
+    "單字": "channel",
+    "音標": "[ˈtʃæn!]",
+    "詞性": "n.",
+    "中文": "電視頻道",
+    "輸入": "",
+    "結果": "",
+    "例句": "Can you change the channel? I want to watch the news.",
+    "翻譯": "你能換個電視頻道嗎？我想看新聞。"
+  },
+  {
+    "單字": "protect",
+    "音標": "[prəˈtɛkt]",
+    "詞性": "v.",
+    "中文": "防護",
+    "輸入": "",
+    "結果": "",
+    "例句": "Wearing a helmet can protect your head from injury.",
+    "翻譯": "佩戴安全帽可以防護你的頭部免受傷害。"
+  },
+  {
+    "單字": "organization",
+    "音標": "[ˌɔrɡənəˈzeʃən]",
+    "詞性": "n.",
+    "中文": "組織",
+    "輸入": "",
+    "結果": "",
+    "例句": "She works for an international charity organization.",
+    "翻譯": "她在一家國際慈善組織工作。"
+  },
+  {
+    "單字": "ignore",
+    "音標": "[ɪɡˈnɔr]",
+    "詞性": "v.",
+    "中文": "忽略",
+    "輸入": "",
+    "結果": "",
+    "例句": "It is not wise to ignore safety warnings.",
+    "翻譯": "忽略安全警告是不明智的。"
+  },
+  {
+    "單字": "airport",
+    "音標": "[ˈɛrˌpɔrt]",
+    "詞性": "n.",
+    "中文": "機場",
+    "輸入": "",
+    "結果": "",
+    "例句": "We arrived at the airport two hours before our flight.",
+    "翻譯": "我們在航班起飛前兩小時抵達了機場。"
+  },
+  {
+    "單字": "motion",
+    "音標": "[ˈmoʃən]",
+    "詞性": "v.",
+    "中文": "做動作示意",
+    "輸入": "",
+    "結果": "",
+    "例句": "The policeman motioned for the cars to stop.",
+    "翻譯": "警察做動作示意車輛停下。"
+  },
+  {
+    "單字": "hospital",
+    "音標": "[ˈhɑspɪt!]",
+    "詞性": "n.",
+    "中文": "醫院",
+    "輸入": "",
+    "結果": "",
+    "例句": "He was taken to the hospital after the accident.",
+    "翻譯": "事故發生後他被送往了醫院。"
+  },
+  {
+    "單字": "badly",
+    "音標": "[ˈbædlɪ]",
+    "詞性": "adv.",
+    "中文": "嚴重地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The building was badly damaged in the earthquake.",
+    "翻譯": "這棟大樓在地震中嚴重地受損。"
+  },
+  {
+    "單字": "make fun of",
+    "音標": "[mek fʌn ʌv]",
+    "詞性": "ph.",
+    "中文": "取笑",
+    "輸入": "",
+    "結果": "",
+    "例句": "You should never make fun of other people.",
+    "翻譯": "你絕不應該取笑其他人。"
+  },
+  {
+    "單字": "clearly",
+    "音標": "[ˈklɪrlɪ]",
+    "詞性": "adv.",
+    "中文": "清楚地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The teacher explained the math problem very clearly.",
+    "翻譯": "老師非常清楚地解釋了這道數學題。"
+  },
+  {
+    "單字": "keep track of",
+    "音標": "[kip træk ʌv]",
+    "詞性": "ph.",
+    "中文": "隨時掌握",
+    "輸入": "",
+    "結果": "",
+    "例句": "It's important to keep track of your daily expenses.",
+    "翻譯": "隨時掌握你每天的開銷是很重要的。"
+  },
+  {
+    "單字": "quietly",
+    "音標": "[ˈkwaɪətlɪ]",
+    "詞性": "adv.",
+    "中文": "靜悄悄地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The mother walked into the baby's room quietly.",
+    "翻譯": "母親靜悄悄地走進了嬰兒的房間。"
+  },
+  {
+    "單字": "run out of",
+    "音標": "[rʌn aʊt ʌv]",
+    "詞性": "ph.",
+    "中文": "用完",
+    "輸入": "",
+    "結果": "",
+    "例句": "We have run out of milk, so I need to buy some.",
+    "翻譯": "我們的牛奶用完了，所以我需要去買一些。"
+  },
+  {
+    "單字": "loudly",
+    "音標": "[ˈlaʊdlɪ]",
+    "詞性": "adv.",
+    "中文": "大聲地",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please do not speak loudly in the library.",
+    "翻譯": "請不要在圖書館內大聲地說話。"
+  },
+  {
+    "單字": "get rid of",
+    "音標": "[ɡɛt rɪd ʌv]",
+    "詞性": "ph.",
+    "中文": "擺脫",
+    "輸入": "",
+    "結果": "",
+    "例句": "It is difficult to get rid of bad habits completely.",
+    "翻譯": "要完全擺脫壞習慣是很困難的。"
+  },
+  {
+    "單字": "promise",
+    "音標": "[ˈprɑmɪs]",
+    "詞性": "v.",
+    "中文": "承諾",
+    "輸入": "",
+    "結果": "",
+    "例句": "He promised to come to my birthday party.",
+    "翻譯": "他承諾會來參加我的生日派對。"
+  },
+  {
+    "單字": "interview",
+    "音標": "[ˈɪntɚˌvju]",
+    "詞性": "n.",
+    "中文": "面試",
+    "輸入": "",
+    "結果": "",
+    "例句": "She has a job interview tomorrow morning.",
+    "翻譯": "她明天早上有一個工作面試。"
+  },
+  {
+    "單字": "question",
+    "音標": "[ˈkwɛstʃən]",
+    "詞性": "v.",
+    "中文": "審/質問",
+    "輸入": "",
+    "結果": "",
+    "例句": "The police questioned the suspect for hours.",
+    "翻譯": "警方審問了嫌犯好幾個小時。"
+  },
+  {
+    "單字": "alphabet",
+    "音標": "[ˈælfəˌbɛt]",
+    "詞性": "n.",
+    "中文": "全部字母(總稱)",
+    "輸入": "",
+    "結果": "",
+    "例句": "There are twenty-six letters in the English alphabet.",
+    "翻譯": "英文全部字母總共有二十六個。"
+  },
+  {
+    "單字": "answer",
+    "音標": "[ˈænsɚ]",
+    "詞性": "v.",
+    "中文": "回答",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please answer my question as soon as possible.",
+    "翻譯": "請盡快回答我的問題。"
+  },
+  {
+    "單字": "gesture",
+    "音標": "[ˈdʒɛstʃɚ]",
+    "詞性": "n.",
+    "中文": "手勢",
+    "輸入": "",
+    "結果": "",
+    "例句": "He made a gesture to show us the way.",
+    "翻譯": "他比了一個手勢來給我們指路。"
+  },
+  {
+    "單字": "favor",
+    "音標": "[ˈfevɚ]",
+    "詞性": "v.",
+    "中文": "較喜歡",
+    "輸入": "",
+    "結果": "",
+    "例句": "Parents shouldn't favor one child over another.",
+    "翻譯": "父母不應該偏心較喜歡某一個孩子。"
+  },
+  {
+    "單字": "cassette",
+    "音標": "[kəˈsɛt]",
+    "詞性": "n.",
+    "中文": "卡式錄音帶",
+    "輸入": "",
+    "結果": "",
+    "例句": "He found an old cassette tape in the drawer.",
+    "翻譯": "他在抽屜裡找到了一捲舊的卡式錄音帶。"
+  },
+  {
+    "單字": "politely",
+    "音標": "[pəˈlaɪtlɪ]",
+    "詞性": "adv.",
+    "中文": "有禮貌地",
+    "輸入": "",
+    "結果": "",
+    "例句": "She politely declined his invitation to the dinner.",
+    "翻譯": "她有禮貌地拒絕了他一同共進晚餐的邀請。"
+  },
+  {
+    "單字": "fair",
+    "音標": "[fɛr]",
+    "詞性": "adj.",
+    "中文": "合理的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The judge made a fair decision for both sides.",
+    "翻譯": "法官為雙方做出了一個合理的判決。"
+  },
+  {
+    "單字": "sleepily",
+    "音標": "[ˈslipəlɪ]",
+    "詞性": "adv.",
+    "中文": "想睡地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The little boy rubbed his eyes sleepily.",
+    "翻譯": "那個小男孩想睡地揉了揉眼睛。"
+  },
+  {
+    "單字": "giant",
+    "音標": "[ˈdʒaɪənt]",
+    "詞性": "adj.",
+    "中文": "巨大的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The company is a giant corporation in the tech industry.",
+    "翻譯": "這家公司是科技產業中一家巨大的企業。"
+  },
+  {
+    "單字": "weekly",
+    "音標": "[ˈwiklɪ]",
+    "詞性": "adv.",
+    "中文": "每週一次地",
+    "輸入": "",
+    "結果": "",
+    "例句": "This magazine is published weekly on Fridays.",
+    "翻譯": "這本雜誌於每週五每週一次地出版。"
+  },
+  {
+    "單字": "male",
+    "音標": "[mel]",
+    "詞性": "adj.",
+    "中文": "男性的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The department has more male employees than female ones.",
+    "翻譯": "這個部門的男性員工比女性員工多。"
+  },
+  {
+    "單字": "rapidly",
+    "音標": "[ˈræpɪdlɪ]",
+    "詞性": "adv.",
+    "中文": "很快地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The city's population is growing rapidly.",
+    "翻譯": "這座城市的人口正很快地增長。"
+  },
+  {
+    "單字": "soft",
+    "音標": "[sɔft]",
+    "詞性": "adj.",
+    "中文": "柔軟的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The cat loves to sleep on the soft cushion.",
+    "翻譯": "這隻貓喜歡在柔軟的墊子上睡覺。"
+  },
+  {
+    "單字": "set out",
+    "音標": "[sɛt aʊt]",
+    "詞性": "ph.",
+    "中文": "出發",
+    "輸入": "",
+    "結果": "",
+    "例句": "They set out on their journey early in the morning.",
+    "翻譯": "他們在清晨一大早出發展開旅程。"
+  },
+  {
+    "單字": "freedom",
+    "音標": "[ˈfridəm]",
+    "詞性": "n.",
+    "中文": "自由",
+    "輸入": "",
+    "結果": "",
+    "例句": "We all value our freedom of speech.",
+    "翻譯": "我們大家都非常珍視我們的言論自由。"
+  },
+  {
+    "單字": "calm down",
+    "音標": "[kɑm daʊn]",
+    "詞性": "ph.",
+    "中文": "冷靜",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please calm down and tell me what happened.",
+    "翻譯": "請冷靜下來並告訴我發生了什麼事。"
+  },
+  {
+    "單字": "hunger",
+    "音標": "[ˈhʌŋɡɚ]",
+    "詞性": "n.",
+    "中文": "飢餓",
+    "輸入": "",
+    "結果": "",
+    "例句": "Many refugees are suffering from hunger and disease.",
+    "翻譯": "許多難民正遭受著飢餓與疾病的折磨。"
+  },
+  {
+    "單字": "show off",
+    "音標": "[ʃo ɔf]",
+    "詞性": "ph.",
+    "中文": "炫耀",
+    "輸入": "",
+    "結果": "",
+    "例句": "He likes to show off his new sports car to his friends.",
+    "翻譯": "他喜歡向他的朋友們炫耀他的新跑車。"
+  },
+  {
+    "單字": "quality",
+    "音標": "[ˈkwɑlətɪ]",
+    "詞性": "n.",
+    "中文": "品質",
+    "輸入": "",
+    "結果": "",
+    "例句": "Our store provides goods of high quality.",
+    "翻譯": "我們店家提供高品質的商品。"
+  },
+  {
+    "單字": "heat up",
+    "音標": "[hit ʌp]",
+    "詞性": "ph.",
+    "中文": "加熱",
+    "輸入": "",
+    "結果": "",
+    "例句": "You can heat up the soup in the microwave.",
+    "翻譯": "你可以用微波爐把湯加熱。"
+  },
+  {
+    "單字": "pleasure",
+    "音標": "[ˈplɛʒɚ]",
+    "詞性": "n.",
+    "中文": "快樂",
+    "輸入": "",
+    "結果": "",
+    "例句": "It is a great pleasure to meet you here.",
+    "翻譯": "能在這裡遇見你是件極大的快樂。"
+  },
+  {
+    "單字": "garden",
+    "音標": "[ˈgɑrdn]",
+    "詞性": "n.",
+    "中文": "花園",
+    "輸入": "",
+    "結果": "",
+    "例句": "They grow beautiful roses in their front garden.",
+    "翻譯": "他們在前花園裡種植美麗的玫瑰。"
+  },
+  {
+    "單字": "in a word",
+    "音標": "[ɪn ə wɝd]",
+    "詞性": "ph.",
+    "中文": "簡稱之",
+    "輸入": "",
+    "結果": "",
+    "例句": "In a word, the whole project was a complete disaster.",
+    "翻譯": "簡稱之，整個項目就是一場徹底的災難。"
+  },
+  {
+    "單字": "hobby",
+    "音標": "[ˈhɑbɪ]",
+    "詞性": "n.",
+    "中文": "嗜好",
+    "輸入": "",
+    "結果": "",
+    "例句": "His favorite hobby is collecting old stamps.",
+    "翻譯": "他最喜歡的嗜好是收集舊郵票。"
+  },
+  {
+    "單字": "out of order",
+    "音標": "[aʊt ʌv ˈɔrdɚ]",
+    "詞性": "ph.",
+    "中文": "故障",
+    "輸入": "",
+    "結果": "",
+    "例句": "The vending machine is currently out of order.",
+    "翻譯": "這台自動販賣機目前故障中。"
+  },
+  {
+    "單字": "speech",
+    "音標": "[spitʃ]",
+    "詞性": "n.",
+    "中文": "演說",
+    "輸入": "",
+    "結果": "",
+    "例句": "The president delivered an inspiring speech yesterday.",
+    "翻譯": "總統昨天發表了一場激勵人心的演說。"
+  },
+  {
+    "單字": "more or less",
+    "音標": "[mɔr ɔr lɛs]",
+    "詞性": "ph.",
+    "中文": "或多或少、大概",
+    "輸入": "",
+    "結果": "",
+    "例句": "The work is more or less finished now.",
+    "翻譯": "這項工作現在大概已經完成了。"
+  },
+  {
+    "單字": "poison",
+    "音標": "[ˈpɔɪzn]",
+    "詞性": "n.",
+    "中文": "毒藥",
+    "輸入": "",
+    "結果": "",
+    "例句": "The snake uses its poison to kill prey.",
+    "翻譯": "這條蛇利用牠的毒藥來殺死獵物。"
+  },
+  {
+    "單字": "up to date",
+    "音標": "[ʌp tu det]",
+    "詞性": "ph.",
+    "中文": "最新",
+    "輸入": "",
+    "結果": "",
+    "例句": "This map is not up to date; many roads are missing.",
+    "翻譯": "這張地圖不是最新的；漏掉了許多道路。"
+  },
+  {
+    "單字": "darken",
+    "音標": "[ˈdɑrkən]",
+    "詞性": "v.",
+    "中文": "變暗",
+    "輸入": "",
+    "結果": "",
+    "例句": "The sky began to darken as the storm approached.",
+    "翻譯": "隨著暴風雨臨近，天空開始變暗。"
+  },
+  {
+    "單字": "move",
+    "音標": "[muv]",
+    "詞性": "v.",
+    "中文": "移動",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please help me move this heavy table to the corner.",
+    "翻譯": "請幫我把這張沉重的桌子移動到角落。"
+  },
+  {
+    "單字": "happen",
+    "音標": "[ˈhæpən]",
+    "詞性": "v.",
+    "中文": "發生",
+    "輸入": "",
+    "結果": "",
+    "例句": "No one knows what will happen tomorrow.",
+    "翻譯": "沒有人知道明天會發生什麼事。"
+  },
+  {
+    "單字": "borrow",
+    "音標": "[ˈbɑro]",
+    "詞性": "v.",
+    "中文": "(向某人)借",
+    "輸入": "",
+    "結果": "",
+    "例句": "Can I borrow your English textbook for a moment?",
+    "翻譯": "我可以向你借一下你的英文課本嗎？"
+  },
+  {
+    "單字": "focus",
+    "音標": "[ˈfokəs]",
+    "詞性": "v.",
+    "中文": "專注",
+    "輸入": "",
+    "結果": "",
+    "例句": "You need to focus on your studies this semester.",
+    "翻譯": "你這個學期需要專注在你的學業上。"
+  },
+  {
+    "單字": "change",
+    "音標": "[tʃendʒ]",
+    "詞性": "v.",
+    "中文": "改變",
+    "輸入": "",
+    "結果": "",
+    "例句": "Technology has managed to change the way we live.",
+    "翻譯": "科技已經成功改變了我們生活的方式。"
+  },
+  {
+    "單字": "shake",
+    "音標": "[ʃek]",
+    "詞性": "v.",
+    "中文": "搖晃",
+    "輸入": "",
+    "結果": "",
+    "例句": "The earthquake made the whole building shake violently.",
+    "翻譯": "這場地震讓整棟大樓猛烈地搖晃。"
+  },
+  {
+    "單字": "range",
+    "音標": "[rendʒ]",
+    "詞性": "v.",
+    "中文": "(在一定幅度內)變動",
+    "輸入": "",
+    "結果": "",
+    "例句": "The prices of these rooms range from fifty to one hundred dollars.",
+    "翻譯": "這些房間的價格在五十到一百美元之內變動。"
+  },
+  {
+    "單字": "trumpet",
+    "音標": "[ˈtrʌmpɪt]",
+    "詞性": "n.",
+    "中文": "喇叭",
+    "輸入": "",
+    "結果": "",
+    "例句": "He learned to play the trumpet at a young age.",
+    "翻譯": "他在很年輕的時候就學會了吹喇叭。"
+  },
+  {
+    "單字": "have a fight",
+    "音標": "[hæv ə faɪt]",
+    "詞性": "ph.",
+    "中文": "吵架",
+    "輸入": "",
+    "結果": "",
+    "例句": "The couple had a fight about money last night.",
+    "翻譯": "這對夫妻昨晚因為錢的事情吵架了。"
+  },
+  {
+    "單字": "language",
+    "音標": "[ˈlæŋgwɪdʒ]",
+    "詞性": "n.",
+    "中文": "語言",
+    "輸入": "",
+    "結果": "",
+    "例句": "English has become a global language nowadays.",
+    "翻譯": "現今英文已經成為一種全球性的語言。"
+  },
+  {
+    "單字": "cash in on",
+    "音標": "[kæʃ ɪn ɑn]",
+    "詞性": "ph.",
+    "中文": "從……獲利",
+    "輸入": "",
+    "結果": "",
+    "例句": "The company tried to cash in on the new trend.",
+    "翻譯": "該公司試圖從這一新趨勢中獲利。"
+  },
+  {
+    "單字": "advantage",
+    "音標": "[ədˈvæntɪdʒ]",
+    "詞性": "n.",
+    "中文": "優點",
+    "輸入": "",
+    "結果": "",
+    "例句": "One advantage of living here is the convenient transportation.",
+    "翻譯": "住在這裡的一個優點是交通便利。"
+  },
+  {
+    "單字": "fall in love",
+    "音標": "[fɔl ɪn lʌv]",
+    "詞性": "ph.",
+    "中文": "愛上",
+    "輸入": "",
+    "結果": "",
+    "例句": "They fell in love with each other at first sight.",
+    "翻譯": "他們對彼此一見鍾情愛上了對方。"
+  },
+  {
+    "單字": "problem",
+    "音標": "[ˈprɑbləm]",
+    "詞性": "n.",
+    "中文": "問題",
+    "輸入": "",
+    "結果": "",
+    "例句": "If you have any problem, feel free to ask me.",
+    "翻譯": "如果你有任何問題，隨時可以問我。"
+  },
+  {
+    "單字": "catch a cold",
+    "音標": "[kætʃ ə kold]",
+    "詞性": "ph.",
+    "中文": "得到感冒",
+    "輸入": "",
+    "結果": "",
+    "例句": "Remember to wear a coat, or you might catch a cold.",
+    "翻譯": "記得穿件外套，否則你可能會得到感冒。"
+  },
+  {
+    "單字": "for free",
+    "音標": "[fɔr fri]",
+    "詞性": "ph.",
+    "中文": "免費",
+    "輸入": "",
+    "結果": "",
+    "例句": "The museum allows students to enter for free on Wednesdays.",
+    "翻譯": "這家博物館允許學生在週三免費入場。"
+  },
+  {
+    "單字": "doubt",
+    "音標": "[daʊt]",
+    "詞性": "v.",
+    "中文": "懷疑",
+    "輸入": "",
+    "結果": "",
+    "例句": "I doubt if his story is completely true.",
+    "翻譯": "我懷疑他的故事是否完全真實。"
+  },
+  {
+    "單字": "in cash",
+    "音標": "[ɪn kæʃ]",
+    "詞性": "ph.",
+    "中文": "用現金",
+    "輸入": "",
+    "結果": "",
+    "例句": "Would you like to pay by credit card or in cash?",
+    "翻譯": "你想用信用卡付款還是用現金？"
+  },
+  {
+    "單字": "attend",
+    "音標": "[əˈtɛnd]",
+    "詞性": "v.",
+    "中文": "參加",
+    "輸入": "",
+    "結果": "",
+    "例句": "Many important guests will attend the meeting tomorrow.",
+    "翻譯": "明天許多重要的嘉賓將會參加這場會議。"
+  },
+  {
+    "單字": "by chance",
+    "音標": "[baɪ tʃæns]",
+    "詞性": "ph.",
+    "中文": "偶然間",
+    "輸入": "",
+    "結果": "",
+    "例句": "I met an old high school friend on the street by chance.",
+    "翻譯": "我偶然間在街上遇見了一位高中的老朋友。"
+  },
+  {
+    "單字": "sink",
+    "音標": "[sɪŋk]",
+    "詞性": "v.",
+    "中文": "沉",
+    "輸入": "",
+    "結果": "",
+    "例句": "The heavy ship began to sink into the deep sea.",
+    "翻譯": "那艘沉重的船開始沉入深海之中。"
+  },
+  {
+    "單字": "at least",
+    "音標": "[æt list]",
+    "詞性": "ph.",
+    "中文": "至少",
+    "輸入": "",
+    "結果": "",
+    "例句": "You should brush your teeth at least twice a day.",
+    "翻譯": "你一天至少應該刷兩次牙。"
+  },
+  {
+    "單字": "throw",
+    "音標": "[θro]",
+    "詞性": "v.",
+    "中文": "扔",
+    "輸入": "",
+    "結果": "",
+    "例句": "Don't throw trash on the ground; keep the environment clean.",
+    "翻譯": "不要把垃圾扔在地上；保持環境整潔。"
+  },
+  {
+    "單字": "theater",
+    "音標": "[ˈθiətɚ]",
+    "詞性": "n.",
+    "中文": "戲院",
+    "輸入": "",
+    "結果": "",
+    "例句": "They went to the theater to watch a newly released movie.",
+    "翻譯": "他們去戲院看了一部新上映的電影。"
+  },
+  {
+    "單字": "widen",
+    "音標": "[ˈwaɪdn]",
+    "詞性": "v.",
+    "中文": "變寬",
+    "輸入": "",
+    "結果": "",
+    "例句": "The river begins to widen as it flows toward the sea.",
+    "翻譯": "這條河在流向大海時開始變寬。"
+  },
+  {
+    "單字": "forest",
+    "音標": "[ˈfɔrɪst]",
+    "詞性": "n.",
+    "中文": "森林",
+    "輸入": "",
+    "結果": "",
+    "例句": "Many wild animals live in this dense forest.",
+    "翻譯": "許多野生動物居住在這片茂密的森林裡。"
+  },
+  {
+    "單字": "cook",
+    "音標": "[kʊk]",
+    "詞性": "v.",
+    "中文": "烹調",
+    "輸入": "",
+    "結果": "",
+    "例句": "My father loves to cook delicious meals for the family.",
+    "翻譯": "我父親喜歡為家人烹調美味的餐點。"
+  },
+  {
+    "單字": "library",
+    "音標": "[ˈlaɪˌbrɛrɪ]",
+    "詞性": "n.",
+    "中文": "圖書館",
+    "輸入": "",
+    "結果": "",
+    "例句": "The students are studying quietly in the school library.",
+    "翻譯": "學生們正在學校圖書館裡安靜地學習。"
+  },
+  {
+    "單字": "burn",
+    "音標": "[bɝn]",
+    "詞性": "v.",
+    "中文": "燃燒",
+    "輸入": "",
+    "結果": "",
+    "例句": "The camp fire continued to burn throughout the cold night.",
+    "翻譯": "營火在寒冷的夜裡持續燃燒著。"
+  },
+  {
+    "單字": "beach",
+    "音標": "[bitʃ]",
+    "詞性": "n.",
+    "中文": "海灘",
+    "輸入": "",
+    "結果": "",
+    "例句": "The children love to build sandcastles on the beach.",
+    "翻譯": "孩子們喜歡在海灘上建造沙堡。"
+  },
+  {
+    "單字": "fail",
+    "音標": "[fel]",
+    "詞性": "v.",
+    "中文": "失敗",
+    "輸入": "",
+    "結果": "",
+    "例句": "He worked hard because he didn't want to fail the exam.",
+    "翻譯": "他非常努力，因為他不想在考試中失敗。"
+  },
+  {
+    "單字": "remind",
+    "音標": "[rɪˈmaɪnd]",
+    "詞性": "v.",
+    "中文": "提醒",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please remind me to call my client tomorrow morning.",
+    "翻譯": "請提醒我明天早上要打電話給我的客戶。"
+  },
+  {
+    "單字": "exactly",
+    "音標": "[ɪgˈzæktlɪ]",
+    "詞性": "adv.",
+    "中文": "正好地",
+    "輸入": "",
+    "結果": "",
+    "例句": "This is exactly what I was looking for.",
+    "翻譯": "這正好地就是我一直在尋找的東西。"
+  },
+  {
+    "單字": "advise",
+    "音標": "[ədˈvaɪz]",
+    "詞性": "v.",
+    "中文": "建議",
+    "輸入": "",
+    "結果": "",
+    "例句": "The doctor advised him to stop smoking immediately.",
+    "翻譯": "醫生建議他應該立即戒菸。"
+  },
+  {
+    "單字": "rarely",
+    "音標": "[ˈrɛrlɪ]",
+    "詞性": "adv.",
+    "中文": "很少",
+    "輸入": "",
+    "結果": "",
+    "例句": "She rarely goes to the cinema because she is too busy.",
+    "翻譯": "她很少去電影院，因為她太忙了。"
+  },
+  {
+    "單字": "punish",
+    "音標": "[ˈpʌnɪʃ]",
+    "詞性": "v.",
+    "中文": "懲罰",
+    "輸入": "",
+    "結果": "",
+    "例句": "The teacher punished the student for cheating on the test.",
+    "翻譯": "老師因該學生在考試中作弊而懲罰了他。"
+  },
+  {
+    "單字": "luckily",
+    "音標": "[ˈlʌkəlɪ]",
+    "詞性": "adv.",
+    "中文": "幸運地",
+    "輸入": "",
+    "結果": "",
+    "例句": "Luckily, nobody was injured in the car accident.",
+    "翻譯": "幸運地，沒有人在這場車禍中受傷。"
+  },
+  {
+    "單字": "surprise",
+    "音標": "[sɚˈpraɪz]",
+    "詞性": "v.",
+    "中文": "使驚訝",
+    "輸入": "",
+    "結果": "",
+    "例句": "The sudden news of her arrival managed to surprise everyone.",
+    "翻譯": "她突然抵達的消息成功使每個人都感到驚訝。"
+  },
+  {
+    "單字": "completely",
+    "音標": "[kəmˈplitlɪ]",
+    "詞性": "adv.",
+    "中文": "完全地",
+    "輸入": "",
+    "結果": "",
+    "例句": "I completely forgot about our meeting this afternoon.",
+    "翻譯": "我完全地忘記了我們今天下午的會議。"
+  },
+  {
+    "單字": "military",
+    "音標": "[ˈmɪləˌtɛrɪ]",
+    "詞性": "adj.",
+    "中文": "軍事的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The country expanded its military power in recent years.",
+    "翻譯": "該國近年來擴大了其軍事力量。"
+  },
+  {
+    "單字": "vendor",
+    "音標": "[ˈvɛndɚ]",
+    "詞性": "n.",
+    "中文": "小販",
+    "輸入": "",
+    "結果": "",
+    "例句": "The street vendor sells delicious traditional snacks.",
+    "翻譯": "這位街頭小販販售美味的傳統小吃。"
+  },
+  {
+    "單字": "skinny",
+    "音標": "[ˈskɪnɪ]",
+    "詞性": "adj.",
+    "中文": "皮包骨的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The stray dog looked very skinny and hungry.",
+    "翻譯": "這隻流浪狗看起來非常皮包骨且飢腸轆轆。"
+  },
+  {
+    "單字": "sailor",
+    "音標": "[ˈselɚ]",
+    "詞性": "n.",
+    "中文": "水手",
+    "輸入": "",
+    "結果": "",
+    "例句": "The experienced sailor managed to guide the ship through the storm.",
+    "翻譯": "經驗豐富的水手成功引導船隻度過暴風雨。"
+  },
+  {
+    "單字": "willing",
+    "音標": "[ˈwɪlɪŋ]",
+    "詞性": "adj.",
+    "中文": "願意的",
+    "輸入": "",
+    "結果": "",
+    "例句": "She is always willing to help people in need.",
+    "翻譯": "她總是願意幫助有需要的人。"
+  },
+  {
+    "單字": "author",
+    "音標": "[ˈɔθɚ]",
+    "詞性": "n.",
+    "中文": "作者",
+    "輸入": "",
+    "結果": "",
+    "例句": "He is the famous author of this best-selling novel.",
+    "翻譯": "他是這本暢銷小說的知名作者。"
+  },
+  {
+    "單字": "personal",
+    "音標": "[ˈpɝsn!]",
+    "詞性": "adj.",
+    "中文": "私人的",
+    "輸入": "",
+    "結果": "",
+    "例句": "You shouldn't ask people about their personal affairs.",
+    "翻譯": "你不應該詢問人們關於他們私人的事務。"
+  },
+  {
+    "單字": "professor",
+    "音標": "[prəˈfɛsɚ]",
+    "詞性": "n.",
+    "中文": "教授",
+    "輸入": "",
+    "結果": "",
+    "例句": "The university professor gave an interesting lecture on history.",
+    "翻譯": "這位大學教授發表了一場有趣的歷史講座。"
+  },
+  {
+    "單字": "send",
+    "音標": "[sɛnd]",
+    "詞性": "v.",
+    "中文": "郵寄",
+    "輸入": "",
+    "結果": "",
+    "例句": "Don't forget to send a postcard to your parents.",
+    "翻譯": "別忘了郵寄一張明信片給你的父母。"
+  },
+  {
+    "單字": "trash",
+    "音標": "[træʃ]",
+    "詞性": "n.",
+    "中文": "垃圾",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please throw the trash into the garbage can outside.",
+    "翻譯": "請把垃圾丟到外面的垃圾桶裡。"
+  },
+  {
+    "單字": "hide",
+    "音標": "[haɪ]",
+    "詞性": "v.",
+    "中文": "藏匿",
+    "輸入": "",
+    "結果": "",
+    "例句": "The little boy tried to hide behind the big tree.",
+    "翻譯": "那個小男孩試圖藏匿在大樹後面。"
+  },
+  {
+    "單字": "flour",
+    "音標": "[flaʊr]",
+    "詞性": "n.",
+    "中文": "麵粉",
+    "輸入": "",
+    "結果": "",
+    "例句": "You need some flour and sugar to bake this cake.",
+    "翻譯": "烘焙這款蛋糕你需要一些麵粉和糖。"
+  },
+  {
+    "單字": "own",
+    "音標": "[on]",
+    "詞性": "v.",
+    "中文": "擁有",
+    "輸入": "",
+    "結果": "",
+    "例句": "They dream to own a house of their own one day.",
+    "翻譯": "他們夢想著有一天能擁有屬於自己的房子。"
+  },
+  {
+    "單字": "power",
+    "音標": "[ˈpaʊɚ]",
+    "詞性": "n.",
+    "中文": "力量",
+    "輸入": "",
+    "結果": "",
+    "例句": "Knowledge gives people the power to change their lives.",
+    "翻譯": "知識給予人們改變生活的力量。"
+  },
+  {
+    "單字": "build",
+    "音標": "[bɪld]",
+    "詞性": "v.",
+    "中文": "建造",
+    "輸入": "",
+    "結果": "",
+    "例句": "The workers are planning to build a new bridge over the river.",
+    "翻譯": "工人們正計劃在河上建造一座新橋。"
+  },
+  {
+    "單字": "grass",
+    "音標": "[græs]",
+    "詞性": "n.",
+    "中文": "草",
+    "輸入": "",
+    "結果": "",
+    "例句": "The children are playing happily on the green grass.",
+    "翻譯": "孩子們正在綠油油的草地上快樂地玩耍。"
+  },
+  {
+    "單字": "greatly",
+    "音標": "[ˈgretlɪ]",
+    "詞性": "adv.",
+    "中文": "大大地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The new technology greatly improved our work efficiency.",
+    "翻譯": "新科技大大地提高了我們的工作效率。"
+  },
+  {
+    "單字": "put off",
+    "音標": "[pʊt ɔf]",
+    "詞性": "ph.",
+    "中文": "暫緩",
+    "輸入": "",
+    "結果": "",
+    "例句": "They decided to put off the meeting until next Monday.",
+    "翻譯": "他們決定將會議暫緩至下週一。"
+  },
+  {
+    "單字": "closely",
+    "音標": "[ˈkloslɪ]",
+    "詞性": "adv.",
+    "中文": "緊密地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The two companies are working closely on the new project.",
+    "翻譯": "這兩家公司在最新項目上正緊密地合作。"
+  },
+  {
+    "單字": "give away",
+    "音標": "[gɪv əˈwe]",
+    "詞性": "ph.",
+    "中文": "贈送",
+    "輸入": "",
+    "結果": "",
+    "例句": "The shop plans to give away free gifts to customers today.",
+    "翻譯": "這家店計劃今天向顧客贈送免費禮物。"
+  },
+  {
+    "單字": "slowly",
+    "音標": "[ˈslolɪ]",
+    "詞性": "adv.",
+    "中文": "慢慢地",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please speak slowly so that I can understand you better.",
+    "翻譯": "請慢慢地說，這樣我才能更好地理解你。"
+  },
+  {
+    "單字": "lead to",
+    "音標": "[lid tu]",
+    "詞性": "ph.",
+    "中文": "導致",
+    "輸入": "",
+    "結果": "",
+    "例句": "Careless driving can easily lead to serious traffic accidents.",
+    "翻譯": "粗心駕駛很容易導致嚴重的交通車禍。"
+  },
+  {
+    "單字": "hardly",
+    "音標": "[ˈhɑrdlɪ]",
+    "詞性": "adv.",
+    "中文": "幾乎不",
+    "輸入": "",
+    "結果": "",
+    "例句": "He was so tired that he could hardly keep his eyes open.",
+    "翻譯": "他太累了，以至於幾乎不睜開眼睛。"
+  },
+  {
+    "單字": "figure out",
+    "音標": "[ˈfɪgjɚ aʊt]",
+    "詞性": "ph.",
+    "中文": "弄明白",
+    "輸入": "",
+    "結果": "",
+    "例句": "We need to figure out a way to solve this difficult problem.",
+    "翻譯": "我們需要想辦法弄明白如何解決這個困難的問題。"
+  },
+  {
+    "單字": "visit",
+    "音標": "[ˈvɪzɪ]",
+    "詞性": "n.",
+    "中文": "拜訪",
+    "輸入": "",
+    "結果": "",
+    "例句": "We paid a visit to our grandparents last weekend.",
+    "翻譯": "我們上週末去拜訪了我們的祖父母。"
+  },
+  {
+    "單字": "sound",
+    "音標": "[saʊnd]",
+    "詞性": "v.",
+    "中文": "聽起來",
+    "輸入": "",
+    "結果": "",
+    "例句": "Your plan sounds interesting; tell me more about it.",
+    "翻譯": "你的計劃聽起來很有趣；再多告訴我一些吧。"
+  },
+  {
+    "單字": "habit",
+    "音標": "[ˈhæbɪ]",
+    "詞性": "n.",
+    "中文": "習慣",
+    "輸入": "",
+    "結果": "",
+    "例句": "It is important to develop a good reading habit from childhood.",
+    "翻譯": "從小養成良好的閱讀習慣是很重要的。"
+  },
+  {
+    "單字": "taste",
+    "音標": "[test]",
+    "詞性": "v.",
+    "中文": "嚐起來",
+    "輸入": "",
+    "結果": "",
+    "例句": "This chocolate cake tastes sweet and delicious.",
+    "翻譯": "這款巧克力蛋糕嚐起來又甜又美味。"
+  },
+  {
+    "單字": "secret",
+    "音標": "[ˈsikrɪt]",
+    "詞性": "n.",
+    "中文": "秘密",
+    "輸入": "",
+    "結果": "",
+    "例句": "Can you keep a secret? Don't tell anyone about this.",
+    "翻譯": "你能守住秘密嗎？不要把這件事告訴任何人。"
+  },
+  {
+    "單字": "look",
+    "音標": "[lʊk]",
+    "詞性": "v.",
+    "中文": "看起來",
+    "輸入": "",
+    "結果": "",
+    "例句": "She looks very beautiful in that elegant white dress.",
+    "翻譯": "她穿著那件優雅的白色長裙看起來非常美麗。"
+  },
+  {
+    "單字": "list",
+    "音標": "[lɪst]",
+    "詞性": "n.",
+    "中文": "清單",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please write down the items you need on the shopping list.",
+    "翻譯": "請在購物清單上寫下你需要的品項。"
+  },
+  {
+    "單字": "feel",
+    "音標": "[fil]",
+    "詞性": "v.",
+    "中文": "感覺",
+    "輸入": "",
+    "結果": "",
+    "例句": "I feel great today after getting a good night's sleep.",
+    "翻譯": "在獲得一夜好眠之後，我今天感覺棒極了。"
+  },
+  {
+    "單字": "repeat",
+    "音標": "[rɪˈpit]",
+    "詞性": "v.",
+    "中文": "重複",
+    "輸入": "",
+    "結果": "",
+    "例句": "Could you please repeat what you just said?",
+    "翻譯": "可以請你重複一次你剛才說的話嗎？"
+  },
+  {
+    "單字": "blood",
+    "音標": "[blʌd]",
+    "詞性": "n.",
+    "中文": "血",
+    "輸入": "",
+    "結果": "",
+    "例句": "Donating blood can help save many people's lives.",
+    "翻譯": "捐血可以幫助挽救許多人的生命。"
+  },
+  {
+    "單字": "design",
+    "音標": "[dɪˈzaɪn]",
+    "詞性": "v.",
+    "中文": "設計",
+    "輸入": "",
+    "結果": "",
+    "例句": "The famous architect was hired to design the new museum.",
+    "翻譯": "這位著名的建築師被聘來設計這座新博物館。"
+  },
+  {
+    "單字": "smoke",
+    "音標": "[smok]",
+    "詞性": "n.",
+    "中文": "煙",
+    "輸入": "",
+    "結果": "",
+    "例句": "The room was filled with thick smoke from the kitchen.",
+    "翻譯": "房間裡充滿了來自廚房的濃煙。"
+  },
+  {
+    "單字": "cancel",
+    "音標": "[ˈkænsəl]",
+    "詞性": "v.",
+    "中文": "取消",
+    "輸入": "",
+    "結果": "",
+    "例句": "They had to cancel the outdoor concert due to the heavy rain.",
+    "翻譯": "由於大雨，他們不得不取消戶外演唱會。"
+  },
+  {
+    "單字": "print",
+    "音標": "[prɪnt]",
+    "詞性": "n.",
+    "中文": "印刷",
+    "輸入": "",
+    "結果": "",
+    "例句": "The book has large print, which makes it easy to read.",
+    "翻譯": "這本書的印刷字體很大，這讓它很容易閱讀。"
+  },
+  {
+    "單字": "pollute",
+    "音標": "[pəˈlut]",
+    "詞性": "v.",
+    "中文": "污染",
+    "輸入": "",
+    "結果": "",
+    "例句": "The factory was fined for releasing waste that pollutes the river.",
+    "翻譯": "該工廠因排放污染河流的廢物而被罰款。"
+  },
+  {
+    "單字": "glass",
+    "音標": "[glæs]",
+    "詞性": "n.",
+    "中文": "玻璃",
+    "輸入": "",
+    "結果": "",
+    "例句": "Be careful not to break that fragile glass vase on the table.",
+    "翻譯": "小心不要打破桌上那個脆弱的玻璃花瓶。"
+  },
+  {
+    "單字": "According to",
+    "音標": "[əˈkɔrdɪŋ tu]",
+    "詞性": "ph.",
+    "中文": "據說",
+    "輸入": "",
+    "結果": "",
+    "例句": "According to the weather report, it will rain tomorrow afternoon.",
+    "翻譯": "據說氣象報告顯示，明天下午將會下雨。"
+  },
+  {
+    "單字": "empty",
+    "音標": "[ˈɛmptɪ]",
+    "詞性": "adj.",
+    "中文": "空的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The house has been empty for months since they moved away.",
+    "翻譯": "自從他們搬走後，這棟房子已經空了好幾個月了。"
+  },
+  {
+    "單字": "When it comes to",
+    "音標": "[hwɛn ɪt kʌmz tu]",
+    "詞性": "ph.",
+    "中文": "說到",
+    "輸入": "",
+    "結果": "",
+    "例句": "When it comes to cooking, my mother is a real expert.",
+    "翻譯": "說到烹飪，我母親是一位真正的專家。"
+  },
+  {
+    "單字": "tidy",
+    "音標": "[ˈtaɪdɪ]",
+    "詞性": "adj.",
+    "中文": "整潔的",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please keep your bedroom clean and tidy at all times.",
+    "翻譯": "請隨時保持你的臥室乾淨又整潔。"
+  },
+  {
+    "單字": "Instead of",
+    "音標": "[ɪnˈstɛd ʌv]",
+    "詞性": "ph.",
+    "中文": "而非",
+    "輸入": "",
+    "結果": "",
+    "例句": "We decided to walk home instead of taking a taxi tonight.",
+    "翻譯": "我們決定今晚走路回家，而非搭計程車。"
+  },
+  {
+    "單字": "alive",
+    "音標": "[əˈlaɪv]",
+    "詞性": "adj.",
+    "中文": "活著的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The doctors managed to keep the patient alive after the accident.",
+    "翻譯": "事故發生後，醫生成功讓病人保持活著的狀態。"
+  },
+  {
+    "單字": "It goes without saying",
+    "音標": "[ɪt goz wɪˈðaʊt ˈseɪɪŋ]",
+    "詞性": "ph.",
+    "中文": "不用說",
+    "輸入": "",
+    "結果": "",
+    "例句": "It goes without saying that health is much more important than wealth.",
+    "翻譯": "不用說，健康遠比財富更為重要。"
+  },
+  {
+    "單字": "legal",
+    "音標": "[ˈligəl]",
+    "詞性": "adj.",
+    "中文": "合法的",
+    "輸入": "",
+    "結果": "",
+    "例句": "You should seek legal advice before signing this important contract.",
+    "翻譯": "在簽署這份重要合約之前，你應該尋求合法的法律建議。"
+  },
+  {
+    "單字": "stomach",
+    "音標": "[ˈstʌmək]",
+    "詞性": "n.",
+    "中文": "腹部",
+    "輸入": "",
+    "結果": "",
+    "例句": "He felt a sharp pain in his stomach after eating spicy food.",
+    "翻譯": "吃完辣味食物後，他感到腹部有一陣劇痛。"
+  },
+  {
+    "單字": "train",
+    "音標": "[tren]",
+    "詞性": "v.",
+    "中文": "訓練",
+    "輸入": "",
+    "結果": "",
+    "例句": "Athletes need to train hard every day to win the competition.",
+    "翻譯": "運動員需要每天努力訓練才能贏得比賽。"
+  },
+  {
+    "單字": "flashlight",
+    "音標": "[ˈflæʃˌlaɪt]",
+    "詞性": "n.",
+    "中文": "手電筒",
+    "輸入": "",
+    "結果": "",
+    "例句": "He used a flashlight to find his keys in the dark room.",
+    "翻譯": "他用手電筒在黑暗的房間裡尋找他的鑰匙。"
+  },
+  {
+    "單字": "lie",
+    "音標": "[laɪ]",
+    "詞性": "v.",
+    "中文": "說謊",
+    "輸入": "",
+    "結果": "",
+    "例句": "It is wrong to lie to your parents about your grades.",
+    "翻譯": "就你的成績對父母說謊是不對的。"
+  },
+  {
+    "單字": "photograph",
+    "音標": "[ˈfotəˌgræf]",
+    "詞性": "n.",
+    "中文": "照片",
+    "輸入": "",
+    "結果": "",
+    "例句": "She kept an old photograph of her family in her wallet.",
+    "翻譯": "她在皮夾裡保存了一張家人的舊照片。"
+  },
+  {
+    "單字": "smile",
+    "音標": "[smaɪl]",
+    "詞性": "v.",
+    "中文": "微笑",
+    "輸入": "",
+    "結果": "",
+    "例句": "The friendly clerk always smiles at customers when they enter.",
+    "翻譯": "那名友善的店員在顧客進門時總會對他們微笑。"
+  },
+  {
+    "單字": "dinosaur",
+    "音標": "[ˈdaɪnəˌsɔr]",
+    "詞性": "n.",
+    "中文": "恐龍",
+    "輸入": "",
+    "結果": "",
+    "例句": "Children love to learn about different types of dinosaurs.",
+    "翻譯": "孩子們喜歡學習關於不同種類恐龍的知識。"
+  },
+  {
+    "單字": "camp",
+    "音標": "[kæmp]",
+    "詞性": "v.",
+    "中文": "露營",
+    "輸入": "",
+    "結果": "",
+    "例句": "They plan to camp by the lake during their summer vacation.",
+    "翻譯": "他們計劃在暑假期間去湖邊露營。"
+  },
+  {
+    "單字": "expert",
+    "音標": "[ˈɛkspɚt]",
+    "詞性": "n.",
+    "中文": "專家",
+    "輸入": "",
+    "結果": "",
+    "例句": "He is a financial expert who advises major companies.",
+    "翻譯": "market."
+  },
+  {
+    "單字": "by heart",
+    "音標": "[baɪ hɑrt]",
+    "詞性": "ph.",
+    "中文": "銘記",
+    "輸入": "",
+    "結果": "",
+    "例句": "The students were required to learn the poem by heart.",
+    "翻譯": "學生們被要求把這首詩銘記在心背下來。"
+  },
+  {
+    "單字": "dentist",
+    "音標": "[ˈdɛntɪst]",
+    "詞性": "n.",
+    "中文": "牙醫",
+    "輸入": "",
+    "結果": "",
+    "例句": "You should visit the dentist regularly to check your teeth.",
+    "翻譯": "你應該定期看牙醫來檢查牙齒。"
+  },
+  {
+    "單字": "at once",
+    "音標": "[æt wʌns]",
+    "詞性": "ph.",
+    "中文": "馬上",
+    "輸入": "",
+    "結果": "",
+    "例句": "If you see a fire, you must call the fire department at once.",
+    "翻譯": "如果你看到火災，你必須馬上打電話給消防局。"
+  },
+  {
+    "單字": "husband",
+    "音標": "[ˈhʌzbənd]",
+    "詞性": "n.",
+    "中文": "丈夫",
+    "輸入": "",
+    "結果": "",
+    "例句": "Her husband works as an engineer in a technology company.",
+    "翻譯": "她的丈夫在一家科技公司擔任工程師。"
+  },
+  {
+    "單字": "in fear",
+    "音標": "[ɪn fɪr]",
+    "詞性": "ph.",
+    "中文": "害怕地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The little girl hid under the blanket in fear during the storm.",
+    "翻譯": "暴風雨中，小女孩害怕地躲在毯子下面。"
+  },
+  {
+    "單字": "principal",
+    "音標": "[ˈprɪnsəp!]",
+    "詞性": "n.",
+    "中文": "(中小學)校長",
+    "輸入": "",
+    "結果": "",
+    "例句": "The principal gave an opening speech at the school ceremony.",
+    "翻譯": "校長在學校典禮上發表了開幕致詞。"
+  },
+  {
+    "單字": "on average",
+    "音標": "[ɑn ˈævərɪdʒ]",
+    "詞性": "ph.",
+    "中文": "平均而言",
+    "輸入": "",
+    "結果": "",
+    "例句": "On average, she spends two hours exercising every single day.",
+    "翻譯": "平均而言，她每一天都會花兩個小時運動。"
+  },
+  {
+    "單字": "pale",
+    "音標": "[pel]",
+    "詞性": "adj.",
+    "中文": "蒼白的",
+    "輸入": "",
+    "結果": "",
+    "例句": "Her face looked very pale because she was sick.",
+    "翻譯": "她的臉色看起來非常蒼白，因為她生病了。"
+  },
+  {
+    "單字": "toilet",
+    "音標": "[ˈtɔɪlɪt]",
+    "詞性": "n.",
+    "中文": "馬桶",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please remember to flush the toilet after you use it.",
+    "翻譯": "使用完馬桶後請記得沖水。"
+  },
+  {
+    "單字": "rude",
+    "音標": "[rud]",
+    "詞性": "adj.",
+    "中文": "無禮的",
+    "輸入": "",
+    "結果": "",
+    "例句": "It is very rude to interrupt people when they are speaking.",
+    "翻譯": "在別人說話時打斷他們是非常無禮的。"
+  },
+  {
+    "單字": "mirror",
+    "音標": "[ˈmɪrɚ]",
+    "詞性": "n.",
+    "中文": "鏡子",
+    "輸入": "",
+    "結果": "",
+    "例句": "She looked into the mirror to check her makeup.",
+    "翻譯": "她照了照鏡子來檢查自己的妝容。"
+  },
+  {
+    "單字": "cute",
+    "音標": "[kjut]",
+    "詞性": "adj.",
+    "中文": "可愛的",
+    "輸入": "",
+    "結果": "",
+    "例句": "The puppy is so cute that everyone wants to pet it.",
+    "翻譯": "這隻小狗太可愛了，每個人都想摸摸牠。"
+  },
+  {
+    "單字": "noise",
+    "音標": "[nɔɪz]",
+    "詞性": "n.",
+    "中文": "噪音",
+    "輸入": "",
+    "結果": "",
+    "例句": "The loud noise from the street kept me awake all night.",
+    "翻譯": "來自街道上的巨大噪音讓我整晚徹夜難眠。"
+  },
+  {
+    "單字": "slim",
+    "音標": "[slɪm]",
+    "詞性": "adj.",
+    "中文": "苗條的",
+    "輸入": "",
+    "結果": "",
+    "例句": "She stays slim by eating a balanced diet and exercising regularly.",
+    "翻譯": "她透過均衡飲食和定期運動來保持苗條的身材。"
+  },
+  {
+    "單字": "choice",
+    "音標": "[tʃɔɪs]",
+    "詞性": "n.",
+    "中文": "選擇",
+    "輸入": "",
+    "結果": "",
+    "例句": "You have to make a choice between these two job offers.",
+    "翻譯": "你必須在這兩個工作機會之間做出一個選擇。"
+  },
+  {
+    "單字": "buy",
+    "音標": "[baɪ]",
+    "詞性": "v.",
+    "中文": "買",
+    "輸入": "",
+    "結果": "",
+    "例句": "He plans to buy a new laptop for his upcoming college classes.",
+    "翻譯": "他計劃為即將到來的大學課程買一台新筆電。"
+  },
+  {
+    "單字": "wrongly",
+    "音標": "[ˈrɔŋlɪ]",
+    "詞性": "adv.",
+    "中文": "錯誤地",
+    "輸入": "",
+    "結果": "",
+    "例句": "He was wrongly accused of stealing the wallet.",
+    "翻譯": "他被錯誤地指控偷了皮夾。"
+  },
+  {
+    "單字": "spend",
+    "音標": "[spɛnd]",
+    "詞性": "v.",
+    "中文": "花費",
+    "輸入": "",
+    "結果": "",
+    "例句": "She loves to spend her weekends reading books at home.",
+    "翻譯": "她喜歡花費她的週末時間在家裡讀書。"
+  },
+  {
+    "單字": "patiently",
+    "音標": "[ˈpeʃəntlɪ]",
+    "詞性": "adv.",
+    "中文": "耐心心地",
+    "輸入": "",
+    "結果": "",
+    "例句": "The passengers waited patiently for the delayed train to arrive.",
+    "翻譯": "乘客們耐心心地等待著延誤的火車抵達。"
+  },
+  {
+    "單字": "forget",
+    "音標": "[fɚˈgɛt]",
+    "詞性": "v.",
+    "中文": "忘記",
+    "輸入": "",
+    "結果": "",
+    "例句": "Don't forget to lock the back door before you go to bed.",
+    "翻譯": "去睡覺前別忘記鎖上後門。"
+  },
+  {
+    "單字": "blindly",
+    "音標": "[ˈblaɪndlɪ]",
+    "詞性": "adv.",
+    "中文": "盲目地",
+    "輸入": "",
+    "結果": "",
+    "例句": "You shouldn't blindly follow everything you read online.",
+    "翻譯": "你不應該盲目地相信你在網路上讀到的所有內容。"
+  },
+  {
+    "單字": "cost",
+    "音標": "[kɔst]",
+    "詞性": "v.",
+    "中文": "要價",
+    "輸入": "",
+    "結果": "",
+    "例句": "This luxury watch cost him a large amount of money.",
+    "翻譯": "這隻豪華手錶要價了他一大筆錢。"
+  },
+  {
+    "單字": "jealously",
+    "音標": "[ˈdʒɛləslɪ]",
+    "詞性": "adv.",
+    "中文": "嫉妒地",
+    "輸入": "",
+    "結果": "",
+    "例句": "She looked jealously at her sister's beautiful new dress.",
+    "翻譯": "她嫉妒地看著她姐姐漂亮的新衣服。"
+  },
+  {
+    "單字": "the envy of",
+    "音標": "[ðə ˈɛnvɪ ʌv]",
+    "詞性": "ph.",
+    "中文": "令……羨慕的",
+    "輸入": "",
+    "結果": "",
+    "例句": "His brand new sports car quickly became the envy of all his friends.",
+    "翻譯": "他的全新跑車很快就成了令他所有朋友羨慕的對象。"
+  },
+  {
+    "單字": "pardon",
+    "音標": "[ˈpɑrdn]",
+    "詞性": "v.",
+    "中文": "原諒",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please pardon my interruption, but I have an urgent question.",
+    "翻譯": "請原諒我的打擾，但我有一個緊急的問題。"
+  },
+  {
+    "單字": "catch up in",
+    "音標": "[kætʃ ʌp ɪn]",
+    "詞性": "ph.",
+    "中文": "陷入(不愉快等的情況中)",
+    "輸入": "",
+    "結果": "",
+    "例句": "He got caught up in the political argument and couldn't leave.",
+    "翻譯": "他陷入了政治爭論的糟糕情況中而無法脫身。"
+  },
+  {
+    "單字": "imagine",
+    "音標": "[ɪˈmædʒɪn]",
+    "詞性": "v.",
+    "中文": "想像",
+    "輸入": "",
+    "結果": "",
+    "例句": "Can you imagine what life will look like in fifty years?",
+    "翻譯": "你能想像五十年後的生活會是什麼樣子嗎？"
+  },
+  {
+    "單字": "make up of",
+    "音標": "[mek ʌp ʌv]",
+    "詞性": "ph.",
+    "中文": "由……組成",
+    "輸入": "",
+    "結果": "",
+    "例句": "The team is made up of ten experienced scientists.",
+    "翻譯": "這個團隊是由十位經驗豐富的科學家所組成的。"
+  },
+  {
+    "單字": "remember",
+    "音標": "[rɪˈmɛmbɚ]",
+    "詞性": "v.",
+    "中文": "記得",
+    "輸入": "",
+    "結果": "",
+    "例句": "Please remember to turn off the lights when you leave the room.",
+    "翻譯": "離開房間時請記得關上電燈。"
+  },
+  {
+    "單字": "fed up with",
+    "音標": "[fɛd ʌp wɪð]",
+    "詞性": "ph.",
+    "中文": "受夠……",
+    "輸入": "",
+    "結果": "",
+    "例句": "She was completely fed up with his constant complaints.",
+    "翻譯": "她已經完全受夠了他沒完沒了的抱怨。"
+  },
+  {
+    "單字": "continue",
+    "音標": "[kənˈtɪnju]",
+    "詞性": "v.",
+    "中文": "繼續",
+    "輸入": "",
+    "結果": "",
+    "例句": "The rain will likely continue until the end of this week.",
+    "翻譯": "這場雨很可能會繼續下到本週結束。"
+  }
+]

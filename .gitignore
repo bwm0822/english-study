@@ -4,9 +4,9 @@ npm-debug.log
 yarn-error.log
 
 # Output files
-output.json
-*.xlsx
-*.xls
+# output.json
+# *.xlsx
+# *.xls
 
 # IDE
 .vscode/
