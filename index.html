@@ -122,21 +122,17 @@
             flex: 1;
         }
 
-        .sheet-buttons {
-            display: flex;
-            gap: 6px;
-        }
-
-        .sheet-buttons button {
-            padding: 2px 8px;
-            font-size: 0.8em;
+        .sheet-group-header button {
+            padding: 4px 12px;
+            font-size: 0.85em;
             border: 1px solid #ddd;
             background: white;
-            border-radius: 2px;
+            border-radius: 3px;
             cursor: pointer;
+            margin-right: 15px;
         }
 
-        .sheet-buttons button:hover {
+        .sheet-group-header button:hover {
             background: #f5f5f5;
         }
 
@@ -224,11 +220,29 @@
         .word-tag {
             background: #667eea;
             color: white;
-            padding: 2px 6px;
+            padding: 4px 6px;
             border-radius: 3px;
-            font-size: 0.75em;
+            font-size: 0.7em;
             font-weight: bold;
             flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            line-height: 1.2;
+            width: 50px;
+            text-align: center;
+        }
+
+        .word-tag-sheet {
+            font-size: 0.9em;
+            min-height: 12px;
+        }
+
+        .word-tag-tag {
+            font-size: 0.8em;
+            min-height: 12px;
         }
 
         .word-word {
@@ -349,7 +363,7 @@
     <script>
         let allWords = [];
         let sheetData = {};
-        let selectedTags = new Set();
+        let selectedTags = new Map(); // {sheetName: Set<tag>}
 
         fetch('output.json?t=' + new Date().getTime())
             .then(r => r.json())
@@ -368,6 +382,9 @@
                         // 添加到allWords
                         allWords = allWords.concat(words);
 
+                        // 初始化selectedTags中該sheet的所有tag
+                        selectedTags.set(sheetName, new Set(sheetTags));
+
                         // 建立sheet項目
                         const sheetItem = document.createElement('div');
                         sheetItem.className = 'sheet-item';
@@ -375,18 +392,45 @@
                         // Sheet標題（可展開）
                         const sheetHeader = document.createElement('div');
                         sheetHeader.className = 'sheet-item-header';
-                        sheetHeader.innerHTML = `
-                            <span class="sheet-toggle">▶</span>
-                            <span class="sheet-name">${sheetName}</span>
-                            <div class="sheet-buttons">
-                                <button onclick="selectAllInSheet(event, '${sheetName}')">全選</button>
-                                <button onclick="clearAllInSheet(event, '${sheetName}')">清除</button>
-                            </div>
-                        `;
+                        sheetHeader.dataset.sheetName = sheetName;
+
+                        const toggleSpan = document.createElement('span');
+                        toggleSpan.className = 'sheet-toggle';
+                        toggleSpan.textContent = '▶';
+
+                        const nameSpan = document.createElement('span');
+                        nameSpan.className = 'sheet-name';
+                        nameSpan.textContent = sheetName;
+
+                        sheetHeader.appendChild(toggleSpan);
+                        sheetHeader.appendChild(nameSpan);
 
                         // Sheet內容
                         const sheetContent = document.createElement('div');
                         sheetContent.className = 'sheet-content';
+
+                        // 按鈕行
+                        const buttonsRow = document.createElement('div');
+                        buttonsRow.className = 'sheet-group-header';
+                        buttonsRow.style.paddingLeft = '20px';
+
+                        const selectBtn = document.createElement('button');
+                        selectBtn.textContent = '全選';
+                        selectBtn.onclick = function(e) {
+                            e.stopPropagation();
+                            selectAllInSheet(e, sheetName);
+                        };
+
+                        const clearBtn = document.createElement('button');
+                        clearBtn.textContent = '清除';
+                        clearBtn.onclick = function(e) {
+                            e.stopPropagation();
+                            clearAllInSheet(e, sheetName);
+                        };
+
+                        buttonsRow.appendChild(selectBtn);
+                        buttonsRow.appendChild(clearBtn);
+                        sheetContent.appendChild(buttonsRow);
 
                         // 該sheet的所有tag
                         sheetTags.forEach(tag => {
@@ -411,8 +455,6 @@
                             };
 
                             sheetContent.appendChild(label);
-
-                            selectedTags.add(tag);
                         });
 
                         // Sheet展開/收起邏輯
@@ -444,7 +486,7 @@
 
         function selectAllInSheet(event, sheetName) {
             event.stopPropagation();
-            const checkboxes = document.querySelectorAll(`.sheet-content input[data-sheet="${sheetName}"]`);
+            const checkboxes = document.querySelectorAll(`input[data-sheet="${sheetName}"]`);
             checkboxes.forEach(checkbox => {
                 checkbox.checked = true;
             });
@@ -453,7 +495,8 @@
 
         function clearAllInSheet(event, sheetName) {
             event.stopPropagation();
-            const checkboxes = document.querySelectorAll(`.sheet-content input[data-sheet="${sheetName}"]`);
+            // 只清除該 sheet 的 checkbox
+            const checkboxes = document.querySelectorAll(`input[data-sheet="${sheetName}"]`);
             checkboxes.forEach(checkbox => {
                 checkbox.checked = false;
             });
@@ -461,10 +504,17 @@
         }
 
         function updateFilter() {
-            selectedTags.clear();
+            // 為每個sheet更新selected tags
+            selectedTags.forEach((tags, sheetName) => {
+                tags.clear();
+            });
+
             document.querySelectorAll('.tag-checkbox-item input').forEach(checkbox => {
                 if (checkbox.checked) {
-                    selectedTags.add(checkbox.value);
+                    const sheetName = checkbox.dataset.sheet;
+                    if (selectedTags.has(sheetName)) {
+                        selectedTags.get(sheetName).add(checkbox.value);
+                    }
                 }
             });
             updateDropdownButton();
@@ -473,10 +523,14 @@
 
         function updateDropdownButton() {
             const btn = document.querySelector('.tag-dropdown-btn');
-            if (selectedTags.size === 0) {
+            let totalSelected = 0;
+            selectedTags.forEach(tags => {
+                totalSelected += tags.size;
+            });
+            if (totalSelected === 0) {
                 btn.innerHTML = '清除 <span>▼</span>';
             } else {
-                btn.innerHTML = `已選擇 ${selectedTags.size} 個 <span>▼</span>`;
+                btn.innerHTML = `已選擇 ${totalSelected} 個 <span>▼</span>`;
             }
         }
 
@@ -506,10 +560,11 @@
             const container = document.getElementById('wordsContainer');
             container.innerHTML = '';
 
-            // 根據選中的tag過濾單字
-            const filteredWords = allWords.filter(word =>
-                selectedTags.size === 0 || selectedTags.has(word.tag)
-            );
+            // 根據選中的sheet+tag過濾單字
+            const filteredWords = allWords.filter(word => {
+                const sheetTags = selectedTags.get(word.sheet);
+                return sheetTags && sheetTags.has(word.tag);
+            });
 
             document.getElementById('stats').textContent = `共 ${filteredWords.length} 項`;
 
@@ -518,7 +573,7 @@
                 row.className = 'word-row';
                 row.innerHTML = `
                     <div class="word-left" onclick="playPronunciation('${word.單字.replace(/'/g, "\\'")}')">
-                        ${word.tag ? `<span class="word-tag">${word.tag}</span>` : ''}
+                        ${word.sheet || word.tag ? `<span class="word-tag"><div class="word-tag-sheet">${word.sheet || ''}</div><div class="word-tag-tag">${word.tag || ''}</div></span>` : ''}
                         <span class="word-word">${word.單字}</span>
                         <span class="word-phonetic">${word.音標}</span>
                         <span class="word-pos">${word.詞性}</span>
