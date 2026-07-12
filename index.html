@@ -440,6 +440,9 @@
                             checkbox.checked = true;
                             checkbox.dataset.sheet = sheetName;
                             checkbox.onchange = updateFilter;
+                            checkbox.onclick = (e) => {
+                                e.stopPropagation();
+                            };
 
                             const label = document.createElement('div');
                             label.className = 'tag-checkbox-item';
