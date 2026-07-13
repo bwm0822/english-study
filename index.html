@@ -735,8 +735,18 @@
                     </div>
                 </div>
             </div>
+            <div class="tag-filter" id="quizTagFilterContainer" style="display: none;">
+                <label>選擇單元：</label>
+                <div class="tag-filter-dropdown">
+                    <button class="tag-dropdown-btn" onclick="toggleQuizDropdown()">全部 <span>▼</span></button>
+                    <div class="tag-dropdown-menu" id="quizTagDropdownMenu">
+                        <div id="quizSheetGroupsContainer"></div>
+                    </div>
+                </div>
+            </div>
             <div class="stats" id="stats"></div>
             <button class="refresh-btn" id="refreshBtn" onclick="refreshReview()" style="display: none; margin-left: auto;">刷新</button>
+            <button class="start-quiz-btn" id="startQuizBtn" onclick="startQuiz()" style="display: none; margin-left: auto;">開始測驗</button>
         </div>
 
         <div class="words-container" id="wordsContainer"></div>
@@ -745,11 +755,6 @@
         <div class="quiz-container" id="quizContainer" style="display: none;">
             <!-- 測驗控制面板 -->
             <div class="quiz-panel" id="quizPanel" style="display: none;">
-                <div class="quiz-controls">
-                    <label>選擇測驗單元：</label>
-                    <div id="quizSheetCheckboxes"></div>
-                    <button class="start-quiz-btn" onclick="startQuiz()">開始測驗</button>
-                </div>
             </div>
 
             <!-- 測驗進行中 -->
@@ -953,25 +958,33 @@
             const wordsContainer = document.getElementById('wordsContainer');
             const quizContainer = document.getElementById('quizContainer');
             const tagFilterContainer = document.getElementById('tagFilterContainer');
+            const quizTagFilterContainer = document.getElementById('quizTagFilterContainer');
             const refreshBtn = document.getElementById('refreshBtn');
+            const startQuizBtn = document.getElementById('startQuizBtn');
 
             if (mode === 'review') {
                 wordsContainer.style.display = 'block';
                 quizContainer.style.display = 'none';
                 tagFilterContainer.style.display = 'none';
+                quizTagFilterContainer.style.display = 'none';
                 refreshBtn.style.display = 'block';
+                startQuizBtn.style.display = 'none';
                 renderWords();
             } else if (mode === 'quiz') {
                 wordsContainer.style.display = 'none';
                 quizContainer.style.display = 'flex';
                 tagFilterContainer.style.display = 'none';
+                quizTagFilterContainer.style.display = 'flex';
                 refreshBtn.style.display = 'none';
+                startQuizBtn.style.display = 'block';
                 initQuizPanel();
             } else {
                 wordsContainer.style.display = 'block';
                 quizContainer.style.display = 'none';
                 tagFilterContainer.style.display = 'flex';
+                quizTagFilterContainer.style.display = 'none';
                 refreshBtn.style.display = 'none';
+                startQuizBtn.style.display = 'none';
                 renderWords();
             }
         }
@@ -983,6 +996,11 @@
 
         function toggleDropdown() {
             const menu = document.getElementById('tagDropdownMenu');
+            menu.classList.toggle('active');
+        }
+
+        function toggleQuizDropdown() {
+            const menu = document.getElementById('quizTagDropdownMenu');
             menu.classList.toggle('active');
         }
 
@@ -1046,9 +1064,13 @@
         }
 
         document.addEventListener('click', (e) => {
-            const filter = document.querySelector('.tag-filter');
-            if (!filter.contains(e.target)) {
+            const filter = document.querySelector('#tagFilterContainer');
+            if (filter && !filter.contains(e.target)) {
                 document.getElementById('tagDropdownMenu').classList.remove('active');
+            }
+            const quizFilter = document.querySelector('#quizTagFilterContainer');
+            if (quizFilter && !quizFilter.contains(e.target)) {
+                document.getElementById('quizTagDropdownMenu').classList.remove('active');
             }
         });
 
@@ -1157,48 +1179,204 @@
 
         // 測驗相關函數
         function initQuizPanel() {
-            const quizPanel = document.getElementById('quizPanel');
-            const quizCheckboxesContainer = document.getElementById('quizSheetCheckboxes');
-            quizCheckboxesContainer.innerHTML = '';
+            console.log('initQuizPanel 被調用');
+            const container = document.getElementById('quizSheetGroupsContainer');
+            container.innerHTML = '';
 
-            Object.keys(sheetData).forEach(sheetName => {
-                const div = document.createElement('div');
-                div.className = 'quiz-sheet-item';
+            Object.entries(sheetData).forEach(([sheetName, words]) => {
+                if (Array.isArray(words)) {
+                    // 建立該sheet的所有tag
+                    const sheetTags = [...new Set(words.map(w => w.tag))];
 
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.id = `quiz-${sheetName}`;
-                checkbox.dataset.sheet = sheetName;
-                checkbox.checked = true;
+                    // 建立sheet項目
+                    const sheetItem = document.createElement('div');
+                    sheetItem.className = 'sheet-item';
 
-                const label = document.createElement('label');
-                label.htmlFor = `quiz-${sheetName}`;
-                label.textContent = sheetName;
+                    // Sheet標題（可展開）
+                    const sheetHeader = document.createElement('div');
+                    sheetHeader.className = 'sheet-item-header';
+                    sheetHeader.dataset.sheetName = sheetName;
 
-                div.appendChild(checkbox);
-                div.appendChild(label);
-                quizCheckboxesContainer.appendChild(div);
+                    const sheetCheckbox = document.createElement('input');
+                    sheetCheckbox.type = 'checkbox';
+                    sheetCheckbox.checked = true;
+                    sheetCheckbox.dataset.sheetName = sheetName;
+                    sheetCheckbox.onclick = (e) => {
+                        e.stopPropagation();
+                    };
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'sheet-name';
+                    nameSpan.textContent = sheetName;
+
+                    sheetHeader.appendChild(sheetCheckbox);
+                    sheetHeader.appendChild(nameSpan);
+
+                    // 創建獨立的第二選單
+                    const sheetSubmenu = document.createElement('div');
+                    sheetSubmenu.className = 'sheet-submenu';
+                    sheetSubmenu.dataset.sheetName = sheetName;
+                    document.body.appendChild(sheetSubmenu);
+
+                    // 按鈕行
+                    const buttonsRow = document.createElement('div');
+                    buttonsRow.className = 'sheet-group-header';
+
+                    const selectBtn = document.createElement('button');
+                    selectBtn.textContent = '全選';
+                    selectBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        selectAllInQuizSheet(e, sheetName);
+                    };
+
+                    const clearBtn = document.createElement('button');
+                    clearBtn.textContent = '清除';
+                    clearBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        clearAllInQuizSheet(e, sheetName);
+                    };
+
+                    buttonsRow.appendChild(selectBtn);
+                    buttonsRow.appendChild(clearBtn);
+                    sheetSubmenu.appendChild(buttonsRow);
+
+                    // 該sheet的所有tag
+                    sheetTags.forEach(tag => {
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = tag;
+                        checkbox.checked = true;
+                        checkbox.dataset.sheet = sheetName;
+                        checkbox.addEventListener('change', function() {
+                            console.log('checkbox 改變:', tag, this.checked);
+                            updateQuizDropdownButton();
+                        });
+                        checkbox.onclick = (e) => {
+                            e.stopPropagation();
+                        };
+
+                        const label = document.createElement('div');
+                        label.className = 'tag-checkbox-item';
+                        label.appendChild(checkbox);
+                        const span = document.createElement('span');
+                        span.textContent = tag;
+                        label.appendChild(span);
+
+                        label.onclick = (e) => {
+                            e.stopPropagation();
+                            checkbox.checked = !checkbox.checked;
+                            console.log('label 點擊，checkbox 改變:', tag, checkbox.checked);
+                            updateQuizDropdownButton();
+                        };
+
+                        sheetSubmenu.appendChild(label);
+                    });
+
+                    // Sheet展開/收起邏輯 - 顯示/隱藏獨立的submenu
+                    sheetHeader.onclick = (e) => {
+                        if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT') {
+                            e.stopPropagation();
+
+                            // 關閉其他所有的submenu
+                            document.querySelectorAll('.sheet-submenu.expanded').forEach(submenu => {
+                                if (submenu !== sheetSubmenu) {
+                                    submenu.classList.remove('expanded');
+                                }
+                            });
+
+                            // Toggle當前的submenu
+                            sheetSubmenu.classList.toggle('expanded');
+
+                            // 如果打開，計算位置並顯示在sheetHeader的右邊
+                            if (sheetSubmenu.classList.contains('expanded')) {
+                                const rect = sheetHeader.getBoundingClientRect();
+                                sheetSubmenu.style.top = rect.top + 'px';
+                                sheetSubmenu.style.left = (rect.right + 5) + 'px';
+                            }
+                        }
+                    };
+
+                    sheetItem.appendChild(sheetHeader);
+                    container.appendChild(sheetItem);
+                }
             });
 
-            document.getElementById('quizPanel').style.display = 'block';
+            document.getElementById('quizPanel').style.display = 'none';
             document.getElementById('quizSession').style.display = 'none';
             document.getElementById('quizResult').style.display = 'none';
+
+            updateQuizDropdownButton();
+        }
+
+        function selectAllInQuizSheet(event, sheetName) {
+            event.stopPropagation();
+            console.log('全選:', sheetName);
+            const checkboxes = document.querySelectorAll(`input[data-sheet="${sheetName}"]`);
+            console.log('找到 checkbox:', checkboxes.length);
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateQuizDropdownButton();
+        }
+
+        function clearAllInQuizSheet(event, sheetName) {
+            event.stopPropagation();
+            console.log('清除:', sheetName);
+            const checkboxes = document.querySelectorAll(`input[data-sheet="${sheetName}"]`);
+            console.log('找到 checkbox:', checkboxes.length);
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateQuizDropdownButton();
+        }
+
+        function updateQuizDropdownButton() {
+            const btn = document.querySelector('#quizTagFilterContainer .tag-dropdown-btn');
+            if (!btn) {
+                console.log('找不到按鈕');
+                return;
+            }
+            const checkboxes = document.querySelectorAll('input[data-sheet]');
+            console.log('找到 checkbox 數量:', checkboxes.length);
+            let totalSelected = 0;
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    totalSelected++;
+                }
+            });
+            console.log('已選擇:', totalSelected);
+            if (totalSelected === 0) {
+                btn.innerHTML = '清除 <span>▼</span>';
+            } else {
+                btn.innerHTML = `已選擇 ${totalSelected} 個 <span>▼</span>`;
+            }
         }
 
         function startQuiz() {
-            // 獲取勾選的sheets
-            const selectedSheets = new Set();
-            document.querySelectorAll('#quizSheetCheckboxes input:checked').forEach(checkbox => {
-                selectedSheets.add(checkbox.dataset.sheet);
+            // 獲取勾選的tags - 加入到對應的sheet
+            const selectedSheetTags = new Map(); // {sheetName: Set<tag>}
+            document.querySelectorAll('input[data-sheet]').forEach(checkbox => {
+                if (checkbox.checked) {
+                    const sheetName = checkbox.dataset.sheet;
+                    if (!selectedSheetTags.has(sheetName)) {
+                        selectedSheetTags.set(sheetName, new Set());
+                    }
+                    selectedSheetTags.get(sheetName).add(checkbox.value);
+                }
             });
 
-            if (selectedSheets.size === 0) {
+            if (selectedSheetTags.size === 0) {
                 alert('請至少選擇一個單元');
                 return;
             }
 
-            // 收集要測驗的單詞
-            quizWords = allWords.filter(word => selectedSheets.has(word.sheet));
+            // 收集要測驗的單詞 - 根據sheet和tag過濾
+            quizWords = allWords.filter(word => {
+                if (!selectedSheetTags.has(word.sheet)) {
+                    return false;
+                }
+                return selectedSheetTags.get(word.sheet).has(word.tag);
+            });
 
             if (quizWords.length === 0) {
                 alert('選定的單元中沒有單詞');
@@ -1216,7 +1394,8 @@
             }));
 
             quizIndex = 0;
-            document.getElementById('quizPanel').style.display = 'none';
+            document.getElementById('quizTagFilterContainer').style.display = 'none';
+            document.getElementById('startQuizBtn').style.display = 'none';
             document.getElementById('quizSession').style.display = 'flex';
             showQuizQuestion();
         }
@@ -1302,12 +1481,17 @@
         }
 
         function backToQuizPanel() {
+            document.getElementById('quizTagFilterContainer').style.display = 'flex';
+            document.getElementById('startQuizBtn').style.display = 'block';
+            document.getElementById('quizSession').style.display = 'none';
+            document.getElementById('quizResult').style.display = 'none';
             initQuizPanel();
         }
 
         function cancelQuiz() {
             if (confirm('確定要取消測驗嗎？')) {
-                document.getElementById('quizPanel').style.display = 'block';
+                document.getElementById('quizTagFilterContainer').style.display = 'flex';
+                document.getElementById('startQuizBtn').style.display = 'block';
                 document.getElementById('quizSession').style.display = 'none';
                 document.getElementById('quizResult').style.display = 'none';
             }
