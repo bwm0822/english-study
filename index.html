@@ -948,6 +948,7 @@
 
                 starItem.appendChild(starCheckbox);
                 starItem.appendChild(starLabel);
+                starCheckbox.addEventListener('change', updateFilter);
                 starItem.onclick = (e) => {
                     if (e.target !== starCheckbox) {
                         starCheckbox.checked = !starCheckbox.checked;
@@ -987,6 +988,7 @@
                     accuracySelect.appendChild(option);
                 });
 
+                accuracyCheckbox.addEventListener('change', updateFilter);
                 accuracySelect.addEventListener('change', updateFilter);
 
                 accuracyFilterContainer.appendChild(accuracyCheckbox);
@@ -1160,6 +1162,8 @@
                 refreshBtn.style.display = 'block';
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'block';
+                // 改變標籤為「過濾單元」
+                tagFilterContainer.querySelector('label').textContent = '過濾單元：';
                 // 隱藏所有sheet項目，只顯示過濾器
                 document.querySelectorAll('.normal-sheet-item').forEach(item => {
                     item.style.display = 'none';
@@ -1190,6 +1194,8 @@
                 refreshBtn.style.display = 'none';
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'block';
+                // 改變標籤回「選擇單元」
+                tagFilterContainer.querySelector('label').textContent = '選擇單元：';
                 // 顯示所有sheet項目
                 document.querySelectorAll('.normal-sheet-item').forEach(item => {
                     item.style.display = 'block';
@@ -1199,6 +1205,7 @@
                 const accuracyFilterItem = document.getElementById('review-accuracy-filter-item');
                 if (starFilterItem) starFilterItem.style.display = 'none';
                 if (accuracyFilterItem) accuracyFilterItem.style.display = 'none';
+                updateDropdownButton();
                 renderWords();
             }
         }
@@ -1270,10 +1277,16 @@
             selectedTags.forEach(tags => {
                 totalSelected += tags.size;
             });
-            if (totalSelected === 0) {
-                btn.innerHTML = '清除 <span>▼</span>';
+            if (currentMode === 'review') {
+                // 複習模式：保持空白
+                btn.innerHTML = '<span>▼</span>';
             } else {
-                btn.innerHTML = `已選擇 ${totalSelected} 個 <span>▼</span>`;
+                // 一般模式
+                if (totalSelected === 0) {
+                    btn.innerHTML = '清除 <span>▼</span>';
+                } else {
+                    btn.innerHTML = `已選擇 ${totalSelected} 個 <span>▼</span>`;
+                }
             }
         }
 
@@ -1333,27 +1346,38 @@
             // 根據模式和選中的sheet+tag過濾單字
             let filteredWords;
             if (currentMode === 'review') {
-                // 複習模式：只顯示有星號的單字
-                filteredWords = allWords.filter(word => {
-                    const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                    if (localStorage.getItem(`favorite_${wordKey}`) !== 'true') {
-                        return false;
-                    }
-                    // 如果勾選正確率過濾，檢查是否符合條件
-                    if (filterByAccuracy !== null) {
-                        const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                        const history = JSON.parse(localStorage.getItem(historyKey)) || [];
-                        if (history.length === 0) {
-                            return false;
+                // 複習模式：根據勾選的過濾器篩選
+                // 如果都沒勾選，不顯示任何單字
+                if (!filterByStar && filterByAccuracy === null) {
+                    filteredWords = [];
+                } else {
+                    filteredWords = allWords.filter(word => {
+                        const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+
+                        // 如果勾選星號過濾，檢查是否有星號
+                        if (filterByStar) {
+                            if (localStorage.getItem(`favorite_${wordKey}`) !== 'true') {
+                                return false;
+                            }
                         }
-                        const correct = history.filter(v => v).length;
-                        const accuracy = Math.round((correct / history.length) * 100);
-                        if (!(accuracy <= filterByAccuracy)) {
-                            return false;
+
+                        // 如果勾選正確率過濾，檢查是否符合條件
+                        if (filterByAccuracy !== null) {
+                            const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
+                            const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+                            if (history.length === 0) {
+                                return false;
+                            }
+                            const correct = history.filter(v => v).length;
+                            const accuracy = Math.round((correct / history.length) * 100);
+                            if (!(accuracy <= filterByAccuracy)) {
+                                return false;
+                            }
                         }
-                    }
-                    return true;
-                });
+
+                        return true;
+                    });
+                }
             } else {
                 // 一般模式：根據sheet+tag過濾
                 filteredWords = allWords.filter(word => {
