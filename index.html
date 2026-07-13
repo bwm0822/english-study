@@ -1384,6 +1384,15 @@
             accuracyFilterContainer.appendChild(accuracyCheckbox);
             accuracyFilterContainer.appendChild(accuracyLabel);
             accuracyFilterContainer.appendChild(accuracySelect);
+
+            // 點擊時 toggle checkbox
+            accuracyFilterContainer.onclick = (e) => {
+                if (e.target !== accuracyCheckbox && e.target !== accuracySelect) {
+                    accuracyCheckbox.checked = !accuracyCheckbox.checked;
+                    updateQuizDropdownButton();
+                }
+            };
+
             container.appendChild(accuracyFilterContainer);
 
             Object.entries(sheetData).forEach(([sheetName, words]) => {
@@ -1686,12 +1695,10 @@
                     const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
                     const history = JSON.parse(localStorage.getItem(historyKey)) || [];
                     if (history.length === 0) {
-                        console.log('No history for:', word.單字);
                         return false; // 沒有歷史記錄的單字不包含
                     }
                     const correct = history.filter(v => v).length;
                     const accuracy = Math.round((correct / history.length) * 100);
-                    console.log(`Word: ${word.單字}, Accuracy: ${accuracy}%, Threshold: ${filterByAccuracy}%, Pass: ${accuracy < filterByAccuracy}`);
                     return accuracy < filterByAccuracy;
                 }
                 return true;
