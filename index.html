@@ -132,10 +132,13 @@
             color: white;
             border: none;
             border-radius: 4px;
-            padding: 10px 30px;
-            font-size: 1em;
+            padding: 6px 18px;
+            font-size: 0.9em;
+            line-height: 1;
             cursor: pointer;
             font-weight: 600;
+            height: auto;
+            min-height: unset;
         }
 
         .start-quiz-btn:hover {
@@ -961,6 +964,7 @@
             const quizTagFilterContainer = document.getElementById('quizTagFilterContainer');
             const refreshBtn = document.getElementById('refreshBtn');
             const startQuizBtn = document.getElementById('startQuizBtn');
+            const stats = document.getElementById('stats');
 
             if (mode === 'review') {
                 wordsContainer.style.display = 'block';
@@ -969,6 +973,7 @@
                 quizTagFilterContainer.style.display = 'none';
                 refreshBtn.style.display = 'block';
                 startQuizBtn.style.display = 'none';
+                stats.style.display = 'block';
                 renderWords();
             } else if (mode === 'quiz') {
                 wordsContainer.style.display = 'none';
@@ -977,6 +982,7 @@
                 quizTagFilterContainer.style.display = 'flex';
                 refreshBtn.style.display = 'none';
                 startQuizBtn.style.display = 'block';
+                stats.style.display = 'block';
                 initQuizPanel();
             } else {
                 wordsContainer.style.display = 'block';
@@ -985,6 +991,7 @@
                 quizTagFilterContainer.style.display = 'none';
                 refreshBtn.style.display = 'none';
                 startQuizBtn.style.display = 'none';
+                stats.style.display = 'block';
                 renderWords();
             }
         }
@@ -1179,7 +1186,11 @@
 
         // 測驗相關函數
         function initQuizPanel() {
-            console.log('initQuizPanel 被調用');
+            // 清理舊的 sheetSubmenu
+            document.querySelectorAll('.sheet-submenu').forEach(submenu => {
+                submenu.remove();
+            });
+
             const container = document.getElementById('quizSheetGroupsContainer');
             container.innerHTML = '';
 
@@ -1200,7 +1211,15 @@
                     const sheetCheckbox = document.createElement('input');
                     sheetCheckbox.type = 'checkbox';
                     sheetCheckbox.checked = true;
-                    sheetCheckbox.dataset.sheetName = sheetName;
+                    sheetCheckbox.setAttribute('data-sheet-name', sheetName);
+                    sheetCheckbox.onchange = function() {
+                        // 當 Sheet checkbox 改變時，同步該 Sheet 下所有 tag 的狀態
+                        const tagCheckboxes = document.querySelectorAll(`input[data-sheet="${sheetName}"]`);
+                        tagCheckboxes.forEach(checkbox => {
+                            checkbox.checked = this.checked;
+                        });
+                        updateQuizDropdownButton();
+                    };
                     sheetCheckbox.onclick = (e) => {
                         e.stopPropagation();
                     };
@@ -1248,7 +1267,6 @@
                         checkbox.checked = true;
                         checkbox.dataset.sheet = sheetName;
                         checkbox.addEventListener('change', function() {
-                            console.log('checkbox 改變:', tag, this.checked);
                             updateQuizDropdownButton();
                         });
                         checkbox.onclick = (e) => {
@@ -1265,7 +1283,6 @@
                         label.onclick = (e) => {
                             e.stopPropagation();
                             checkbox.checked = !checkbox.checked;
-                            console.log('label 點擊，checkbox 改變:', tag, checkbox.checked);
                             updateQuizDropdownButton();
                         };
 
@@ -1310,9 +1327,7 @@
 
         function selectAllInQuizSheet(event, sheetName) {
             event.stopPropagation();
-            console.log('全選:', sheetName);
             const checkboxes = document.querySelectorAll(`input[data-sheet="${sheetName}"]`);
-            console.log('找到 checkbox:', checkboxes.length);
             checkboxes.forEach(checkbox => {
                 checkbox.checked = true;
             });
@@ -1321,9 +1336,7 @@
 
         function clearAllInQuizSheet(event, sheetName) {
             event.stopPropagation();
-            console.log('清除:', sheetName);
             const checkboxes = document.querySelectorAll(`input[data-sheet="${sheetName}"]`);
-            console.log('找到 checkbox:', checkboxes.length);
             checkboxes.forEach(checkbox => {
                 checkbox.checked = false;
             });
@@ -1332,31 +1345,72 @@
 
         function updateQuizDropdownButton() {
             const btn = document.querySelector('#quizTagFilterContainer .tag-dropdown-btn');
-            if (!btn) {
-                console.log('找不到按鈕');
-                return;
+            const stats = document.getElementById('stats');
+            if (!btn) return;
+
+            // 檢查 sheet checkbox 的狀態
+            const enabledSheets = new Set();
+            document.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
+                if (sheetCheckbox.checked) {
+                    enabledSheets.add(sheetCheckbox.getAttribute('data-sheet-name'));
+                }
+            });
+
+            // 獲取選中的 tags（只考慮 enabled sheets）
+            const selectedSheetTags = new Map();
+            document.querySelectorAll('input[data-sheet]').forEach(checkbox => {
+                if (checkbox.checked && enabledSheets.has(checkbox.dataset.sheet)) {
+                    const sheetName = checkbox.dataset.sheet;
+                    if (!selectedSheetTags.has(sheetName)) {
+                        selectedSheetTags.set(sheetName, new Set());
+                    }
+                    selectedSheetTags.get(sheetName).add(checkbox.value);
+                }
+            });
+
+            // 計算選中的單詞數量
+            let selectedWords = 0;
+            if (selectedSheetTags.size > 0) {
+                selectedWords = allWords.filter(word => {
+                    if (!selectedSheetTags.has(word.sheet)) {
+                        return false;
+                    }
+                    return selectedSheetTags.get(word.sheet).has(word.tag);
+                }).length;
             }
-            const checkboxes = document.querySelectorAll('input[data-sheet]');
-            console.log('找到 checkbox 數量:', checkboxes.length);
+
             let totalSelected = 0;
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
+            document.querySelectorAll('input[data-sheet]').forEach(checkbox => {
+                if (checkbox.checked && enabledSheets.has(checkbox.dataset.sheet)) {
                     totalSelected++;
                 }
             });
-            console.log('已選擇:', totalSelected);
+
             if (totalSelected === 0) {
                 btn.innerHTML = '清除 <span>▼</span>';
             } else {
                 btn.innerHTML = `已選擇 ${totalSelected} 個 <span>▼</span>`;
             }
+
+            // 更新統計信息 - 顯示選中的單詞數量
+            if (stats) {
+                stats.textContent = `共 ${selectedWords} 項`;
+            }
         }
 
         function startQuiz() {
-            // 獲取勾選的tags - 加入到對應的sheet
+            // 檢查 sheet checkbox 的狀態
+            const enabledSheets = new Set();
+            document.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
+                if (sheetCheckbox.checked) {
+                    enabledSheets.add(sheetCheckbox.getAttribute('data-sheet-name'));
+                }
+            });
+
+            // 獲取勾選的tags - 加入到對應的sheet（只考慮 enabled sheets）
             const selectedSheetTags = new Map(); // {sheetName: Set<tag>}
             document.querySelectorAll('input[data-sheet]').forEach(checkbox => {
-                if (checkbox.checked) {
+                if (checkbox.checked && enabledSheets.has(checkbox.dataset.sheet)) {
                     const sheetName = checkbox.dataset.sheet;
                     if (!selectedSheetTags.has(sheetName)) {
                         selectedSheetTags.set(sheetName, new Set());
