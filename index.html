@@ -14,10 +14,14 @@
             box-sizing: border-box;
         }
 
+        html, body {
+            height: 100%;
+            width: 100%;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            height: 100vh;
             padding: 10px;
             overflow: hidden;
         }
@@ -82,14 +86,19 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 20px;
             background: white;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            min-height: 0;
         }
 
         .quiz-panel {
             text-align: center;
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+            min-height: 0;
         }
 
         .quiz-controls {
@@ -153,6 +162,8 @@
             align-items: center;
             gap: 20px;
             padding: 20px;
+            overflow: hidden;
+            min-height: 0;
         }
 
         .quiz-header {
@@ -309,7 +320,11 @@
         }
 
         .quiz-result {
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+            min-height: 0;
         }
 
         .result-header {
@@ -320,35 +335,113 @@
             margin-bottom: 20px;
         }
 
+        .result-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            width: 100%;
+            flex: 0 0 auto;
+            padding: 8px 12px 0 12px;
+        }
+
         .result-score {
-            font-size: 2em;
+            font-size: 0.9em;
             font-weight: 600;
             color: #667eea;
-            margin-bottom: 20px;
+            text-align: center;
+            flex: 1;
+            line-height: 1;
         }
 
         .result-words {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 30px;
+            flex: 1;
+            overflow-y: auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            min-height: 0;
+            /* max-height: calc(100vh - 180px); */
+            max-height: 100%;
+            padding: 0 12px 8px 12px;
         }
 
         .result-word {
-            padding: 8px 15px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
+            display: flex;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+            height: auto;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            font-size: 0.85em;
         }
 
         .result-word.correct {
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: white;
+            color: #333;
         }
 
         .result-word.wrong {
-            background: #f44336;
+            background: #ffcdd2;
+            color: #333;
+        }
+
+        .result-word.wrong {
+            background: #ffcdd2;
+            color: #333;
+        }
+
+        .result-word.correct {
+            background: white;
+            color: #333;
+        }
+
+        .result-word-star {
+            flex: 0 0 30px;
+            text-align: center;
+            font-size: 1.2em;
+            cursor: pointer;
+            color: #ffa500;
+        }
+
+        .result-word-star:hover {
+            transform: scale(1.2);
+        }
+
+        .result-word-tag {
+            flex: 0 0 50px;
+            background: #667eea;
             color: white;
+            padding: 4px 6px;
+            border-radius: 3px;
+            font-size: 0.7em;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.2;
+        }
+
+        .result-word-english {
+            flex: 0 0 100px;
+            font-weight: bold;
+        }
+
+        .result-word-pos {
+            flex: 0 0 50px;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            text-align: center;
+        }
+
+        .result-word-chinese {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .back-btn {
@@ -786,12 +879,11 @@
 
             <!-- 測驗結果 -->
             <div class="quiz-result" id="quizResult" style="display: none;">
-                <div class="result-header">
-                    <h2>測驗結果</h2>
+                <div class="result-header-top">
                     <div class="result-score" id="resultScore"></div>
+                    <button class="back-btn" onclick="backToQuizPanel()">返回</button>
                 </div>
                 <div class="result-words" id="resultWords"></div>
-                <button class="back-btn" onclick="backToQuizPanel()">返回</button>
             </div>
         </div>
     </div>
@@ -1194,6 +1286,31 @@
             const container = document.getElementById('quizSheetGroupsContainer');
             container.innerHTML = '';
 
+            // 添加星號選項
+            const starItem = document.createElement('div');
+            starItem.className = 'tag-checkbox-item';
+            starItem.style.borderBottom = '1px solid #eee';
+            starItem.style.paddingBottom = '10px';
+            starItem.style.marginBottom = '10px';
+
+            const starCheckbox = document.createElement('input');
+            starCheckbox.type = 'checkbox';
+            starCheckbox.id = 'quiz-star-filter';
+            starCheckbox.dataset.isStar = 'true';
+            starCheckbox.addEventListener('change', updateQuizDropdownButton);
+
+            const starLabel = document.createElement('span');
+            starLabel.textContent = '☆ 僅限有星號';
+
+            starItem.appendChild(starCheckbox);
+            starItem.appendChild(starLabel);
+            starItem.onclick = (e) => {
+                e.stopPropagation();
+                starCheckbox.checked = !starCheckbox.checked;
+                updateQuizDropdownButton();
+            };
+            container.appendChild(starItem);
+
             Object.entries(sheetData).forEach(([sheetName, words]) => {
                 if (Array.isArray(words)) {
                     // 建立該sheet的所有tag
@@ -1348,6 +1465,10 @@
             const stats = document.getElementById('stats');
             if (!btn) return;
 
+            // 檢查星號篩選
+            const starCheckbox = document.getElementById('quiz-star-filter');
+            const filterByStar = starCheckbox ? starCheckbox.checked : false;
+
             // 檢查 sheet checkbox 的狀態
             const enabledSheets = new Set();
             document.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
@@ -1375,7 +1496,15 @@
                     if (!selectedSheetTags.has(word.sheet)) {
                         return false;
                     }
-                    return selectedSheetTags.get(word.sheet).has(word.tag);
+                    if (!selectedSheetTags.get(word.sheet).has(word.tag)) {
+                        return false;
+                    }
+                    // 如果勾選星號篩選，只包含有星號的單字
+                    if (filterByStar) {
+                        const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        return localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                    }
+                    return true;
                 }).length;
             }
 
@@ -1399,6 +1528,10 @@
         }
 
         function startQuiz() {
+            // 檢查星號篩選
+            const starCheckbox = document.getElementById('quiz-star-filter');
+            const filterByStar = starCheckbox ? starCheckbox.checked : false;
+
             // 檢查 sheet checkbox 的狀態
             const enabledSheets = new Set();
             document.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
@@ -1429,7 +1562,15 @@
                 if (!selectedSheetTags.has(word.sheet)) {
                     return false;
                 }
-                return selectedSheetTags.get(word.sheet).has(word.tag);
+                if (!selectedSheetTags.get(word.sheet).has(word.tag)) {
+                    return false;
+                }
+                // 如果勾選星號篩選，只包含有星號的單字
+                if (filterByStar) {
+                    const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    return localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                }
+                return true;
             });
 
             if (quizWords.length === 0) {
@@ -1518,18 +1659,62 @@
             const correctCount = quizResults.filter(r => r.isCorrect).length;
             const accuracy = Math.round((correctCount / quizResults.length) * 100);
 
-            document.getElementById('resultScore').innerHTML = `
-                <div>正確率: ${accuracy}%</div>
-                <div style="font-size: 0.8em; color: #666;">正確: ${correctCount} / ${quizResults.length}</div>
-            `;
+            document.getElementById('resultScore').innerHTML = `正確率: ${accuracy}% (${correctCount}/${quizResults.length})`;
 
             const resultWordsDiv = document.getElementById('resultWords');
             resultWordsDiv.innerHTML = '';
 
-            quizResults.forEach(result => {
+            quizResults.forEach((result, index) => {
                 const wordDiv = document.createElement('div');
                 wordDiv.className = `result-word ${result.isCorrect ? 'correct' : 'wrong'}`;
-                wordDiv.textContent = result.word.單字;
+
+                const word = result.word;
+                const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                const isFavorited = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+
+                // 星號
+                const starSpan = document.createElement('div');
+                starSpan.className = 'result-word-star';
+                starSpan.textContent = isFavorited ? '★' : '☆';
+                starSpan.onclick = (e) => {
+                    e.stopPropagation();
+                    // 重新檢查當前狀態
+                    const currentIsFav = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                    if (currentIsFav) {
+                        localStorage.removeItem(`favorite_${wordKey}`);
+                        starSpan.textContent = '☆';
+                    } else {
+                        localStorage.setItem(`favorite_${wordKey}`, 'true');
+                        starSpan.textContent = '★';
+                    }
+                };
+
+                // Sheet/Tag
+                const tagDiv = document.createElement('div');
+                tagDiv.className = 'result-word-tag';
+                tagDiv.innerHTML = `<div>${word.sheet}</div><div>${word.tag}</div>`;
+
+                // 英文單字
+                const englishSpan = document.createElement('div');
+                englishSpan.className = 'result-word-english';
+                englishSpan.textContent = word.單字;
+
+                // 詞性
+                const posSpan = document.createElement('div');
+                posSpan.className = 'result-word-pos';
+                posSpan.textContent = word.詞性;
+
+                // 中文
+                const chineseSpan = document.createElement('div');
+                chineseSpan.className = 'result-word-chinese';
+                chineseSpan.textContent = word.中文;
+
+                wordDiv.appendChild(starSpan);
+                wordDiv.appendChild(tagDiv);
+                wordDiv.appendChild(englishSpan);
+                wordDiv.appendChild(posSpan);
+                wordDiv.appendChild(chineseSpan);
+
                 resultWordsDiv.appendChild(wordDiv);
             });
         }
