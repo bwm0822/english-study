@@ -1306,9 +1306,11 @@
             starItem.appendChild(starCheckbox);
             starItem.appendChild(starLabel);
             starItem.onclick = (e) => {
-                e.stopPropagation();
-                starCheckbox.checked = !starCheckbox.checked;
-                updateQuizDropdownButton();
+                if (e.target !== starCheckbox) {
+                    // 只有點擊非checkbox的地方時才手動切換
+                    starCheckbox.checked = !starCheckbox.checked;
+                    updateQuizDropdownButton();
+                }
             };
             container.appendChild(starItem);
 
