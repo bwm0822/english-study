@@ -1015,7 +1015,7 @@
 
                         // 建立sheet項目
                         const sheetItem = document.createElement('div');
-                        sheetItem.className = 'sheet-item';
+                        sheetItem.className = 'sheet-item normal-sheet-item';
 
                         // Sheet標題（可展開）
                         const sheetHeader = document.createElement('div');
@@ -1160,6 +1160,10 @@
                 refreshBtn.style.display = 'block';
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'block';
+                // 隱藏所有sheet項目，只顯示過濾器
+                document.querySelectorAll('.normal-sheet-item').forEach(item => {
+                    item.style.display = 'none';
+                });
                 // 顯示複習模式的過濾器
                 const starFilterItem = document.getElementById('review-star-filter-item');
                 const accuracyFilterItem = document.getElementById('review-accuracy-filter-item');
@@ -1186,6 +1190,10 @@
                 refreshBtn.style.display = 'none';
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'block';
+                // 顯示所有sheet項目
+                document.querySelectorAll('.normal-sheet-item').forEach(item => {
+                    item.style.display = 'block';
+                });
                 // 隱藏複習模式的過濾器
                 const starFilterItem = document.getElementById('review-star-filter-item');
                 const accuracyFilterItem = document.getElementById('review-accuracy-filter-item');
