@@ -507,16 +507,17 @@
             position: absolute;
             top: 100%;
             left: 0;
-            background: white;
-            border: 1px solid #ddd;
+            background: #4a4a62;
+            border: 1px solid #5a5a72;
             border-radius: 4px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             z-index: 100;
             min-width: 300px;
             max-height: calc(100vh - 150px);
             overflow-y: auto;
             display: none;
             margin-top: 4px;
+            color: #b8b8b8;
         }
 
         .tag-dropdown-menu.active {
@@ -524,7 +525,7 @@
         }
 
         .sheet-item {
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #5a5a72;
             position: relative;
         }
 
@@ -533,15 +534,16 @@
             align-items: center;
             padding: 8px 12px;
             gap: 8px;
-            background: #f9f9f9;
+            background: #4a4a62;
             font-weight: 600;
             font-size: 0.9em;
             cursor: pointer;
             position: relative;
+            color: #b8b8b8;
         }
 
         .sheet-item-header:hover {
-            background: #f0f0f0;
+            background: #5a5a72;
         }
 
         .sheet-item-header::after {
@@ -549,7 +551,7 @@
             position: absolute;
             right: 8px;
             font-size: 0.7em;
-            color: #999;
+            color: #8a8a8a;
             transition: transform 0.2s;
         }
 
@@ -561,7 +563,7 @@
             width: 20px;
             text-align: center;
             font-size: 0.8em;
-            color: #666;
+            color: #8a8a8a;
         }
 
         .sheet-item-header input[type="checkbox"] {
@@ -578,39 +580,42 @@
         .sheet-group-header {
             position: sticky;
             top: 0;
-            background: white;
-            border-bottom: 1px solid #ddd;
+            background: #4a4a62;
+            border-bottom: 1px solid #5a5a72;
             padding: 6px 12px 6px 20px;
             z-index: 10;
             display: flex;
             gap: 8px;
+            color: #b8b8b8;
         }
 
         .sheet-group-header button {
             padding: 4px 12px;
             font-size: 0.85em;
-            border: 1px solid #ddd;
-            background: white;
+            border: 1px solid #5a5a72;
+            background: #5a5a72;
             border-radius: 3px;
             cursor: pointer;
             margin-right: 15px;
+            color: #b8b8b8;
         }
 
         .sheet-group-header button:hover {
-            background: #f5f5f5;
+            background: #6a6a82;
         }
 
         .sheet-submenu {
             position: fixed;
-            background: white;
-            border: 1px solid #ddd;
+            background: #4a4a62;
+            border: 1px solid #5a5a72;
             border-radius: 4px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             z-index: 9999;
             min-width: 150px;
             max-height: calc(100vh - 100px);
             overflow-y: auto;
             display: none;
+            color: #b8b8b8;
         }
 
         .sheet-submenu.expanded {
