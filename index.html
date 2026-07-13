@@ -176,7 +176,7 @@
         }
 
         .quiz-progress {
-            font-size: 0.9em;
+            font-size: 1.2em;
             color: #666;
         }
 
@@ -346,7 +346,7 @@
         }
 
         .result-score {
-            font-size: 0.9em;
+            font-size: 1.5em;
             font-weight: 600;
             color: #667eea;
             text-align: center;
@@ -846,8 +846,9 @@
 
         <!-- 測驗界面 -->
         <div class="quiz-container" id="quizContainer" style="display: none;">
-            <!-- 測驗控制面板 -->
-            <div class="quiz-panel" id="quizPanel" style="display: none;">
+            <!-- 測驗開始按鈕 -->
+            <div style="display: none; justify-content: center; align-items: center; flex: 1;" id="quizStartPanel">
+                <button class="start-quiz-btn" onclick="startQuiz()">開始測驗</button>
             </div>
 
             <!-- 測驗進行中 -->
@@ -1070,8 +1071,11 @@
                 tagFilterContainer.style.display = 'none';
                 quizTagFilterContainer.style.display = 'flex';
                 refreshBtn.style.display = 'none';
-                startQuizBtn.style.display = 'block';
+                startQuizBtn.style.display = 'none';
                 stats.style.display = 'block';
+                document.getElementById('quizStartPanel').style.display = 'flex';
+                document.getElementById('quizSession').style.display = 'none';
+                document.getElementById('quizResult').style.display = 'none';
                 initQuizPanel();
             } else {
                 wordsContainer.style.display = 'block';
@@ -1587,7 +1591,7 @@
 
             quizIndex = 0;
             document.getElementById('quizTagFilterContainer').style.display = 'none';
-            document.getElementById('startQuizBtn').style.display = 'none';
+            document.getElementById('quizStartPanel').style.display = 'none';
             document.getElementById('quizSession').style.display = 'flex';
             showQuizQuestion();
         }
@@ -1718,16 +1722,15 @@
 
         function backToQuizPanel() {
             document.getElementById('quizTagFilterContainer').style.display = 'flex';
-            document.getElementById('startQuizBtn').style.display = 'block';
+            document.getElementById('quizStartPanel').style.display = 'flex';
             document.getElementById('quizSession').style.display = 'none';
             document.getElementById('quizResult').style.display = 'none';
-            initQuizPanel();
         }
 
         function cancelQuiz() {
             if (confirm('確定要取消測驗嗎？')) {
                 document.getElementById('quizTagFilterContainer').style.display = 'flex';
-                document.getElementById('startQuizBtn').style.display = 'block';
+                document.getElementById('quizStartPanel').style.display = 'flex';
                 document.getElementById('quizSession').style.display = 'none';
                 document.getElementById('quizResult').style.display = 'none';
             }
