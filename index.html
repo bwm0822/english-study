@@ -21,7 +21,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #2d2d45 0%, #25254f 100%);
             padding: 10px;
             overflow: hidden;
         }
@@ -31,6 +31,8 @@
             flex-direction: column;
             height: 100%;
             box-sizing: border-box;
+            background: linear-gradient(135deg, #2d2d45 0%, #25254f 100%);
+            border-radius: 8px;
         }
 
         .controls {
@@ -86,11 +88,12 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: white;
+            background: #3a3a52;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             min-height: 0;
+            color: #d8d8d8;
         }
 
         .quiz-panel {
@@ -672,30 +675,32 @@
         .words-container {
             flex: 1;
             overflow-y: auto;
-            background: white;
+            background: #3a3a52;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            color: #d8d8d8;
         }
 
         .word-row {
             display: flex;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #4a4a60;
             cursor: pointer;
             transition: background 0.2s;
             height: auto;
             align-items: center;
+            color: #d8d8d8;
         }
 
         .word-row:nth-child(odd) {
-            background: #e3f2fd;
+            background: #3a3a52;
         }
 
         .word-row:nth-child(even) {
-            background: #f5f9ff;
+            background: #424260;
         }
 
         .word-row:hover {
-            background: #bbdefb;
+            background: #4a4a68;
         }
 
         .word-index {
@@ -772,7 +777,7 @@
 
         .word-word {
             font-weight: bold;
-            color: #333;
+            color: #d8d8d8;
             min-width: 100px;
             flex-shrink: 0;
         }
@@ -785,18 +790,18 @@
         }
 
         .word-pos {
-            background: #f0f0f0;
+            background: #4a4a60;
             padding: 2px 6px;
             border-radius: 3px;
             font-size: 0.8em;
-            color: #666;
+            color: #d8d8d8;
             min-width: 50px;
             text-align: center;
             flex-shrink: 0;
         }
 
         .word-chinese {
-            color: #555;
+            color: #d8d8d8;
             flex: 1;
             min-width: 0;
             white-space: nowrap;
@@ -806,7 +811,7 @@
 
         .word-right {
             flex: 1;
-            border-left: 1px solid #ddd;
+            border-left: 1px solid #4a4a60;
             padding: 12px 15px;
             overflow: hidden;
             display: flex;
@@ -814,6 +819,7 @@
             gap: 10px;
             justify-content: center;
             min-width: 0;
+            color: #d8d8d8;
         }
 
         .content-half {
@@ -826,7 +832,7 @@
         }
 
         .content-text {
-            color: #333;
+            color: #d8d8d8;
             font-size: 0.9em;
             line-height: 1.4;
         }
