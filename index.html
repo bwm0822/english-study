@@ -421,6 +421,14 @@
             line-height: 1.2;
         }
 
+        .result-word-accuracy {
+            flex: 0 0 50px;
+            text-align: center;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
         .result-word-english {
             flex: 0 0 100px;
             font-weight: bold;
@@ -698,6 +706,15 @@
             gap: 2px;
             line-height: 1.2;
             width: 50px;
+            text-align: center;
+        }
+
+        .word-accuracy {
+            flex-shrink: 0;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #667eea;
+            min-width: 40px;
             text-align: center;
         }
 
@@ -1246,12 +1263,23 @@
                     }
                 };
 
+                // 計算正確率
+                const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
+                const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+                let accuracyDisplay = '--';
+                if (history.length > 0) {
+                    const correct = history.filter(v => v).length;
+                    const accuracy = Math.round((correct / history.length) * 100);
+                    accuracyDisplay = `${accuracy}%`;
+                }
+
                 // 創建左側內容
                 const wordLeft = document.createElement('div');
                 wordLeft.className = 'word-left';
                 wordLeft.onclick = () => playPronunciation(word.單字);
                 wordLeft.innerHTML = `
                     ${word.sheet || word.tag ? `<span class="word-tag"><div class="word-tag-sheet">${word.sheet || ''}</div><div class="word-tag-tag">${word.tag || ''}</div></span>` : ''}
+                    <span class="word-accuracy">${accuracyDisplay}</span>
                     <span class="word-word">${word.單字}</span>
                     <span class="word-phonetic">${word.音標}</span>
                     <span class="word-pos">${word.詞性}</span>
@@ -1659,6 +1687,19 @@
             document.getElementById('quizSession').style.display = 'none';
             document.getElementById('quizResult').style.display = 'block';
 
+            // 保存每個單詞的測驗結果到localStorage
+            quizResults.forEach(result => {
+                const word = result.word;
+                const wordKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
+                let history = JSON.parse(localStorage.getItem(wordKey)) || [];
+                history.push(result.isCorrect);
+                // 只保留最近5次
+                if (history.length > 5) {
+                    history = history.slice(-5);
+                }
+                localStorage.setItem(wordKey, JSON.stringify(history));
+            });
+
             const correctCount = quizResults.filter(r => r.isCorrect).length;
             const accuracy = Math.round((correctCount / quizResults.length) * 100);
 
@@ -1697,6 +1738,21 @@
                 tagDiv.className = 'result-word-tag';
                 tagDiv.innerHTML = `<div>${word.sheet}</div><div>${word.tag}</div>`;
 
+                // 計算正確率
+                const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
+                const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+                let accuracyDisplay = '--';
+                if (history.length > 0) {
+                    const correct = history.filter(v => v).length;
+                    const accuracy = Math.round((correct / history.length) * 100);
+                    accuracyDisplay = `${accuracy}%`;
+                }
+
+                // 正確率
+                const accuracyDiv = document.createElement('div');
+                accuracyDiv.className = 'result-word-accuracy';
+                accuracyDiv.textContent = accuracyDisplay;
+
                 // 英文單字
                 const englishSpan = document.createElement('div');
                 englishSpan.className = 'result-word-english';
@@ -1714,6 +1770,7 @@
 
                 wordDiv.appendChild(starSpan);
                 wordDiv.appendChild(tagDiv);
+                wordDiv.appendChild(accuracyDiv);
                 wordDiv.appendChild(englishSpan);
                 wordDiv.appendChild(posSpan);
                 wordDiv.appendChild(chineseSpan);
