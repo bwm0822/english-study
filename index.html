@@ -1349,6 +1349,43 @@
             };
             container.appendChild(starItem);
 
+            // 添加正確率過濾 checkbox + 下拉菜單
+            const accuracyFilterContainer = document.createElement('div');
+            accuracyFilterContainer.className = 'tag-checkbox-item';
+            accuracyFilterContainer.style.borderBottom = '1px solid #eee';
+            accuracyFilterContainer.style.paddingBottom = '10px';
+            accuracyFilterContainer.style.marginBottom = '10px';
+
+            const accuracyCheckbox = document.createElement('input');
+            accuracyCheckbox.type = 'checkbox';
+            accuracyCheckbox.id = 'quiz-accuracy-filter-checkbox';
+            accuracyCheckbox.addEventListener('change', updateQuizDropdownButton);
+
+            const accuracyLabel = document.createElement('span');
+            accuracyLabel.textContent = '正確率';
+
+            const accuracySelect = document.createElement('select');
+            accuracySelect.id = 'quiz-accuracy-filter-select';
+            accuracySelect.style.padding = '4px 8px';
+            accuracySelect.style.borderRadius = '3px';
+            accuracySelect.style.border = '1px solid #ddd';
+            accuracySelect.style.cursor = 'pointer';
+            accuracySelect.style.marginLeft = '5px';
+
+            ['<100%', '<80%', '<60%', '<40%', '<20%'].forEach(threshold => {
+                const option = document.createElement('option');
+                option.value = threshold;
+                option.textContent = threshold;
+                accuracySelect.appendChild(option);
+            });
+
+            accuracySelect.addEventListener('change', updateQuizDropdownButton);
+
+            accuracyFilterContainer.appendChild(accuracyCheckbox);
+            accuracyFilterContainer.appendChild(accuracyLabel);
+            accuracyFilterContainer.appendChild(accuracySelect);
+            container.appendChild(accuracyFilterContainer);
+
             Object.entries(sheetData).forEach(([sheetName, words]) => {
                 if (Array.isArray(words)) {
                     // 建立該sheet的所有tag
@@ -1473,7 +1510,7 @@
                 }
             });
 
-            document.getElementById('quizPanel').style.display = 'none';
+            document.getElementById('quizStartPanel').style.display = 'flex';
             document.getElementById('quizSession').style.display = 'none';
             document.getElementById('quizResult').style.display = 'none';
 
@@ -1527,6 +1564,15 @@
                 }
             });
 
+            // 檢查正確率篩選
+            const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
+            const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
+            let filterByAccuracy = null;
+            if (accuracyCheckbox && accuracyCheckbox.checked && accuracySelect) {
+                const threshold = accuracySelect.value.replace(/<|%/g, '');
+                filterByAccuracy = parseInt(threshold);
+            }
+
             // 計算選中的單詞數量
             let selectedWords = 0;
             if (selectedSheetTags.size > 0) {
@@ -1540,7 +1586,22 @@
                     // 如果勾選星號篩選，只包含有星號的單字
                     if (filterByStar) {
                         const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                        return localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                        if (localStorage.getItem(`favorite_${wordKey}`) !== 'true') {
+                            return false;
+                        }
+                    }
+                    // 如果勾選正確率篩選，只包含符合條件的單字
+                    if (filterByAccuracy !== null) {
+                        const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
+                        const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+                        if (history.length === 0) {
+                            return false;
+                        }
+                        const correct = history.filter(v => v).length;
+                        const accuracy = Math.round((correct / history.length) * 100);
+                        if (!(accuracy < filterByAccuracy)) {
+                            return false;
+                        }
                     }
                     return true;
                 }).length;
@@ -1595,6 +1656,16 @@
                 return;
             }
 
+            // 檢查正確率篩選
+            const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
+            const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
+            let filterByAccuracy = null;
+            if (accuracyCheckbox && accuracyCheckbox.checked && accuracySelect) {
+                // 移除 < 和 % 符號後解析
+                const threshold = accuracySelect.value.replace(/<|%/g, '');
+                filterByAccuracy = parseInt(threshold);
+            }
+
             // 收集要測驗的單詞 - 根據sheet和tag過濾
             quizWords = allWords.filter(word => {
                 if (!selectedSheetTags.has(word.sheet)) {
@@ -1606,7 +1677,22 @@
                 // 如果勾選星號篩選，只包含有星號的單字
                 if (filterByStar) {
                     const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                    return localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                    if (localStorage.getItem(`favorite_${wordKey}`) !== 'true') {
+                        return false;
+                    }
+                }
+                // 如果勾選正確率篩選，只包含符合條件的單字
+                if (filterByAccuracy !== null) {
+                    const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
+                    const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+                    if (history.length === 0) {
+                        console.log('No history for:', word.單字);
+                        return false; // 沒有歷史記錄的單字不包含
+                    }
+                    const correct = history.filter(v => v).length;
+                    const accuracy = Math.round((correct / history.length) * 100);
+                    console.log(`Word: ${word.單字}, Accuracy: ${accuracy}%, Threshold: ${filterByAccuracy}%, Pass: ${accuracy < filterByAccuracy}`);
+                    return accuracy < filterByAccuracy;
                 }
                 return true;
             });
