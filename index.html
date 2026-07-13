@@ -1372,7 +1372,7 @@
             accuracySelect.style.cursor = 'pointer';
             accuracySelect.style.marginLeft = '5px';
 
-            ['<100%', '<80%', '<60%', '<40%', '<20%'].forEach(threshold => {
+            ['<=80%', '<=60%', '<=40%', '<=20%'].forEach(threshold => {
                 const option = document.createElement('option');
                 option.value = threshold;
                 option.textContent = threshold;
@@ -1578,7 +1578,7 @@
             const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
             let filterByAccuracy = null;
             if (accuracyCheckbox && accuracyCheckbox.checked && accuracySelect) {
-                const threshold = accuracySelect.value.replace(/<|%/g, '');
+                const threshold = accuracySelect.value.replace(/[<=%]/g, '');
                 filterByAccuracy = parseInt(threshold);
             }
 
@@ -1671,7 +1671,7 @@
             let filterByAccuracy = null;
             if (accuracyCheckbox && accuracyCheckbox.checked && accuracySelect) {
                 // 移除 < 和 % 符號後解析
-                const threshold = accuracySelect.value.replace(/<|%/g, '');
+                const threshold = accuracySelect.value.replace(/[<=%]/g, '');
                 filterByAccuracy = parseInt(threshold);
             }
 
@@ -1699,7 +1699,7 @@
                     }
                     const correct = history.filter(v => v).length;
                     const accuracy = Math.round((correct / history.length) * 100);
-                    return accuracy < filterByAccuracy;
+                    return accuracy <= filterByAccuracy;
                 }
                 return true;
             });
