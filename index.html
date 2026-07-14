@@ -944,6 +944,178 @@
             background: #5568d3;
         }
 
+        .word-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .word-modal-content {
+            background: #3a3a52;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 700px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            color: #b8b8b8;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .word-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid #4a4a60;
+        }
+
+        .word-modal-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-index {
+            font-weight: bold;
+            color: #999;
+            min-width: 25px;
+            font-size: 0.9em;
+        }
+
+        .modal-star {
+            font-size: 1.1em;
+            cursor: pointer;
+            color: #ffa500;
+        }
+
+        .modal-tag {
+            background: #667eea;
+            color: white;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 0.7em;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.1;
+            min-width: 45px;
+        }
+
+        .modal-tag-sheet {
+            font-size: 0.85em;
+        }
+
+        .modal-tag-tag {
+            font-size: 0.75em;
+        }
+
+        .modal-accuracy {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 45px;
+            text-align: center;
+            font-size: 0.9em;
+        }
+
+        .modal-close-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 16px;
+            font-size: 0.9em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .modal-close-btn:hover {
+            background: #da190b;
+        }
+
+        .word-modal-body {
+            flex: 1;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .modal-word {
+            font-size: 1.9em;
+            font-weight: bold;
+            color: white;
+        }
+
+        .modal-phonetic {
+            font-size: 1em;
+            color: #ffa500;
+        }
+
+        .modal-info {
+            display: flex;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .modal-pos {
+            background: #4a4a60;
+            padding: 3px 6px;
+            border-radius: 3px;
+            flex-shrink: 0;
+            font-size: 0.8em;
+        }
+
+        .modal-chinese {
+            flex: 1;
+        }
+
+        .modal-example {
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #b8b8b8;
+            margin-top: 10px;
+        }
+
+        .modal-translation {
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #b8b8b8;
+        }
+
+        .word-modal-footer {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            border-top: 1px solid #4a4a60;
+            gap: 8px;
+        }
+
+        .modal-nav-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            cursor: pointer;
+            font-weight: 600;
+            flex: 0 0 calc(33.333% - 4px);
+            min-width: 0;
+        }
+
+        .modal-nav-btn:hover {
+            background: #0b7dda;
+        }
+
         @media (max-width: 1024px) {
             .word-right {
                 width: 100%;
@@ -1037,6 +1209,43 @@
                 <div class="result-words" id="resultWords"></div>
             </div>
         </div>
+
+        <!-- 單字視窗 -->
+        <div class="word-modal" id="wordModal" style="display: none;">
+            <div class="word-modal-content">
+                <!-- 頁頭 -->
+                <div class="word-modal-header">
+                    <div class="word-modal-left">
+                        <span id="modalWordIndex" class="modal-index"></span>
+                        <span id="modalWordStar" class="modal-star">☆</span>
+                        <div id="modalWordTag" class="modal-tag">
+                            <div class="modal-tag-sheet"></div>
+                            <div class="modal-tag-tag"></div>
+                        </div>
+                        <span id="modalWordAccuracy" class="modal-accuracy"></span>
+                    </div>
+                    <button class="modal-close-btn" onclick="closeWordModal()">離開</button>
+                </div>
+
+                <!-- 單字信息 -->
+                <div class="word-modal-body">
+                    <div class="modal-word" id="modalWord"></div>
+                    <div class="modal-phonetic" id="modalPhonetic"></div>
+                    <div class="modal-info">
+                        <span id="modalPos" class="modal-pos"></span>
+                        <span id="modalChinese" class="modal-chinese"></span>
+                    </div>
+                    <div class="modal-example" id="modalExample"></div>
+                    <div class="modal-translation" id="modalTranslation"></div>
+                </div>
+
+                <!-- 導航按鈕 -->
+                <div class="word-modal-footer">
+                    <button class="modal-nav-btn" onclick="previousWord()">上一個</button>
+                    <button class="modal-nav-btn" onclick="nextWord()">下一個</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -1056,6 +1265,10 @@
         let quizWords = [];
         let quizIndex = 0;
         let quizResults = [];
+
+        // 單字視窗相關變數
+        let currentFilteredWords = [];
+        let modalCurrentWordIndex = -1;
 
         fetch('output.json?t=' + new Date().getTime())
             .then(r => r.json())
@@ -1742,7 +1955,11 @@
                 sentenceBtn.textContent = 'ⓘ';
                 sentenceBtn.onclick = (e) => {
                     e.stopPropagation();
-                    wordRight.classList.toggle('show');
+                    // 在 filteredWords 中查找當前單字的索引
+                    const wordIndex = filteredWords.findIndex(w =>
+                        w.sheet === word.sheet && w.tag === word.tag && w.單字 === word.單字
+                    );
+                    openWordModal(wordIndex, filteredWords);
                 };
 
                 // 創建右側內容
@@ -1761,6 +1978,10 @@
                 const indexDiv = document.createElement('div');
                 indexDiv.className = 'word-index';
                 indexDiv.textContent = index + 1;
+
+                // 添加 data 屬性用於識別單字
+                row.dataset.wordKey = wordKey;
+                row.dataset.filteredIndex = index;
 
                 row.appendChild(indexDiv);
                 row.appendChild(starBtn);
@@ -2414,6 +2635,133 @@
             const settingsContainer = document.getElementById('settingsMenuContainer');
             if (settingsContainer && !settingsContainer.contains(e.target)) {
                 document.getElementById('settingsDropdown').classList.remove('active');
+            }
+        });
+
+        // 單字視窗函數
+        function openWordModal(wordIndex, filteredWords) {
+            currentFilteredWords = filteredWords;
+            modalCurrentWordIndex = wordIndex;
+            displayWordInModal(wordIndex, filteredWords);
+            document.getElementById('wordModal').style.display = 'flex';
+
+            // Focus 到單字列中對應的單字
+            if (wordIndex >= 0 && wordIndex < filteredWords.length) {
+                const word = filteredWords[wordIndex];
+                const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                const wordRow = document.querySelector(`[data-word-key="${wordKey}"][data-filtered-index="${wordIndex}"]`);
+                if (wordRow) {
+                    wordRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    wordRow.style.backgroundColor = '#5a5a72';
+                    setTimeout(() => {
+                        wordRow.style.backgroundColor = '';
+                    }, 1000);
+                }
+            }
+        }
+
+        function closeWordModal() {
+            document.getElementById('wordModal').style.display = 'none';
+            currentFilteredWords = [];
+            modalCurrentWordIndex = -1;
+        }
+
+        function displayWordInModal(wordIndex, filteredWords) {
+            if (wordIndex < 0 || wordIndex >= filteredWords.length) return;
+
+            const word = filteredWords[wordIndex];
+            const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+
+            // 更新導航按鈕顯示狀態
+            const prevBtn = document.querySelector('.word-modal-footer .modal-nav-btn:nth-child(1)');
+            const nextBtn = document.querySelector('.word-modal-footer .modal-nav-btn:nth-child(2)');
+            prevBtn.style.visibility = wordIndex > 0 ? 'visible' : 'hidden';
+            nextBtn.style.visibility = wordIndex < filteredWords.length - 1 ? 'visible' : 'hidden';
+
+            // 更新頁頭
+            document.getElementById('modalWordIndex').textContent = wordIndex + 1;
+
+            const starSpan = document.getElementById('modalWordStar');
+            const isFavorited = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+            starSpan.textContent = isFavorited ? '★' : '☆';
+            starSpan.onclick = (e) => {
+                e.stopPropagation();
+                const currentIsFav = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                if (currentIsFav) {
+                    localStorage.removeItem(`favorite_${wordKey}`);
+                    starSpan.textContent = '☆';
+                } else {
+                    localStorage.setItem(`favorite_${wordKey}`, 'true');
+                    starSpan.textContent = '★';
+                }
+            };
+
+            const tagDiv = document.getElementById('modalWordTag');
+            tagDiv.querySelector('.modal-tag-sheet').textContent = word.sheet;
+            tagDiv.querySelector('.modal-tag-tag').textContent = word.tag;
+
+            const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
+            const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+            let accuracyDisplay = '--';
+            if (history.length > 0) {
+                const correct = history.filter(v => v).length;
+                const accuracy = Math.round((correct / history.length) * 100);
+                accuracyDisplay = `${accuracy}%`;
+            }
+            document.getElementById('modalWordAccuracy').textContent = accuracyDisplay;
+
+            // 更新內容
+            const modalWordEl = document.getElementById('modalWord');
+            modalWordEl.textContent = word.單字;
+            modalWordEl.style.cursor = 'pointer';
+            modalWordEl.onclick = () => playPronunciation(word.單字);
+
+            const modalPhoneticEl = document.getElementById('modalPhonetic');
+            modalPhoneticEl.textContent = word.音標;
+            modalPhoneticEl.style.cursor = 'pointer';
+            modalPhoneticEl.onclick = () => playPronunciation(word.單字);
+
+            document.getElementById('modalPos').textContent = word.詞性;
+            document.getElementById('modalChinese').textContent = word.中文;
+            document.getElementById('modalExample').textContent = word.例句;
+            document.getElementById('modalTranslation').textContent = word.翻譯;
+        }
+
+        function previousWord() {
+            if (modalCurrentWordIndex > 0) {
+                modalCurrentWordIndex--;
+                displayWordInModal(modalCurrentWordIndex, currentFilteredWords);
+                focusWordInList(modalCurrentWordIndex, currentFilteredWords);
+            }
+        }
+
+        function nextWord() {
+            if (modalCurrentWordIndex < currentFilteredWords.length - 1) {
+                modalCurrentWordIndex++;
+                displayWordInModal(modalCurrentWordIndex, currentFilteredWords);
+                focusWordInList(modalCurrentWordIndex, currentFilteredWords);
+            }
+        }
+
+        function focusWordInList(wordIndex, filteredWords) {
+            if (wordIndex >= 0 && wordIndex < filteredWords.length) {
+                const word = filteredWords[wordIndex];
+                const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                const wordRow = document.querySelector(`[data-word-key="${wordKey}"][data-filtered-index="${wordIndex}"]`);
+                if (wordRow) {
+                    wordRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    wordRow.style.backgroundColor = '#5a5a72';
+                    setTimeout(() => {
+                        wordRow.style.backgroundColor = '';
+                    }, 1000);
+                }
+            }
+        }
+
+        // 點擊視窗外部時關閉
+        document.getElementById('wordModal').addEventListener('click', (e) => {
+            if (e.target.id === 'wordModal') {
+                closeWordModal();
             }
         });
     </script>
