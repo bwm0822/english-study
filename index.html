@@ -1929,7 +1929,7 @@
 
             // 獲取選中的 tags（只考慮 quiz mode 的 enabled sheets）
             const selectedSheetTags = new Map();
-            quizContainer.querySelectorAll('input[data-sheet]').forEach(checkbox => {
+            document.querySelectorAll('input.quiz-tag-checkbox').forEach(checkbox => {
                 if (checkbox.checked && enabledSheets.has(checkbox.dataset.sheet)) {
                     const sheetName = checkbox.dataset.sheet;
                     if (!selectedSheetTags.has(sheetName)) {
@@ -2017,7 +2017,7 @@
 
             // 獲取勾選的tags - 加入到對應的sheet（只考慮 quiz mode 的 enabled sheets）
             const selectedSheetTags = new Map(); // {sheetName: Set<tag>}
-            quizContainer.querySelectorAll('input[data-sheet]').forEach(checkbox => {
+            document.querySelectorAll('input.quiz-tag-checkbox').forEach(checkbox => {
                 if (checkbox.checked && enabledSheets.has(checkbox.dataset.sheet)) {
                     const sheetName = checkbox.dataset.sheet;
                     if (!selectedSheetTags.has(sheetName)) {
