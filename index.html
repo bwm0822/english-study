@@ -970,6 +970,9 @@
         let selectedTags = new Map(); // {sheetName: Set<tag>}
         let currentMode = 'normal'; // 'normal' or 'review' or 'quiz'
         let searchKeyword = ''; // 搜尋關鍵詞
+        let normalModeSheetNames = new Set(); // 記錄一般/複習模式的 sheet 名稱
+        let normalModeSelections = new Map(); // 保存 normal 模式的選擇狀態 {sheetName: Set<tag>}
+        let quizModeSelections = new Map(); // 保存 quiz 模式的選擇狀態 {sheetName: Set<tag>}
 
         // 測驗相關變數
         let quizWords = [];
@@ -1061,6 +1064,9 @@
 
                 Object.entries(sheetData).forEach(([sheetName, words]) => {
                     if (Array.isArray(words)) {
+                        // 記錄 normal mode 的 sheet 名稱
+                        normalModeSheetNames.add(sheetName);
+
                         // 建立該sheet的所有tag
                         const sheetTags = [...new Set(words.map(w => w.tag))];
 
@@ -1087,6 +1093,7 @@
                         sheetCheckbox.type = 'checkbox';
                         sheetCheckbox.checked = true;
                         sheetCheckbox.dataset.sheetName = sheetName;
+                        sheetCheckbox.className = 'normal-sheet-checkbox';
                         sheetCheckbox.onchange = updateFilter;
                         sheetCheckbox.onclick = (e) => {
                             e.stopPropagation();
@@ -1103,7 +1110,6 @@
                         const sheetSubmenu = document.createElement('div');
                         sheetSubmenu.className = 'sheet-submenu';
                         sheetSubmenu.dataset.sheetName = sheetName;
-                        sheetSubmenu.dataset.mode = 'normal';
                         document.body.appendChild(sheetSubmenu);
 
                         // 按鈕行
@@ -1135,6 +1141,7 @@
                             checkbox.value = tag;
                             checkbox.checked = true;
                             checkbox.dataset.sheet = sheetName;
+                            checkbox.className = 'normal-tag-checkbox';
                             checkbox.onchange = updateFilter;
                             checkbox.onclick = (e) => {
                                 e.stopPropagation();
@@ -1210,6 +1217,54 @@
             });
 
         function changeMode(mode) {
+            // 離開 normal/review 模式時，保存選擇狀態
+            if (currentMode === 'normal' || currentMode === 'review') {
+                normalModeSelections.clear();
+                document.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
+                    if (sheetCheckbox.classList.contains('normal-sheet-checkbox')) {
+                        const sheetName = sheetCheckbox.dataset.sheetName;
+                        if (sheetCheckbox.checked) {
+                            if (!normalModeSelections.has(sheetName)) {
+                                normalModeSelections.set(sheetName, new Set());
+                            }
+                        }
+                    }
+                });
+                document.querySelectorAll('input.normal-tag-checkbox').forEach(tagCheckbox => {
+                    if (tagCheckbox.checked) {
+                        const sheetName = tagCheckbox.dataset.sheet;
+                        const tag = tagCheckbox.value;
+                        if (!normalModeSelections.has(sheetName)) {
+                            normalModeSelections.set(sheetName, new Set());
+                        }
+                        normalModeSelections.get(sheetName).add(tag);
+                    }
+                });
+            }
+
+            // 離開 quiz 模式時，保存選擇狀態
+            if (currentMode === 'quiz') {
+                quizModeSelections.clear();
+                document.querySelectorAll('input.quiz-sheet-checkbox').forEach(sheetCheckbox => {
+                    const sheetName = sheetCheckbox.dataset.sheetName;
+                    if (sheetCheckbox.checked) {
+                        if (!quizModeSelections.has(sheetName)) {
+                            quizModeSelections.set(sheetName, new Set());
+                        }
+                    }
+                });
+                document.querySelectorAll('input.quiz-tag-checkbox').forEach(tagCheckbox => {
+                    if (tagCheckbox.checked) {
+                        const sheetName = tagCheckbox.dataset.sheet;
+                        const tag = tagCheckbox.value;
+                        if (!quizModeSelections.has(sheetName)) {
+                            quizModeSelections.set(sheetName, new Set());
+                        }
+                        quizModeSelections.get(sheetName).add(tag);
+                    }
+                });
+            }
+
             currentMode = mode;
             const wordsContainer = document.getElementById('wordsContainer');
             const quizContainer = document.getElementById('quizContainer');
@@ -1282,6 +1337,20 @@
                 const accuracyFilterItem = document.getElementById('review-accuracy-filter-item');
                 if (starFilterItem) starFilterItem.style.display = 'none';
                 if (accuracyFilterItem) accuracyFilterItem.style.display = 'none';
+
+                // 恢復 normal 模式的選擇狀態
+                if (normalModeSelections.size > 0) {
+                    document.querySelectorAll('input.normal-sheet-checkbox').forEach(sheetCheckbox => {
+                        sheetCheckbox.checked = normalModeSelections.has(sheetCheckbox.dataset.sheetName);
+                    });
+                    document.querySelectorAll('input.normal-tag-checkbox').forEach(tagCheckbox => {
+                        const sheetName = tagCheckbox.dataset.sheet;
+                        const tag = tagCheckbox.value;
+                        tagCheckbox.checked = normalModeSelections.has(sheetName) &&
+                                            normalModeSelections.get(sheetName).has(tag);
+                    });
+                }
+
                 updateDropdownButton();
                 renderWords();
             }
@@ -1601,9 +1670,12 @@
 
         // 測驗相關函數
         function initQuizPanel() {
-            // 清理舊的 quiz mode sheetSubmenu
-            document.querySelectorAll('.sheet-submenu[data-mode="quiz"]').forEach(submenu => {
-                submenu.remove();
+            // 清理舊的 quiz mode sheetSubmenu（只刪除不屬於 normal mode 的）
+            document.querySelectorAll('.sheet-submenu').forEach(submenu => {
+                const sheetName = submenu.dataset.sheetName;
+                if (!normalModeSheetNames.has(sheetName)) {
+                    submenu.remove();
+                }
             });
 
             const container = document.getElementById('quizSheetGroupsContainer');
@@ -1700,9 +1772,10 @@
                     sheetCheckbox.type = 'checkbox';
                     sheetCheckbox.checked = true;
                     sheetCheckbox.setAttribute('data-sheet-name', sheetName);
+                    sheetCheckbox.className = 'quiz-sheet-checkbox';
                     sheetCheckbox.onchange = function() {
                         // 當 Sheet checkbox 改變時，同步該 Sheet 下所有 tag 的狀態
-                        const tagCheckboxes = document.querySelectorAll(`input[data-sheet="${sheetName}"]`);
+                        const tagCheckboxes = document.querySelectorAll(`input.quiz-tag-checkbox[data-sheet="${sheetName}"]`);
                         tagCheckboxes.forEach(checkbox => {
                             checkbox.checked = this.checked;
                         });
@@ -1723,7 +1796,6 @@
                     const sheetSubmenu = document.createElement('div');
                     sheetSubmenu.className = 'sheet-submenu';
                     sheetSubmenu.dataset.sheetName = sheetName;
-                    sheetSubmenu.dataset.mode = 'quiz';
                     document.body.appendChild(sheetSubmenu);
 
                     // 按鈕行
@@ -1755,6 +1827,7 @@
                         checkbox.value = tag;
                         checkbox.checked = true;
                         checkbox.dataset.sheet = sheetName;
+                        checkbox.className = 'quiz-tag-checkbox';
                         checkbox.addEventListener('change', function() {
                             updateQuizDropdownButton();
                         });
@@ -1811,13 +1884,25 @@
             document.getElementById('quizSession').style.display = 'none';
             document.getElementById('quizResult').style.display = 'none';
 
+            // 恢復之前保存的 quiz 模式選擇狀態
+            if (quizModeSelections.size > 0) {
+                document.querySelectorAll('input.quiz-sheet-checkbox').forEach(sheetCheckbox => {
+                    sheetCheckbox.checked = quizModeSelections.has(sheetCheckbox.dataset.sheetName);
+                });
+                document.querySelectorAll('input.quiz-tag-checkbox').forEach(tagCheckbox => {
+                    const sheetName = tagCheckbox.dataset.sheet;
+                    const tag = tagCheckbox.value;
+                    tagCheckbox.checked = quizModeSelections.has(sheetName) &&
+                                        quizModeSelections.get(sheetName).has(tag);
+                });
+            }
+
             updateQuizDropdownButton();
         }
 
         function selectAllInQuizSheet(event, sheetName) {
             event.stopPropagation();
-            const checkboxes = document.querySelectorAll(`input[data-sheet="${sheetName}"]`);
-            checkboxes.forEach(checkbox => {
+            document.querySelectorAll(`input.quiz-tag-checkbox[data-sheet="${sheetName}"]`).forEach(checkbox => {
                 checkbox.checked = true;
             });
             updateQuizDropdownButton();
@@ -1825,8 +1910,7 @@
 
         function clearAllInQuizSheet(event, sheetName) {
             event.stopPropagation();
-            const checkboxes = document.querySelectorAll(`input[data-sheet="${sheetName}"]`);
-            checkboxes.forEach(checkbox => {
+            document.querySelectorAll(`input.quiz-tag-checkbox[data-sheet="${sheetName}"]`).forEach(checkbox => {
                 checkbox.checked = false;
             });
             updateQuizDropdownButton();
@@ -1841,17 +1925,18 @@
             const starCheckbox = document.getElementById('quiz-star-filter');
             const filterByStar = starCheckbox ? starCheckbox.checked : false;
 
-            // 檢查 sheet checkbox 的狀態
+            // 只在 quiz mode 容器中查詢 sheet checkbox
+            const quizContainer = document.getElementById('quizSheetGroupsContainer');
             const enabledSheets = new Set();
-            document.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
+            quizContainer.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
                 if (sheetCheckbox.checked) {
                     enabledSheets.add(sheetCheckbox.getAttribute('data-sheet-name'));
                 }
             });
 
-            // 獲取選中的 tags（只考慮 enabled sheets）
+            // 獲取選中的 tags（只考慮 quiz mode 的 enabled sheets）
             const selectedSheetTags = new Map();
-            document.querySelectorAll('input[data-sheet]').forEach(checkbox => {
+            quizContainer.querySelectorAll('input[data-sheet]').forEach(checkbox => {
                 if (checkbox.checked && enabledSheets.has(checkbox.dataset.sheet)) {
                     const sheetName = checkbox.dataset.sheet;
                     if (!selectedSheetTags.has(sheetName)) {
@@ -1905,7 +1990,7 @@
             }
 
             let totalSelected = 0;
-            document.querySelectorAll('input[data-sheet]').forEach(checkbox => {
+            quizContainer.querySelectorAll('input[data-sheet]').forEach(checkbox => {
                 if (checkbox.checked && enabledSheets.has(checkbox.dataset.sheet)) {
                     totalSelected++;
                 }
@@ -1928,17 +2013,18 @@
             const starCheckbox = document.getElementById('quiz-star-filter');
             const filterByStar = starCheckbox ? starCheckbox.checked : false;
 
-            // 檢查 sheet checkbox 的狀態
+            // 只在 quiz mode 容器中查詢 sheet checkbox
+            const quizContainer = document.getElementById('quizSheetGroupsContainer');
             const enabledSheets = new Set();
-            document.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
+            quizContainer.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
                 if (sheetCheckbox.checked) {
                     enabledSheets.add(sheetCheckbox.getAttribute('data-sheet-name'));
                 }
             });
 
-            // 獲取勾選的tags - 加入到對應的sheet（只考慮 enabled sheets）
+            // 獲取勾選的tags - 加入到對應的sheet（只考慮 quiz mode 的 enabled sheets）
             const selectedSheetTags = new Map(); // {sheetName: Set<tag>}
-            document.querySelectorAll('input[data-sheet]').forEach(checkbox => {
+            quizContainer.querySelectorAll('input[data-sheet]').forEach(checkbox => {
                 if (checkbox.checked && enabledSheets.has(checkbox.dataset.sheet)) {
                     const sheetName = checkbox.dataset.sheet;
                     if (!selectedSheetTags.has(sheetName)) {
