@@ -791,6 +791,7 @@
             color: #b8b8b8;
             min-width: 100px;
             flex-shrink: 0;
+            font-size: 1.3em;
         }
 
         .word-phonetic {
@@ -821,7 +822,36 @@
         }
 
         .word-right {
+            flex: 1;
+            padding: 12px 15px;
+            overflow: hidden;
             display: none;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
+            min-width: 0;
+            color: #b8b8b8;
+        }
+
+        .word-right.show {
+            display: flex;
+        }
+
+        .sentence-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 2px;
+            padding: 2px 6px;
+            font-size: 0.95em;
+            cursor: pointer;
+            flex-shrink: 0;
+            white-space: nowrap;
+            margin-right: 15px;
+        }
+
+        .sentence-btn:hover {
+            background: #5568d3;
         }
 
         .content-half {
@@ -864,8 +894,6 @@
         @media (max-width: 1024px) {
             .word-right {
                 width: 100%;
-                border-left: none;
-                border-top: 1px solid #ddd;
                 margin-top: 10px;
             }
         }
@@ -1627,7 +1655,15 @@
                 // 創建左側內容
                 const wordLeft = document.createElement('div');
                 wordLeft.className = 'word-left';
-                wordLeft.onclick = () => playPronunciation(word.單字);
+                wordLeft.onclick = () => {
+                    playPronunciation(word.單字);
+                    // 隱藏所有其他打開的例句
+                    document.querySelectorAll('.word-right.show').forEach(item => {
+                        if (item !== wordRight) {
+                            item.classList.remove('show');
+                        }
+                    });
+                };
                 wordLeft.innerHTML = `
                     ${word.sheet || word.tag ? `<span class="word-tag"><div class="word-tag-sheet">${word.sheet || ''}</div><div class="word-tag-tag">${word.tag || ''}</div></span>` : ''}
                     <span class="word-accuracy">${accuracyDisplay}</span>
@@ -1636,6 +1672,15 @@
                     <span class="word-pos">${word.詞性}</span>
                     <span class="word-chinese">${word.中文}</span>
                 `;
+
+                // 創建例句按鈕
+                const sentenceBtn = document.createElement('button');
+                sentenceBtn.className = 'sentence-btn';
+                sentenceBtn.textContent = 'ⓘ';
+                sentenceBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    wordRight.classList.toggle('show');
+                };
 
                 // 創建右側內容
                 const wordRight = document.createElement('div');
@@ -1657,6 +1702,7 @@
                 row.appendChild(indexDiv);
                 row.appendChild(starBtn);
                 row.appendChild(wordLeft);
+                row.appendChild(sentenceBtn);
                 row.appendChild(wordRight);
                 container.appendChild(row);
             });
