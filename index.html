@@ -975,6 +975,7 @@
         let normalModeTagStates = {}; // 保存 normal 模式 tag 的狀態 {sheetName: {tagName: checked}}
         let quizModeCheckStates = {}; // 保存 quiz 模式 sheet 的狀態 {sheetName: checked}
         let quizModeTagStates = {}; // 保存 quiz 模式 tag 的狀態 {sheetName: {tagName: checked}}
+        let quizModeFilterStates = {}; // 保存 quiz 模式的過濾狀態 {starFilter, accuracyFilter, accuracyThreshold}
 
         // 測驗相關變數
         let quizWords = [];
@@ -1235,10 +1236,11 @@
                 });
             }
 
-            // 離開 quiz 模式時，保存 checkbox 狀態
+            // 離開 quiz 模式時，保存 checkbox 狀態和過濾器狀態
             if (currentMode === 'quiz') {
                 quizModeCheckStates = {};
                 quizModeTagStates = {};
+                quizModeFilterStates = {};
                 document.querySelectorAll('input.quiz-sheet-checkbox').forEach(checkbox => {
                     quizModeCheckStates[checkbox.dataset.sheetName] = checkbox.checked;
                 });
@@ -1249,6 +1251,19 @@
                     }
                     quizModeTagStates[sheetName][checkbox.value] = checkbox.checked;
                 });
+                // 保存過濾器狀態
+                const starCheckbox = document.getElementById('quiz-star-filter');
+                const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
+                const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
+                if (starCheckbox) {
+                    quizModeFilterStates.starFilter = starCheckbox.checked;
+                }
+                if (accuracyCheckbox) {
+                    quizModeFilterStates.accuracyFilter = accuracyCheckbox.checked;
+                }
+                if (accuracySelect) {
+                    quizModeFilterStates.accuracyThreshold = accuracySelect.value;
+                }
             }
 
             currentMode = mode;
@@ -1885,6 +1900,23 @@
                     checkbox.checked = true;
                 }
             });
+
+            // 恢復過濾器狀態
+            if (Object.keys(quizModeFilterStates).length > 0) {
+                const starCheckbox = document.getElementById('quiz-star-filter');
+                const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
+                const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
+
+                if (starCheckbox && 'starFilter' in quizModeFilterStates) {
+                    starCheckbox.checked = quizModeFilterStates.starFilter;
+                }
+                if (accuracyCheckbox && 'accuracyFilter' in quizModeFilterStates) {
+                    accuracyCheckbox.checked = quizModeFilterStates.accuracyFilter;
+                }
+                if (accuracySelect && 'accuracyThreshold' in quizModeFilterStates) {
+                    accuracySelect.value = quizModeFilterStates.accuracyThreshold;
+                }
+            }
 
             updateQuizDropdownButton();
         }
