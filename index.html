@@ -2329,7 +2329,7 @@
                         }
                         const correct = history.filter(v => v).length;
                         const accuracy = Math.round((correct / history.length) * 100);
-                        if (!(accuracy < filterByAccuracy)) {
+                        if (!(accuracy <= filterByAccuracy)) {
                             return false;
                         }
                     }
