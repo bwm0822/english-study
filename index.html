@@ -1103,6 +1103,7 @@
                         const sheetSubmenu = document.createElement('div');
                         sheetSubmenu.className = 'sheet-submenu';
                         sheetSubmenu.dataset.sheetName = sheetName;
+                        sheetSubmenu.dataset.mode = 'normal';
                         document.body.appendChild(sheetSubmenu);
 
                         // 按鈕行
@@ -1600,8 +1601,8 @@
 
         // 測驗相關函數
         function initQuizPanel() {
-            // 清理舊的 sheetSubmenu
-            document.querySelectorAll('.sheet-submenu').forEach(submenu => {
+            // 清理舊的 quiz mode sheetSubmenu
+            document.querySelectorAll('.sheet-submenu[data-mode="quiz"]').forEach(submenu => {
                 submenu.remove();
             });
 
@@ -1722,6 +1723,7 @@
                     const sheetSubmenu = document.createElement('div');
                     sheetSubmenu.className = 'sheet-submenu';
                     sheetSubmenu.dataset.sheetName = sheetName;
+                    sheetSubmenu.dataset.mode = 'quiz';
                     document.body.appendChild(sheetSubmenu);
 
                     // 按鈕行
