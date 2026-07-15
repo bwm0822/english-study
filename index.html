@@ -1380,6 +1380,10 @@
                 <div class="settings-dropdown" id="settingsDropdown">
                     <button class="settings-option" onclick="showAbout()">ℹ️ 資訊</button>
                     <button class="settings-option" onclick="showPronunciationSettings()">🔊 發音</button>
+                    <div class="settings-option" style="display: flex; align-items: center; justify-content: flex-start; padding: 12px 16px; background: none; border: none; cursor: pointer; gap: 10px;" onclick="document.getElementById('allowRetestCheckbox').click()">
+                        <input type="checkbox" id="allowRetestCheckbox" style="width: 16px; height: 16px; cursor: pointer;" onclick="event.stopPropagation();">
+                        <span style="color: #b8b8b8; text-align: left; flex: 1;">允許重測</span>
+                    </div>
                     <button class="settings-option" onclick="updateApp()">🔄 更新</button>
                     <button class="settings-option" onclick="clearHistory()">清除紀錄</button>
                 </div>
@@ -1510,6 +1514,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- 單字視窗 -->
         <div class="word-modal" id="wordModal" style="display: none;">
@@ -2448,8 +2453,32 @@
                     tagInfo.appendChild(accuracyItem);
                     tagInfo.appendChild(accuracyBar);
 
+                    const quizBtn = document.createElement('button');
+                    quizBtn.textContent = '測驗';
+                    quizBtn.style.padding = '6px 12px';
+                    quizBtn.style.background = '#2196F3';
+                    quizBtn.style.color = 'white';
+                    quizBtn.style.border = 'none';
+                    quizBtn.style.borderRadius = '4px';
+                    quizBtn.style.cursor = 'pointer';
+                    quizBtn.style.fontSize = '0.9em';
+                    quizBtn.style.fontWeight = '600';
+                    quizBtn.style.marginLeft = 'auto';
+                    quizBtn.style.flexShrink = '0';
+                    quizBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        startQuizFromStats(sheetName, tag);
+                    };
+                    quizBtn.onmouseover = () => {
+                        quizBtn.style.background = '#0b7dda';
+                    };
+                    quizBtn.onmouseout = () => {
+                        quizBtn.style.background = '#2196F3';
+                    };
+
                     tagCard.appendChild(tagName);
                     tagCard.appendChild(tagInfo);
+                    tagCard.appendChild(quizBtn);
                     tagsContainer.appendChild(tagCard);
                 });
 
@@ -2813,6 +2842,55 @@
             }
         }
 
+        function startQuizFromStats(sheetName, tag) {
+            // 顯示確認對話框
+            if (!confirm(`要開始測驗「${sheetName} / ${tag}」嗎？`)) {
+                return;
+            }
+
+            // 切換到測驗模式
+            document.getElementById('modeSelect').value = 'quiz';
+            changeMode('quiz');
+
+            // 等待 DOM 更新後，自動勾選該 sheet 和 tag
+            setTimeout(() => {
+                // 清除所有 sheet checkbox
+                document.querySelectorAll('input.quiz-sheet-checkbox').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+
+                // 清除所有 tag checkbox
+                document.querySelectorAll('input.quiz-tag-checkbox').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+
+                // 勾選該 sheet 和 tag
+                document.querySelectorAll('input.quiz-sheet-checkbox').forEach(checkbox => {
+                    if (checkbox.dataset.sheetName === sheetName) {
+                        checkbox.checked = true;
+                    }
+                });
+
+                document.querySelectorAll('input.quiz-tag-checkbox').forEach(checkbox => {
+                    if (checkbox.dataset.sheet === sheetName && checkbox.value === tag) {
+                        checkbox.checked = true;
+                    }
+                });
+
+                // 清除星號和正確率篩選
+                const starCheckbox = document.getElementById('quiz-star-filter');
+                const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
+                if (starCheckbox) starCheckbox.checked = false;
+                if (accuracyCheckbox) accuracyCheckbox.checked = false;
+
+                // 更新下拉按鈕顯示
+                updateQuizDropdownButton();
+
+                // 自動開始測驗
+                startQuiz();
+            }, 100);
+        }
+
         function startQuiz() {
             // 檢查星號篩選
             const starCheckbox = document.getElementById('quiz-star-filter');
@@ -2960,7 +3038,8 @@
                 document.getElementById('retestBtn').style.display = 'none';
             } else {
                 document.getElementById('nextBtn').style.display = 'block';
-                document.getElementById('retestBtn').style.display = 'block';
+                // 根據設定決定是否顯示重測按鈕
+                document.getElementById('retestBtn').style.display = allowRetest ? 'block' : 'none';
             }
         }
 
@@ -3102,6 +3181,7 @@
 
         let pronunciationLang = localStorage.getItem('pronunciationLang') || 'en-US';
         let pronunciationRate = parseFloat(localStorage.getItem('pronunciationRate')) || 1.0;
+        let allowRetest = localStorage.getItem('allowRetest') === 'true'; // 預設為 false
 
         function showPronunciationSettings() {
             const modal = document.getElementById('pronunciationModal');
@@ -3131,6 +3211,7 @@
             alert('發音設定已保存');
             closePronunciationModal();
         }
+
 
         function updateApp() {
             if (confirm('即將清除快取並更新應用。您的學習紀錄將保留。確認更新嗎？')) {
@@ -3309,6 +3390,16 @@
                 closePronunciationModal();
             }
         });
+
+        // 「允許重測」checkbox 事件監聽
+        const allowRetestCheckbox = document.getElementById('allowRetestCheckbox');
+        if (allowRetestCheckbox) {
+            allowRetestCheckbox.checked = allowRetest;
+            allowRetestCheckbox.addEventListener('change', (e) => {
+                allowRetest = e.target.checked;
+                localStorage.setItem('allowRetest', allowRetest.toString());
+            });
+        }
     </script>
 </body>
 </html>
