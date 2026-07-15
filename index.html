@@ -1202,6 +1202,8 @@
             <div class="settings-menu" id="settingsMenuContainer">
                 <button class="settings-btn" onclick="toggleSettingsMenu()">⚙️</button>
                 <div class="settings-dropdown" id="settingsDropdown">
+                    <button class="settings-option" onclick="showAbout()">ℹ️ 資訊</button>
+                    <button class="settings-option" onclick="updateApp()">🔄 更新</button>
                     <button class="settings-option" onclick="clearHistory()">清除紀錄</button>
                 </div>
             </div>
@@ -2677,6 +2679,23 @@
 
         function cancelQuiz() {
             showQuizResult();
+        }
+
+        function showAbout() {
+            alert(`英文學習系統\n\n版本：2026.07.15\n\n功能：\n• 一般模式：瀏覽單字\n• 複習模式：根據準確率複習\n• 測驗模式：測試單字拼寫\n\n快捷鍵：\n• 單字列：點擊音標發音\n• 測驗結果：點擊單字發音`);
+        }
+
+        function updateApp() {
+            if (confirm('即將清除快取並更新應用。您的學習紀錄將保留。確認更新嗎？')) {
+                // 清除快取
+                if ('caches' in window) {
+                    caches.keys().then(names => {
+                        names.forEach(name => caches.delete(name));
+                    });
+                }
+                // 強制重新加載
+                location.reload(true);
+            }
         }
 
         function toggleSettingsMenu() {
