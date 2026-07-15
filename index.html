@@ -1705,14 +1705,14 @@
 
             // 先檢查sheet checkbox，如果unchecked則skip該sheet
             const enabledSheets = new Set();
-            document.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
+            document.querySelectorAll('input.normal-sheet-checkbox').forEach(sheetCheckbox => {
                 if (sheetCheckbox.checked) {
                     enabledSheets.add(sheetCheckbox.dataset.sheetName);
                 }
             });
 
-            // 只處理enabled sheets的tag checkbox
-            document.querySelectorAll('.tag-checkbox-item input').forEach(checkbox => {
+            // 只處理enabled sheets的tag checkbox（只選 normal 模式的）
+            document.querySelectorAll('input.normal-tag-checkbox').forEach(checkbox => {
                 if (checkbox.checked) {
                     const sheetName = checkbox.dataset.sheet;
                     if (enabledSheets.has(sheetName) && selectedTags.has(sheetName)) {
@@ -2598,6 +2598,11 @@
                 const englishSpan = document.createElement('div');
                 englishSpan.className = 'result-word-english';
                 englishSpan.textContent = word.單字;
+                englishSpan.style.cursor = 'pointer';
+                englishSpan.onclick = (e) => {
+                    e.stopPropagation();
+                    playPronunciation(word.單字);
+                };
 
                 // 詞性
                 const posSpan = document.createElement('div');
