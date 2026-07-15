@@ -208,7 +208,7 @@
             align-items: center;
             gap: 15px;
             justify-content: center;
-            font-size: 1.3em;
+            font-size: 2.0em;
         }
 
         .quiz-chinese {
@@ -238,7 +238,7 @@
         #quizInput {
             width: 100%;
             padding: 12px;
-            font-size: 1.5em;
+            font-size: 2.0em;
             border: 2px solid #ddd;
             border-radius: 4px;
             text-align: center;
@@ -257,10 +257,12 @@
         .feedback-correct {
             background: #4CAF50;
             color: black;
-            padding: 12px 24px;
+            padding: 15px 30px;
             border-radius: 4px;
             font-weight: 600;
+            font-size: 1.1em;
             text-align: center;
+            min-width: 120px;
         }
 
         .feedback-wrong {
@@ -274,10 +276,12 @@
         .feedback-error {
             background: #f44336;
             color: white;
-            padding: 12px 24px;
+            padding: 15px 30px;
             border-radius: 4px;
             font-weight: 600;
+            font-size: 1.1em;
             text-align: center;
+            min-width: 120px;
         }
 
         .quiz-bottom {
@@ -401,7 +405,8 @@
         }
 
         .result-word.correct {
-            background: #5a5a72;
+            /* background: #5a5a72; */
+            background: #333; 
             color: #b8b8b8;
         }
 
@@ -413,7 +418,7 @@
         .result-word-star {
             flex: 0 0 30px;
             text-align: center;
-            font-size: 1.2em;
+            font-size: 1.5em;
             cursor: pointer;
             color: #ffa500;
         }
@@ -423,10 +428,10 @@
         }
 
         .result-word-tag {
-            flex: 0 0 65px;
+            flex: 0 0 100px;
             background: #667eea;
             color: white;
-            padding: 6px 8px;
+            padding: 6px 6px;
             border-radius: 3px;
             font-size: 0.85em;
             text-align: center;
@@ -439,22 +444,25 @@
         .result-word-accuracy {
             flex: 0 0 50px;
             text-align: center;
-            font-size: 0.9em;
+            font-size: 1.25em;
             font-weight: bold;
             color: #667eea;
         }
 
         .result-word-english {
-            flex: 0 0 100px;
+            flex: 0 0 250px;
             font-weight: bold;
+            font-size: 1.5em;
         }
 
         .result-word-pos {
             flex: 0 0 50px;
-            background: #f0f0f0;
-            padding: 2px 6px;
+            background: #c0c0c0;
+            color: black;
+            padding: 2px 2px;
             border-radius: 3px;
             text-align: center;
+            font-size: 1.25em;
         }
 
         .result-word-chinese {
@@ -462,6 +470,8 @@
             min-width: 0;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-size: 1.25em;
+            color: lightgray;
         }
 
         .back-btn {
@@ -1120,6 +1130,24 @@
 
         .modal-nav-btn:hover {
             background: #0b7dda;
+        }
+
+        #quizAnswer {
+            background: #f44336 !important;
+            color: white !important;
+            padding: 0 12px !important;
+            /* padding: 12px 20px !important; */
+            /* border-radius: 4px !important; */
+            font-size: 2.0em !important;
+            font-weight: 600 !important;
+        }
+
+        .quiz-feedback-answer-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            min-height: 60px;
         }
 
         @media (max-width: 1024px) {
