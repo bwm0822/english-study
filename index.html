@@ -786,7 +786,7 @@
         .word-index {
             flex: 0 0 40px;
             text-align: center;
-            font-size: 0.9em;
+            font-size: 1.5em;
             color: #999;
             padding: 12px 8px;
             user-select: none;
@@ -796,7 +796,7 @@
         .word-star {
             flex: 0 0 40px;
             text-align: center;
-            font-size: 1.2em;
+            font-size: 1.5em;
             cursor: pointer;
             padding: 12px 8px;
             user-select: none;
@@ -838,7 +838,7 @@
 
         .word-accuracy {
             flex-shrink: 0;
-            font-size: 0.9em;
+            font-size: 1em;
             font-weight: bold;
             color: #667eea;
             min-width: 40px;
@@ -851,7 +851,7 @@
         }
 
         .word-tag-tag {
-            font-size: 0.9em;
+            font-size: 1em;
             min-height: 12px;
         }
 
@@ -860,21 +860,21 @@
             color: #b8b8b8;
             min-width: 100px;
             flex-shrink: 0;
-            font-size: 1.3em;
+            font-size: 1.5em;
         }
 
         .word-phonetic {
             color: #ffa500;
-            font-size: 0.9em;
+            font-size: 1.2em;
             flex-shrink: 0;
             min-width: 120px;
         }
 
         .word-pos {
-            background: #4a4a60;
+            background: #777;
             padding: 2px 6px;
             border-radius: 3px;
-            font-size: 0.8em;
+            font-size: 0.95em;
             color: #b8b8b8;
             min-width: 50px;
             text-align: center;
@@ -888,6 +888,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-size: 1.05em;
         }
 
         .word-right {
@@ -910,13 +911,18 @@
             background: #667eea;
             color: white;
             border: none;
-            border-radius: 2px;
-            padding: 4px 10px;
-            font-size: 1.1em;
+            border-radius: 0;
+            padding: 0;
+            font-size: 2em;
             cursor: pointer;
-            flex-shrink: 0;
+            flex: 0 0 100px;
             white-space: nowrap;
-            margin-right: 15px;
+            margin-right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            align-self: stretch;
         }
 
         .sentence-btn:hover {
@@ -1003,11 +1009,11 @@
             font-weight: bold;
             color: #999;
             min-width: 25px;
-            font-size: 0.9em;
+            font-size: 1.5em;
         }
 
         .modal-star {
-            font-size: 1.1em;
+            font-size: 1.5em;
             cursor: pointer;
             color: #ffa500;
         }
@@ -1017,7 +1023,7 @@
             color: white;
             padding: 6px 8px;
             border-radius: 3px;
-            font-size: 0.85em;
+            font-size: 1em;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -1031,7 +1037,7 @@
         }
 
         .modal-tag-tag {
-            font-size: 0.9em;
+            font-size: 1em;
         }
 
         .modal-accuracy {
@@ -1039,7 +1045,7 @@
             color: #667eea;
             min-width: 45px;
             text-align: center;
-            font-size: 0.9em;
+            font-size: 1.5em;
         }
 
         .modal-close-btn {
@@ -1048,7 +1054,7 @@
             border: none;
             border-radius: 4px;
             padding: 6px 16px;
-            font-size: 0.9em;
+            font-size: 1.5em;
             cursor: pointer;
             font-weight: 600;
         }
@@ -1066,20 +1072,20 @@
         }
 
         .modal-word {
-            font-size: 1.9em;
+            font-size: 2em;
             font-weight: bold;
             color: white;
         }
 
         .modal-phonetic {
-            font-size: 1em;
+            font-size: 1.5em;
             color: #ffa500;
         }
 
         .modal-info {
             display: flex;
             gap: 10px;
-            font-size: 0.95em;
+            font-size: 1.5em;
         }
 
         .modal-pos {
@@ -1087,7 +1093,7 @@
             padding: 3px 6px;
             border-radius: 3px;
             flex-shrink: 0;
-            font-size: 0.8em;
+            font-size: 1em;
         }
 
         .modal-chinese {
@@ -1095,14 +1101,14 @@
         }
 
         .modal-example {
-            font-size: 0.95em;
+            font-size: 1.5em;
             line-height: 1.6;
             color: #b8b8b8;
             margin-top: 10px;
         }
 
         .modal-translation {
-            font-size: 0.95em;
+            font-size: 1.5em;
             line-height: 1.6;
             color: #b8b8b8;
         }
@@ -1121,7 +1127,7 @@
             border: none;
             border-radius: 4px;
             padding: 8px 16px;
-            font-size: 0.9em;
+            font-size: 1.5em;
             cursor: pointer;
             font-weight: 600;
             flex: 0 0 calc(33.333% - 4px);
@@ -1968,15 +1974,6 @@
                 // 創建左側內容
                 const wordLeft = document.createElement('div');
                 wordLeft.className = 'word-left';
-                wordLeft.onclick = () => {
-                    playPronunciation(word.單字);
-                    // 隱藏所有其他打開的例句
-                    document.querySelectorAll('.word-right.show').forEach(item => {
-                        if (item !== wordRight) {
-                            item.classList.remove('show');
-                        }
-                    });
-                };
                 wordLeft.innerHTML = `
                     ${word.sheet || word.tag ? `<span class="word-tag"><div class="word-tag-sheet">${word.sheet || ''}</div><div class="word-tag-tag">${word.tag || ''}</div></span>` : ''}
                     <span class="word-accuracy">${accuracyDisplay}</span>
@@ -1985,6 +1982,24 @@
                     <span class="word-pos">${word.詞性}</span>
                     <span class="word-chinese">${word.中文}</span>
                 `;
+
+                // 為單字和音標添加發音事件
+                const wordWordSpan = wordLeft.querySelector('.word-word');
+                const wordPhoneticSpan = wordLeft.querySelector('.word-phonetic');
+
+                const handlePronunciation = (e) => {
+                    e.stopPropagation();
+                    playPronunciation(word.單字);
+                };
+
+                if (wordWordSpan) {
+                    wordWordSpan.style.cursor = 'pointer';
+                    wordWordSpan.onclick = handlePronunciation;
+                }
+                if (wordPhoneticSpan) {
+                    wordPhoneticSpan.style.cursor = 'pointer';
+                    wordPhoneticSpan.onclick = handlePronunciation;
+                }
 
                 // 創建例句按鈕
                 const sentenceBtn = document.createElement('button');
