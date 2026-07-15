@@ -1133,7 +1133,7 @@
             font-size: 1.2em;
             cursor: pointer;
             font-weight: 600;
-            flex: 0 0 calc(33.333% - 4px);
+            flex: 0 0 calc(25% - 3px);
             min-width: 0;
         }
 
@@ -1230,6 +1230,7 @@
             gap: 6px;
             min-height: 38px;
             overflow: hidden;
+            width: 100%;
         }
 
         .stats-tag-card:hover {
@@ -1256,10 +1257,10 @@
         }
 
         .stats-tag-name {
-            font-size: 0.95em;
+            font-size: 1.2em;
             font-weight: 600;
             color: #b8b8b8;
-            min-width: 50px;
+            min-width: 40px;
             white-space: nowrap;
             flex-shrink: 0;
         }
@@ -1267,27 +1268,32 @@
         .stats-tag-info {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 0.9em;
+            gap: 8px;
+            font-size: 1em;
             flex: 1;
             min-width: 0;
+            overflow: hidden;
         }
 
         .stats-tag-item {
             display: flex;
             align-items: center;
-            gap: 3px;
+            gap: 2px;
             color: #999;
             white-space: nowrap;
-            flex-shrink: 0;
+            flex: 0 0 100px;
+            font-size: 1.2em;
+            justify-content: flex-start;
         }
 
         .stats-tag-accuracy {
             flex: 0 0 50px;
-            font-size: 0.9em;
+            font-size: 1.2em;
             font-weight: 600;
             color: #667eea;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .stats-tag-accuracy.high {
@@ -1303,12 +1309,12 @@
         }
 
         .stats-accuracy-bar {
-            width: 60px;
-            height: 4px;
+            flex: 1;
+            height: 8px;
             background: #4a4a60;
-            border-radius: 2px;
+            border-radius: 4px;
             overflow: hidden;
-            flex-shrink: 0;
+            min-width: 40px;
         }
 
         .stats-accuracy-fill {
@@ -1453,7 +1459,7 @@
                 </div>
                 <div class="word-modal-body" style="gap: 15px; font-size: 0.95em; text-align: left;">
                     <div>
-                        <strong style="color: #667eea; font-size: 1.1em;">版本：2026.07.15.c</strong>
+                        <strong style="color: #667eea; font-size: 1.1em;">版本：2026.07.16</strong>
                     </div>
 
                     <div>
@@ -1470,7 +1476,7 @@
                         <strong style="color: white;">統計模式功能：</strong>
                         <div style="margin-left: 10px; color: #b8b8b8;">
                             • 按Sheet分類顯示<br>
-                            • 每個tag顯示：測試進度、平均熟練度<br>
+                            • 每個tag顯示：測試進度（📝 X/Y）、正確率（XX%）、進度條<br>
                             • 整體熟練度 = 所有tag平均（未測試當0計）<br>
                             • 灰色顯示未測過的tag<br>
                             • [檢視]按鈕：查看該tag的所有單字<br>
@@ -1483,7 +1489,8 @@
                         <div style="margin-left: 10px; color: #b8b8b8;">
                             • 允許重測設定（設定菜單中切換）<br>
                             • 支援星號篩選和正確率篩選<br>
-                            • 自動追蹤正確率（保留最近5次）
+                            • 正確率計算：最近5次中正確的次數/5<br>
+                            • 自動轉換舊格式記錄檔為新格式
                         </div>
                     </div>
 
@@ -1492,7 +1499,7 @@
                         <div style="margin-left: 10px; color: #b8b8b8;">
                             • ★ 標記重要單字<br>
                             • 🔊 單字發音（點擊音標或單字）<br>
-                            • 正確率追蹤<br>
+                            • 正確率追蹤（基於最近5次測驗）<br>
                             • 多語言發音支援
                         </div>
                     </div>
@@ -1643,11 +1650,46 @@
         let currentFilteredWords = [];
         let modalCurrentWordIndex = -1;
 
+        // 批量轉換舊的正確率記錄檔格式
+        function migrateOldFormatToNew() {
+            const keys = Object.keys(localStorage);
+            let convertedCount = 0;
+
+            keys.forEach(key => {
+                if (key.startsWith('quizHistory_')) {
+                    const data = localStorage.getItem(key);
+                    try {
+                        const parsed = JSON.parse(data);
+                        // 如果是舊格式（boolean 陣列），轉換為新格式（數值）
+                        if (Array.isArray(parsed)) {
+                            const correct = parsed.filter(v => v).length;
+                            localStorage.setItem(key, correct.toString());
+                            convertedCount++;
+                        }
+                    } catch (e) {
+                        // 不是有效的 JSON，可能已經是新格式，忽略
+                    }
+                }
+            });
+
+            return convertedCount;
+        }
+
         fetch('output.json?t=' + new Date().getTime())
             .then(r => r.json())
             .then(data => {
                 sheetData = data;
                 allWords = [];
+
+                // 批量轉換舊格式（只在第一次加載時進行一次）
+                if (!localStorage.getItem('_migrationDone')) {
+                    const convertedCount = migrateOldFormatToNew();
+                    localStorage.setItem('_migrationDone', 'true');
+                    // 如果有轉換過的記錄，可選擇顯示提示
+                    if (convertedCount > 0) {
+                        console.log(`已將 ${convertedCount} 筆舊格式記錄轉換為新格式`);
+                    }
+                }
 
                 // 建立分組下拉選單
                 const container = document.getElementById('sheetGroupsContainer');
@@ -2305,11 +2347,10 @@
 
                 // 計算正確率
                 const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+                const correctCount = getQuizHistory(historyKey);
                 let accuracyDisplay = '--';
-                if (history.length > 0) {
-                    const correct = history.filter(v => v).length;
-                    const accuracy = Math.round((correct / history.length) * 100);
+                if (correctCount > 0) {
+                    const accuracy = calculateAccuracy(correctCount);
                     accuracyDisplay = `${accuracy}%`;
                 }
 
@@ -2407,12 +2448,11 @@
 
                     tagWords.forEach(word => {
                         const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                        const history = JSON.parse(localStorage.getItem(historyKey)) || [];
-                        if (history.length > 0) {
+                        const correctCount = getQuizHistory(historyKey);
+                        if (correctCount > 0) {
                             hasAnyTested = true;
                             testedCount++;
-                            const correct = history.filter(v => v).length;
-                            const accuracy = (correct / history.length) * 100;
+                            const accuracy = calculateAccuracy(correctCount);
                             totalAccuracy += accuracy;
                         }
                         // 沒測過的字，熟練度當0
@@ -2504,9 +2544,9 @@
                         accuracyDisplay = `${data.avgAccuracy}%`;
                     }
 
-                    const accuracyItem = document.createElement('div');
-                    accuracyItem.className = 'stats-tag-item';
-                    accuracyItem.innerHTML = `<span class="stats-tag-accuracy ${accuracyClass}">${accuracyDisplay}</span>`;
+                    const accuracyDiv = document.createElement('div');
+                    accuracyDiv.className = `stats-tag-accuracy ${accuracyClass}`;
+                    accuracyDiv.textContent = accuracyDisplay;
 
                     const accuracyBar = document.createElement('div');
                     accuracyBar.className = 'stats-accuracy-bar';
@@ -2517,7 +2557,7 @@
                     accuracyBar.appendChild(fill);
 
                     tagInfo.appendChild(wordCountItem);
-                    tagInfo.appendChild(accuracyItem);
+                    tagInfo.appendChild(accuracyDiv);
                     tagInfo.appendChild(accuracyBar);
 
                     const buttonGroup = document.createElement('div');
@@ -2528,13 +2568,13 @@
 
                     const viewBtn = document.createElement('button');
                     viewBtn.textContent = '檢視';
-                    viewBtn.style.padding = '4px 10px';
+                    viewBtn.style.padding = '6px 14px';
                     viewBtn.style.background = '#666';
                     viewBtn.style.color = 'white';
                     viewBtn.style.border = 'none';
                     viewBtn.style.borderRadius = '3px';
                     viewBtn.style.cursor = 'pointer';
-                    viewBtn.style.fontSize = '0.85em';
+                    viewBtn.style.fontSize = '0.95em';
                     viewBtn.style.fontWeight = '600';
                     viewBtn.style.whiteSpace = 'nowrap';
                     viewBtn.onclick = (e) => {
@@ -2550,13 +2590,13 @@
 
                     const quizBtn = document.createElement('button');
                     quizBtn.textContent = '測驗';
-                    quizBtn.style.padding = '4px 10px';
+                    quizBtn.style.padding = '6px 14px';
                     quizBtn.style.background = '#2196F3';
                     quizBtn.style.color = 'white';
                     quizBtn.style.border = 'none';
                     quizBtn.style.borderRadius = '3px';
                     quizBtn.style.cursor = 'pointer';
-                    quizBtn.style.fontSize = '0.85em';
+                    quizBtn.style.fontSize = '0.95em';
                     quizBtn.style.fontWeight = '600';
                     quizBtn.style.whiteSpace = 'nowrap';
                     quizBtn.onclick = (e) => {
@@ -2906,12 +2946,11 @@
                     // 如果勾選正確率篩選，只包含符合條件的單字
                     if (filterByAccuracy !== null) {
                         const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                        const history = JSON.parse(localStorage.getItem(historyKey)) || [];
-                        if (history.length === 0) {
+                        const correctCount = getQuizHistory(historyKey);
+                        if (correctCount === 0) {
                             return false;
                         }
-                        const correct = history.filter(v => v).length;
-                        const accuracy = Math.round((correct / history.length) * 100);
+                        const accuracy = calculateAccuracy(correctCount);
                         if (!(accuracy <= filterByAccuracy)) {
                             return false;
                         }
@@ -3047,12 +3086,11 @@
                 // 如果勾選正確率篩選，只包含符合條件的單字
                 if (filterByAccuracy !== null) {
                     const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                    const history = JSON.parse(localStorage.getItem(historyKey)) || [];
-                    if (history.length === 0) {
+                    const correctCount = getQuizHistory(historyKey);
+                    if (correctCount === 0) {
                         return false; // 沒有歷史記錄的單字不包含
                     }
-                    const correct = history.filter(v => v).length;
-                    const accuracy = Math.round((correct / history.length) * 100);
+                    const accuracy = calculateAccuracy(correctCount);
                     return accuracy <= filterByAccuracy;
                 }
                 return true;
@@ -3164,17 +3202,18 @@
             // 只統計已測試的單字（isCorrect 不為 null）
             const testedResults = quizResults.filter(r => r.isCorrect !== null);
 
-            // 保存每個單詞的測驗結果到localStorage
+            // 保存每個單詞的測驗結果到localStorage（新格式：只存數值）
             testedResults.forEach(result => {
                 const word = result.word;
                 const wordKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                let history = JSON.parse(localStorage.getItem(wordKey)) || [];
-                history.push(result.isCorrect);
-                // 只保留最近5次
-                if (history.length > 5) {
-                    history = history.slice(-5);
+                let correctCount = getQuizHistory(wordKey); // 讀取舊格式並自動轉換
+
+                // 更新計數：如果本次正確，加1；否則保持不變
+                if (result.isCorrect) {
+                    correctCount = Math.min(correctCount + 1, 5); // 最多5次
                 }
-                localStorage.setItem(wordKey, JSON.stringify(history));
+                // 保存為數值（新格式）
+                localStorage.setItem(wordKey, correctCount.toString());
             });
 
             const correctCount = testedResults.filter(r => r.isCorrect).length;
@@ -3217,11 +3256,10 @@
 
                 // 計算正確率
                 const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+                const correctCount = getQuizHistory(historyKey);
                 let accuracyDisplay = '--';
-                if (history.length > 0) {
-                    const correct = history.filter(v => v).length;
-                    const accuracy = Math.round((correct / history.length) * 100);
+                if (correctCount > 0) {
+                    const accuracy = calculateAccuracy(correctCount);
                     accuracyDisplay = `${accuracy}%`;
                 }
 
@@ -3283,6 +3321,48 @@
         let pronunciationLang = localStorage.getItem('pronunciationLang') || 'en-US';
         let pronunciationRate = parseFloat(localStorage.getItem('pronunciationRate')) || 1.0;
         let allowRetest = localStorage.getItem('allowRetest') === 'true'; // 預設為 false
+
+        // 獲取歷史記錄，支援舊格式（boolean陣列）和新格式（數值）
+        function getQuizHistory(historyKey) {
+            const data = localStorage.getItem(historyKey);
+            if (!data) {
+                return 0;
+            }
+
+            // 嘗試解析為 JSON
+            try {
+                const parsed = JSON.parse(data);
+
+                // 舊格式：boolean 陣列
+                if (Array.isArray(parsed)) {
+                    const correct = parsed.filter(v => v).length;
+                    // 自動轉換為新格式
+                    localStorage.setItem(historyKey, correct.toString());
+                    return correct;
+                }
+
+                // 新格式：數值
+                if (typeof parsed === 'number') {
+                    return parsed;
+                }
+            } catch (e) {
+                // 如果不是有效的 JSON，嘗試作為數值
+                const num = parseInt(data);
+                if (!isNaN(num)) {
+                    return num;
+                }
+            }
+
+            return 0;
+        }
+
+        // 計算正確率：正確次數/5 * 100
+        function calculateAccuracy(correctCount) {
+            if (correctCount === 0) {
+                return 0;
+            }
+            return Math.round((correctCount / 5) * 100);
+        }
 
         function showPronunciationSettings() {
             const modal = document.getElementById('pronunciationModal');
@@ -3394,8 +3474,9 @@
             const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
 
             // 更新導航按鈕顯示狀態
-            const prevBtn = document.querySelector('.word-modal-footer .modal-nav-btn:nth-child(1)');
-            const nextBtn = document.querySelector('.word-modal-footer .modal-nav-btn:nth-child(2)');
+            const wordModal = document.getElementById('wordModal');
+            const prevBtn = wordModal.querySelector('.word-modal-footer .modal-nav-btn:nth-child(1)');
+            const nextBtn = wordModal.querySelector('.word-modal-footer .modal-nav-btn:nth-child(2)');
             prevBtn.style.visibility = wordIndex > 0 ? 'visible' : 'hidden';
             nextBtn.style.visibility = wordIndex < filteredWords.length - 1 ? 'visible' : 'hidden';
 
@@ -3422,11 +3503,10 @@
             tagDiv.querySelector('.modal-tag-tag').textContent = word.tag;
 
             const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-            const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+            const correctCount = getQuizHistory(historyKey);
             let accuracyDisplay = '--';
-            if (history.length > 0) {
-                const correct = history.filter(v => v).length;
-                const accuracy = Math.round((correct / history.length) * 100);
+            if (correctCount > 0) {
+                const accuracy = calculateAccuracy(correctCount);
                 accuracyDisplay = `${accuracy}%`;
             }
             document.getElementById('modalWordAccuracy').textContent = accuracyDisplay;
