@@ -984,11 +984,12 @@
             border-radius: 8px;
             width: 90%;
             max-width: 700px;
-            height: 90vh;
+            height: 85vh;
             display: flex;
             flex-direction: column;
             color: #b8b8b8;
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            max-height: calc(100vh - 40px);
         }
 
         .word-modal-header {
@@ -1065,10 +1066,12 @@
 
         .word-modal-body {
             flex: 1;
-            padding: 15px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
+            overflow-y: auto;
+            min-height: 0;
         }
 
         .modal-word {
@@ -1116,9 +1119,9 @@
         .word-modal-footer {
             display: flex;
             justify-content: space-between;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-top: 1px solid #4a4a60;
-            gap: 8px;
+            gap: 6px;
         }
 
         .modal-nav-btn {
@@ -1126,8 +1129,8 @@
             color: white;
             border: none;
             border-radius: 4px;
-            padding: 8px 16px;
-            font-size: 1.5em;
+            padding: 6px 12px;
+            font-size: 1.2em;
             cursor: pointer;
             font-weight: 600;
             flex: 0 0 calc(33.333% - 4px);
@@ -1213,18 +1216,20 @@
         .stats-tags {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            gap: 10px;
         }
 
         .stats-tag-card {
             background: #2a2a52;
             border-radius: 6px;
-            padding: 12px 15px;
+            padding: 8px 10px;
             border-left: 4px solid #667eea;
             transition: transform 0.2s;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 6px;
+            min-height: 38px;
+            overflow: hidden;
         }
 
         .stats-tag-card:hover {
@@ -1251,32 +1256,35 @@
         }
 
         .stats-tag-name {
-            font-size: 1em;
+            font-size: 0.95em;
             font-weight: 600;
             color: #b8b8b8;
-            min-width: 60px;
+            min-width: 50px;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .stats-tag-info {
             display: flex;
             align-items: center;
-            gap: 15px;
-            font-size: 1em;
+            gap: 10px;
+            font-size: 0.9em;
             flex: 1;
+            min-width: 0;
         }
 
         .stats-tag-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
             color: #999;
             white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .stats-tag-accuracy {
-            flex: 0 0 60px;
-            font-size: 1em;
+            flex: 0 0 50px;
+            font-size: 0.9em;
             font-weight: 600;
             color: #667eea;
             text-align: center;
@@ -1295,7 +1303,7 @@
         }
 
         .stats-accuracy-bar {
-            width: 80px;
+            width: 60px;
             height: 4px;
             background: #4a4a60;
             border-radius: 2px;
@@ -1433,6 +1441,65 @@
                     <button class="back-btn" onclick="backToQuizPanel()">返回</button>
                 </div>
                 <div class="result-words" id="resultWords"></div>
+            </div>
+        </div>
+
+        <!-- 資訊視窗 -->
+        <div class="word-modal" id="aboutModal" style="display: none;">
+            <div class="word-modal-content" style="max-width: 600px;">
+                <div class="word-modal-header">
+                    <span style="font-weight: bold; font-size: 1.2em;">ℹ️ 英文學習系統</span>
+                    <button class="modal-close-btn" onclick="closeAboutModal()">關閉</button>
+                </div>
+                <div class="word-modal-body" style="gap: 15px; font-size: 0.95em; text-align: left;">
+                    <div>
+                        <strong style="color: #667eea; font-size: 1.1em;">版本：2026.07.15.c</strong>
+                    </div>
+
+                    <div>
+                        <strong style="color: white;">功能模式：</strong>
+                        <div style="margin-left: 10px; color: #b8b8b8;">
+                            • 一般模式：瀏覽單字、搜尋、篩選<br>
+                            • 複習模式：根據準確率複習低分單字<br>
+                            • 測驗模式：隨機測試單字拼寫<br>
+                            • 統計模式：查看每個tag的熟練度統計
+                        </div>
+                    </div>
+
+                    <div>
+                        <strong style="color: white;">統計模式功能：</strong>
+                        <div style="margin-left: 10px; color: #b8b8b8;">
+                            • 按Sheet分類顯示<br>
+                            • 每個tag顯示：測試進度、平均熟練度<br>
+                            • 整體熟練度 = 所有tag平均（未測試當0計）<br>
+                            • 灰色顯示未測過的tag<br>
+                            • [檢視]按鈕：查看該tag的所有單字<br>
+                            • [測驗]按鈕：快速開始該tag的測驗
+                        </div>
+                    </div>
+
+                    <div>
+                        <strong style="color: white;">測驗功能：</strong>
+                        <div style="margin-left: 10px; color: #b8b8b8;">
+                            • 允許重測設定（設定菜單中切換）<br>
+                            • 支援星號篩選和正確率篩選<br>
+                            • 自動追蹤正確率（保留最近5次）
+                        </div>
+                    </div>
+
+                    <div>
+                        <strong style="color: white;">便捷功能：</strong>
+                        <div style="margin-left: 10px; color: #b8b8b8;">
+                            • ★ 標記重要單字<br>
+                            • 🔊 單字發音（點擊音標或單字）<br>
+                            • 正確率追蹤<br>
+                            • 多語言發音支援
+                        </div>
+                    </div>
+                </div>
+                <div class="word-modal-footer">
+                    <button class="modal-nav-btn" onclick="closeAboutModal()" style="flex: 1;">關閉</button>
+                </div>
             </div>
         </div>
 
@@ -2453,18 +2520,45 @@
                     tagInfo.appendChild(accuracyItem);
                     tagInfo.appendChild(accuracyBar);
 
+                    const buttonGroup = document.createElement('div');
+                    buttonGroup.style.display = 'flex';
+                    buttonGroup.style.gap = '6px';
+                    buttonGroup.style.marginLeft = 'auto';
+                    buttonGroup.style.flexShrink = '0';
+
+                    const viewBtn = document.createElement('button');
+                    viewBtn.textContent = '檢視';
+                    viewBtn.style.padding = '4px 10px';
+                    viewBtn.style.background = '#666';
+                    viewBtn.style.color = 'white';
+                    viewBtn.style.border = 'none';
+                    viewBtn.style.borderRadius = '3px';
+                    viewBtn.style.cursor = 'pointer';
+                    viewBtn.style.fontSize = '0.85em';
+                    viewBtn.style.fontWeight = '600';
+                    viewBtn.style.whiteSpace = 'nowrap';
+                    viewBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        viewTagWords(sheetName, tag);
+                    };
+                    viewBtn.onmouseover = () => {
+                        viewBtn.style.background = '#555';
+                    };
+                    viewBtn.onmouseout = () => {
+                        viewBtn.style.background = '#666';
+                    };
+
                     const quizBtn = document.createElement('button');
                     quizBtn.textContent = '測驗';
-                    quizBtn.style.padding = '6px 12px';
+                    quizBtn.style.padding = '4px 10px';
                     quizBtn.style.background = '#2196F3';
                     quizBtn.style.color = 'white';
                     quizBtn.style.border = 'none';
-                    quizBtn.style.borderRadius = '4px';
+                    quizBtn.style.borderRadius = '3px';
                     quizBtn.style.cursor = 'pointer';
-                    quizBtn.style.fontSize = '0.9em';
+                    quizBtn.style.fontSize = '0.85em';
                     quizBtn.style.fontWeight = '600';
-                    quizBtn.style.marginLeft = 'auto';
-                    quizBtn.style.flexShrink = '0';
+                    quizBtn.style.whiteSpace = 'nowrap';
                     quizBtn.onclick = (e) => {
                         e.stopPropagation();
                         startQuizFromStats(sheetName, tag);
@@ -2476,9 +2570,12 @@
                         quizBtn.style.background = '#2196F3';
                     };
 
+                    buttonGroup.appendChild(viewBtn);
+                    buttonGroup.appendChild(quizBtn);
+
                     tagCard.appendChild(tagName);
                     tagCard.appendChild(tagInfo);
-                    tagCard.appendChild(quizBtn);
+                    tagCard.appendChild(buttonGroup);
                     tagsContainer.appendChild(tagCard);
                 });
 
@@ -3176,7 +3273,11 @@
         }
 
         function showAbout() {
-            alert(`英文學習系統\n\n版本：2026.07.15.b\n\n功能模式：\n• 一般模式：瀏覽單字、搜尋、篩選\n• 複習模式：根據準確率複習低分單字\n• 測驗模式：隨機測試單字拼寫\n• 統計模式：查看每個tag的熟練度統計\n\n統計功能：\n• 按Sheet分類顯示\n• 每個tag顯示：測試進度、平均熟練度\n• 整體熟練度 = 所有tag平均（未測試當0計）\n• 灰色顯示未測過的tag\n\n便捷功能：\n• ★ 標記重要單字\n• 🔊 單字發音（點擊音標或單字）\n• 正確率追蹤\n• 多語言支援`);
+            document.getElementById('aboutModal').style.display = 'flex';
+        }
+
+        function closeAboutModal() {
+            document.getElementById('aboutModal').style.display = 'none';
         }
 
         let pronunciationLang = localStorage.getItem('pronunciationLang') || 'en-US';
@@ -3378,10 +3479,25 @@
             }
         }
 
+        function viewTagWords(sheetName, tag) {
+            const tagWords = allWords.filter(word => word.sheet === sheetName && word.tag === tag);
+            if (tagWords.length === 0) {
+                alert('此單元沒有單字');
+                return;
+            }
+            openWordModal(0, tagWords);
+        }
+
         // 點擊視窗外部時關閉
         document.getElementById('wordModal').addEventListener('click', (e) => {
             if (e.target.id === 'wordModal') {
                 closeWordModal();
+            }
+        });
+
+        document.getElementById('aboutModal').addEventListener('click', (e) => {
+            if (e.target.id === 'aboutModal') {
+                closeAboutModal();
             }
         });
 
