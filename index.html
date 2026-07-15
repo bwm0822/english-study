@@ -2382,18 +2382,15 @@
                 const totalTested = Object.values(tagStats).reduce((sum, t) => sum + t.testedCount, 0);
 
                 let overallAccuracy = '--';
-                if (totalTested > 0) {
+                if (totalWords > 0) {
                     let totalAccuracySum = 0;
-                    let countedWords = 0;
                     Object.values(tagStats).forEach(t => {
                         if (t.avgAccuracy !== null) {
                             totalAccuracySum += t.avgAccuracy * t.totalWords;
-                            countedWords += t.totalWords;
                         }
+                        // 未測試的tag當0，自動加入計算（0 * totalWords = 0）
                     });
-                    if (countedWords > 0) {
-                        overallAccuracy = Math.round(totalAccuracySum / countedWords);
-                    }
+                    overallAccuracy = Math.round(totalAccuracySum / totalWords);
                 }
 
                 tagsSummary.innerHTML = `
@@ -3100,7 +3097,7 @@
         }
 
         function showAbout() {
-            alert(`英文學習系統\n\n版本：2026.07.15.a\n\n功能：\n• 一般模式：瀏覽單字和篩選\n• 複習模式：根據準確率複習低分單字\n• 測驗模式：測試單字拼寫\n• 統計模式：查看每個tag的熟練度統計\n  - 顯示每個tag的測試進度\n  - 平均熟練度（未測試當0計）\n  - 灰色顯示未測過的tag\n\n快捷鍵：\n• 單字列：點擊音標/單字發音\n• 測驗結果：點擊單字發音\n• 星號：標記重要單字`);
+            alert(`英文學習系統\n\n版本：2026.07.15.b\n\n功能模式：\n• 一般模式：瀏覽單字、搜尋、篩選\n• 複習模式：根據準確率複習低分單字\n• 測驗模式：隨機測試單字拼寫\n• 統計模式：查看每個tag的熟練度統計\n\n統計功能：\n• 按Sheet分類顯示\n• 每個tag顯示：測試進度、平均熟練度\n• 整體熟練度 = 所有tag平均（未測試當0計）\n• 灰色顯示未測過的tag\n\n便捷功能：\n• ★ 標記重要單字\n• 🔊 單字發音（點擊音標或單字）\n• 正確率追蹤\n• 多語言支援`);
         }
 
         let pronunciationLang = localStorage.getItem('pronunciationLang') || 'en-US';
