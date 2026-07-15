@@ -1203,6 +1203,7 @@
                 <button class="settings-btn" onclick="toggleSettingsMenu()">⚙️</button>
                 <div class="settings-dropdown" id="settingsDropdown">
                     <button class="settings-option" onclick="showAbout()">ℹ️ 資訊</button>
+                    <button class="settings-option" onclick="showPronunciationSettings()">🔊 發音</button>
                     <button class="settings-option" onclick="updateApp()">🔄 更新</button>
                     <button class="settings-option" onclick="clearHistory()">清除紀錄</button>
                 </div>
@@ -1252,6 +1253,85 @@
                     <button class="back-btn" onclick="backToQuizPanel()">返回</button>
                 </div>
                 <div class="result-words" id="resultWords"></div>
+            </div>
+        </div>
+
+        <!-- 發音設定視窗 -->
+        <div class="word-modal" id="pronunciationModal" style="display: none;">
+            <div class="word-modal-content" style="max-width: 500px;">
+                <div class="word-modal-header">
+                    <span style="font-weight: bold; font-size: 1.2em;">🔊 發音設定</span>
+                    <button class="modal-close-btn" onclick="closePronunciationModal()">關閉</button>
+                </div>
+                <div class="word-modal-body" style="gap: 20px;">
+                    <div style="text-align: left;">
+                        <label style="color: white; font-weight: bold; display: block; margin-bottom: 8px;">語言</label>
+                        <select id="pronunciationLangSelect" style="width: 100%; padding: 8px; font-size: 1em; border-radius: 4px; border: none;">
+                            <!-- 英語 -->
+                            <optgroup label="━━━ 英語 ━━━">
+                                <option value="en-US">🇺🇸 美國英語 (en-US)</option>
+                                <option value="en-GB">🇬🇧 英國英語 (en-GB)</option>
+                                <option value="en-AU">🇦🇺 澳洲英語 (en-AU)</option>
+                                <option value="en-CA">🇨🇦 加拿大英語 (en-CA)</option>
+                                <option value="en-IN">🇮🇳 印度英語 (en-IN)</option>
+                                <option value="en-IE">🇮🇪 愛爾蘭英語 (en-IE)</option>
+                                <option value="en-NZ">🇳🇿 紐西蘭英語 (en-NZ)</option>
+                            </optgroup>
+                            <!-- 中文 -->
+                            <optgroup label="━━━ 中文 ━━━">
+                                <option value="zh-CN">🇨🇳 簡體中文 (zh-CN)</option>
+                                <option value="zh-HK">🇭🇰 香港繁體 (zh-HK)</option>
+                                <option value="zh-TW">🇹🇼 台灣繁體 (zh-TW)</option>
+                            </optgroup>
+                            <!-- 亞洲語言 -->
+                            <optgroup label="━━━ 亞洲語言 ━━━">
+                                <option value="ja-JP">🇯🇵 日語 (ja-JP)</option>
+                                <option value="ko-KR">🇰🇷 韓語 (ko-KR)</option>
+                                <option value="th-TH">🇹🇭 泰語 (th-TH)</option>
+                                <option value="vi-VN">🇻🇳 越南語 (vi-VN)</option>
+                                <option value="id-ID">🇮🇩 印尼語 (id-ID)</option>
+                                <option value="ta-IN">🇮🇳 泰米爾語 (ta-IN)</option>
+                                <option value="hi-IN">🇮🇳 印地語 (hi-IN)</option>
+                            </optgroup>
+                            <!-- 歐洲語言 -->
+                            <optgroup label="━━━ 歐洲語言 ━━━">
+                                <option value="fr-FR">🇫🇷 法語 (fr-FR)</option>
+                                <option value="fr-CA">🇨🇦 加拿大法語 (fr-CA)</option>
+                                <option value="de-DE">🇩🇪 德語 (de-DE)</option>
+                                <option value="es-ES">🇪🇸 西班牙語 (es-ES)</option>
+                                <option value="es-MX">🇲🇽 墨西哥西班牙語 (es-MX)</option>
+                                <option value="it-IT">🇮🇹 義大利語 (it-IT)</option>
+                                <option value="pt-PT">🇵🇹 葡萄牙語 (pt-PT)</option>
+                                <option value="pt-BR">🇧🇷 巴西葡萄牙語 (pt-BR)</option>
+                                <option value="nl-NL">🇳🇱 荷蘭語 (nl-NL)</option>
+                                <option value="pl-PL">🇵🇱 波蘭語 (pl-PL)</option>
+                                <option value="ru-RU">🇷🇺 俄語 (ru-RU)</option>
+                                <option value="sv-SE">🇸🇪 瑞典語 (sv-SE)</option>
+                                <option value="da-DK">🇩🇰 丹麥語 (da-DK)</option>
+                                <option value="tr-TR">🇹🇷 土耳其語 (tr-TR)</option>
+                                <option value="el-GR">🇬🇷 希臘語 (el-GR)</option>
+                            </optgroup>
+                            <!-- 中東與其他 -->
+                            <optgroup label="━━━ 中東與其他 ━━━">
+                                <option value="ar-SA">🇸🇦 阿拉伯語 (ar-SA)</option>
+                                <option value="he-IL">🇮🇱 希伯來語 (he-IL)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div style="text-align: left;">
+                        <label style="color: white; font-weight: bold; display: block; margin-bottom: 8px;">速度</label>
+                        <select id="pronunciationRateSelect" style="width: 100%; padding: 8px; font-size: 1em; border-radius: 4px; border: none;">
+                            <option value="0.5">🐢 極慢 (0.5x)</option>
+                            <option value="0.8">🐌 慢 (0.8x)</option>
+                            <option value="1.0" selected>📢 正常 (1.0x)</option>
+                            <option value="1.2">⚡ 快 (1.2x)</option>
+                            <option value="1.5">🚀 很快 (1.5x)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="word-modal-footer">
+                    <button class="modal-nav-btn" onclick="savePronunciationSettings()" style="flex: 1;">保存設定</button>
+                </div>
             </div>
         </div>
 
@@ -1813,7 +1893,8 @@
             }
 
             const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US';
+            utterance.lang = pronunciationLang;
+            utterance.rate = pronunciationRate;
             speechSynthesis.cancel();
             speechSynthesis.speak(utterance);
         }
@@ -2496,7 +2577,10 @@
         function showQuizQuestion() {
             const word = quizWords[quizIndex];
             document.getElementById('quizProgress').textContent = `${quizIndex + 1}/${quizWords.length}`;
-            document.getElementById('quizChinese').textContent = word.中文;
+            const quizChineseEl = document.getElementById('quizChinese');
+            quizChineseEl.textContent = word.中文;
+            quizChineseEl.style.cursor = 'pointer';
+            quizChineseEl.onclick = () => playPronunciation(word.單字);
             document.getElementById('quizPos').textContent = word.詞性;
             document.getElementById('quizInput').value = '';
             document.getElementById('quizFeedback').innerHTML = '';
@@ -2685,6 +2769,38 @@
             alert(`英文學習系統\n\n版本：2026.07.15\n\n功能：\n• 一般模式：瀏覽單字\n• 複習模式：根據準確率複習\n• 測驗模式：測試單字拼寫\n\n快捷鍵：\n• 單字列：點擊音標發音\n• 測驗結果：點擊單字發音`);
         }
 
+        let pronunciationLang = localStorage.getItem('pronunciationLang') || 'en-US';
+        let pronunciationRate = parseFloat(localStorage.getItem('pronunciationRate')) || 1.0;
+
+        function showPronunciationSettings() {
+            const modal = document.getElementById('pronunciationModal');
+            const langSelect = document.getElementById('pronunciationLangSelect');
+            const rateSelect = document.getElementById('pronunciationRateSelect');
+
+            langSelect.value = pronunciationLang;
+            rateSelect.value = pronunciationRate.toFixed(1);
+
+            modal.style.display = 'flex';
+        }
+
+        function closePronunciationModal() {
+            document.getElementById('pronunciationModal').style.display = 'none';
+        }
+
+        function savePronunciationSettings() {
+            const langSelect = document.getElementById('pronunciationLangSelect');
+            const rateSelect = document.getElementById('pronunciationRateSelect');
+
+            pronunciationLang = langSelect.value;
+            pronunciationRate = parseFloat(rateSelect.value);
+
+            localStorage.setItem('pronunciationLang', pronunciationLang);
+            localStorage.setItem('pronunciationRate', pronunciationRate.toString());
+
+            alert('發音設定已保存');
+            closePronunciationModal();
+        }
+
         function updateApp() {
             if (confirm('即將清除快取並更新應用。您的學習紀錄將保留。確認更新嗎？')) {
                 // 清除快取
@@ -2854,6 +2970,12 @@
         document.getElementById('wordModal').addEventListener('click', (e) => {
             if (e.target.id === 'wordModal') {
                 closeWordModal();
+            }
+        });
+
+        document.getElementById('pronunciationModal').addEventListener('click', (e) => {
+            if (e.target.id === 'pronunciationModal') {
+                closePronunciationModal();
             }
         });
     </script>
