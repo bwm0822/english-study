@@ -1460,7 +1460,7 @@
                 </div>
                 <div class="word-modal-body" style="gap: 15px; font-size: 0.95em; text-align: left;">
                     <div>
-                        <strong style="color: #667eea; font-size: 1.1em;">版本：2026.07.16.a</strong>
+                        <strong style="color: #667eea; font-size: 1.1em;">版本：2026.07.16.b</strong>
                     </div>
 
                     <div>
@@ -1504,9 +1504,6 @@
                             • 多語言發音支援
                         </div>
                     </div>
-                </div>
-                <div class="word-modal-footer">
-                    <button class="modal-nav-btn" onclick="closeAboutModal()" style="flex: 1;">關閉</button>
                 </div>
             </div>
         </div>
@@ -2249,12 +2246,12 @@
                         // 如果勾選正確率過濾，檢查是否符合條件
                         if (filterByAccuracy !== null) {
                             const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                            const history = JSON.parse(localStorage.getItem(historyKey)) || [];
-                            if (history.length === 0) {
+                            const hasHistory = localStorage.getItem(historyKey) !== null;
+                            if (!hasHistory) {
                                 return false;
                             }
-                            const correct = history.filter(v => v).length;
-                            const accuracy = Math.round((correct / history.length) * 100);
+                            const correctCount = getQuizHistory(historyKey);
+                            const accuracy = calculateAccuracy(correctCount);
                             if (!(accuracy <= filterByAccuracy)) {
                                 return false;
                             }
@@ -2268,14 +2265,12 @@
                 if (filterByAccuracy !== null) {
                     filteredWords.sort((a, b) => {
                         const historyKeyA = `quizHistory_${a.sheet}/${a.tag}/${a.單字}`;
-                        const historyA = JSON.parse(localStorage.getItem(historyKeyA)) || [];
-                        const correctA = historyA.filter(v => v).length;
-                        const accuracyA = historyA.length > 0 ? Math.round((correctA / historyA.length) * 100) : 0;
+                        const correctCountA = getQuizHistory(historyKeyA);
+                        const accuracyA = calculateAccuracy(correctCountA);
 
                         const historyKeyB = `quizHistory_${b.sheet}/${b.tag}/${b.單字}`;
-                        const historyB = JSON.parse(localStorage.getItem(historyKeyB)) || [];
-                        const correctB = historyB.filter(v => v).length;
-                        const accuracyB = historyB.length > 0 ? Math.round((correctB / historyB.length) * 100) : 0;
+                        const correctCountB = getQuizHistory(historyKeyB);
+                        const accuracyB = calculateAccuracy(correctCountB);
 
                         return accuracyA - accuracyB;
                     });
@@ -2301,12 +2296,12 @@
                     // 如果勾選正確率過濾，檢查是否符合條件
                     if (filterByAccuracy !== null) {
                         const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                        const history = JSON.parse(localStorage.getItem(historyKey)) || [];
-                        if (history.length === 0) {
+                        const hasHistory = localStorage.getItem(historyKey) !== null;
+                        if (!hasHistory) {
                             return false;
                         }
-                        const correct = history.filter(v => v).length;
-                        const accuracy = Math.round((correct / history.length) * 100);
+                        const correctCount = getQuizHistory(historyKey);
+                        const accuracy = calculateAccuracy(correctCount);
                         if (!(accuracy <= filterByAccuracy)) {
                             return false;
                         }
@@ -2348,9 +2343,10 @@
 
                 // 計算正確率
                 const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                const correctCount = getQuizHistory(historyKey);
+                const hasHistory = localStorage.getItem(historyKey) !== null;
                 let accuracyDisplay = '--';
-                if (correctCount > 0) {
+                if (hasHistory) {
+                    const correctCount = getQuizHistory(historyKey);
                     const accuracy = calculateAccuracy(correctCount);
                     accuracyDisplay = `${accuracy}%`;
                 }
@@ -2449,10 +2445,11 @@
 
                     tagWords.forEach(word => {
                         const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                        const correctCount = getQuizHistory(historyKey);
-                        if (correctCount > 0) {
+                        const hasHistory = localStorage.getItem(historyKey) !== null;
+                        if (hasHistory) {
                             hasAnyTested = true;
                             testedCount++;
+                            const correctCount = getQuizHistory(historyKey);
                             const accuracy = calculateAccuracy(correctCount);
                             totalAccuracy += accuracy;
                         }
@@ -2947,10 +2944,11 @@
                     // 如果勾選正確率篩選，只包含符合條件的單字
                     if (filterByAccuracy !== null) {
                         const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                        const correctCount = getQuizHistory(historyKey);
-                        if (correctCount === 0) {
+                        const hasHistory = localStorage.getItem(historyKey) !== null;
+                        if (!hasHistory) {
                             return false;
                         }
+                        const correctCount = getQuizHistory(historyKey);
                         const accuracy = calculateAccuracy(correctCount);
                         if (!(accuracy <= filterByAccuracy)) {
                             return false;
@@ -3087,10 +3085,11 @@
                 // 如果勾選正確率篩選，只包含符合條件的單字
                 if (filterByAccuracy !== null) {
                     const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                    const correctCount = getQuizHistory(historyKey);
-                    if (correctCount === 0) {
+                    const hasHistory = localStorage.getItem(historyKey) !== null;
+                    if (!hasHistory) {
                         return false; // 沒有歷史記錄的單字不包含
                     }
+                    const correctCount = getQuizHistory(historyKey);
                     const accuracy = calculateAccuracy(correctCount);
                     return accuracy <= filterByAccuracy;
                 }
@@ -3207,14 +3206,16 @@
             testedResults.forEach(result => {
                 const word = result.word;
                 const wordKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                let correctCount = getQuizHistory(wordKey); // 讀取舊格式並自動轉換
+                let cnt = getQuizHistory(wordKey); // 讀取舊格式並自動轉換
 
-                // 更新計數：如果本次正確，加1；否則保持不變
+                // 更新計數：正確加1，錯誤減1，範圍0~5
                 if (result.isCorrect) {
-                    correctCount = Math.min(correctCount + 1, 5); // 最多5次
+                    cnt = Math.min(cnt + 1, 5); // 正確加1，最高5
+                } else {
+                    cnt = Math.max(cnt - 1, 0); // 錯誤減1，最低0
                 }
                 // 保存為數值（新格式）
-                localStorage.setItem(wordKey, correctCount.toString());
+                localStorage.setItem(wordKey, cnt.toString());
             });
 
             const correctCount = testedResults.filter(r => r.isCorrect).length;
@@ -3257,9 +3258,10 @@
 
                 // 計算正確率
                 const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                const correctCount = getQuizHistory(historyKey);
+                const hasHistory = localStorage.getItem(historyKey) !== null;
                 let accuracyDisplay = '--';
-                if (correctCount > 0) {
+                if (hasHistory) {
+                    const correctCount = getQuizHistory(historyKey);
                     const accuracy = calculateAccuracy(correctCount);
                     accuracyDisplay = `${accuracy}%`;
                 }
@@ -3504,9 +3506,10 @@
             tagDiv.querySelector('.modal-tag-tag').textContent = word.tag;
 
             const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-            const correctCount = getQuizHistory(historyKey);
+            const hasHistory = localStorage.getItem(historyKey) !== null;
             let accuracyDisplay = '--';
-            if (correctCount > 0) {
+            if (hasHistory) {
+                const correctCount = getQuizHistory(historyKey);
                 const accuracy = calculateAccuracy(correctCount);
                 accuracyDisplay = `${accuracy}%`;
             }
