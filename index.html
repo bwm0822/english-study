@@ -1461,7 +1461,7 @@
                 </div>
                 <div class="word-modal-body" style="gap: 15px; font-size: 0.95em; text-align: left;">
                     <div>
-                        <strong style="color: #667eea; font-size: 1.1em;">版本：2026.07.17</strong>
+                        <strong style="color: #667eea; font-size: 1.1em;">版本：2026.07.17.a</strong>
                     </div>
 
                     <div>
@@ -1744,7 +1744,7 @@
                 accuracySelect.style.cursor = 'pointer';
                 accuracySelect.style.marginLeft = '5px';
 
-                ['<=100%', '<=80%', '<=60%', '<=40%', '<=20%'].forEach(threshold => {
+                ['<=100%', '<=80%', '<=60%', '<=40%', '<=20%', '=0%'].forEach(threshold => {
                     const option = document.createElement('option');
                     option.value = threshold;
                     option.textContent = threshold;
@@ -2700,7 +2700,7 @@
             accuracySelect.style.cursor = 'pointer';
             accuracySelect.style.marginLeft = '5px';
 
-            ['<=100%', '<=80%', '<=60%', '<=40%', '<=20%'].forEach(threshold => {
+            ['<=100%', '<=80%', '<=60%', '<=40%', '<=20%', '=0%'].forEach(threshold => {
                 const option = document.createElement('option');
                 option.value = threshold;
                 option.textContent = threshold;
