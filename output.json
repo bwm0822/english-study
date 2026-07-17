@@ -1,4 +1,1866 @@
 {
+  "進階文法": [
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "position",
+      "音標": "[pəˈzɪʃən]",
+      "詞性": "n.",
+      "中文": "位置",
+      "例句": "The teacher asked the students to find the position of the ball.",
+      "翻譯": "老師請學生找出球的位置。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "look at",
+      "音標": "[lʊk æt]",
+      "詞性": "v. phr.",
+      "中文": "看著",
+      "例句": "Please look at the picture on the board.",
+      "翻譯": "請看黑板上的圖片。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "fill in",
+      "音標": "[fɪl ɪn]",
+      "詞性": "v. phr.",
+      "中文": "填入",
+      "例句": "Please fill in the blanks with the correct words.",
+      "翻譯": "請用正確的單字填入空格。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "blank",
+      "音標": "[blæŋk]",
+      "詞性": "n.",
+      "中文": "空格、空白",
+      "例句": "There is a blank in the sentence.",
+      "翻譯": "句子裡有一個空格。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "between",
+      "音標": "[bɪˈtwin]",
+      "詞性": "prep.",
+      "中文": "在…之間",
+      "例句": "The ball is between the two chairs.",
+      "翻譯": "球在兩張椅子之間。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "beside",
+      "音標": "[bɪˈsaɪd]",
+      "詞性": "prep.",
+      "中文": "在…旁邊",
+      "例句": "She is sitting beside her friend.",
+      "翻譯": "她坐在她朋友旁邊。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "behind",
+      "音標": "[bɪˈhaɪnd]",
+      "詞性": "prep.",
+      "中文": "在…後面",
+      "例句": "The dog is behind the door.",
+      "翻譯": "狗在門後面。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "above",
+      "音標": "[əˈbʌv]",
+      "詞性": "prep.",
+      "中文": "在…上方",
+      "例句": "The lamp is above the table.",
+      "翻譯": "燈在桌子上方。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "in front of",
+      "音標": "[ɪn frʌnt ʌv]",
+      "詞性": "prep.",
+      "中文": "在…前面",
+      "例句": "The car is in front of the house.",
+      "翻譯": "車子在房子前面。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "against",
+      "音標": "[əˈɡɛnst]",
+      "詞性": "prep.",
+      "中文": "靠著、貼著",
+      "例句": "The ladder is against the wall.",
+      "翻譯": "梯子靠著牆。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "into",
+      "音標": "[ˈɪntu]",
+      "詞性": "prep.",
+      "中文": "進入…裡面",
+      "例句": "The cat jumped into the box.",
+      "翻譯": "貓跳進盒子裡。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "around",
+      "音標": "[əˈraʊnd]",
+      "詞性": "prep.",
+      "中文": "在…周圍、繞著",
+      "例句": "They walked around the park.",
+      "翻譯": "他們繞著公園走。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "from",
+      "音標": "[frʌm]",
+      "詞性": "prep.",
+      "中文": "從…",
+      "例句": "I got this gift from my teacher.",
+      "翻譯": "我從老師那裡得到這個禮物。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "towards",
+      "音標": "[təˈwɔrdz]",
+      "詞性": "prep.",
+      "中文": "朝向…",
+      "例句": "The boy ran towards his mother.",
+      "翻譯": "男孩跑向他的媽媽。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "across from",
+      "音標": "[əˈkrɔs frʌm]",
+      "詞性": "prep. phr.",
+      "中文": "在…對面",
+      "例句": "The bank is across from the school.",
+      "翻譯": "銀行在學校對面。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "direction",
+      "音標": "[dəˈrɛkʃən]",
+      "詞性": "n.",
+      "中文": "方向",
+      "例句": "Which direction should we go?",
+      "翻譯": "我們應該往哪個方向走？"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "cross out",
+      "音標": "[krɔs aʊt]",
+      "詞性": "v. phr.",
+      "中文": "劃掉",
+      "例句": "Please cross out the wrong answer.",
+      "翻譯": "請把錯誤的答案劃掉。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "rearrange",
+      "音標": "[ˌriəˈrendʒ]",
+      "詞性": "v.",
+      "中文": "重新排列",
+      "例句": "Please rearrange the words to make a sentence.",
+      "翻譯": "請重新排列單字來組成句子。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "form",
+      "音標": "[fɔrm]",
+      "詞性": "n.",
+      "中文": "表格；形式",
+      "例句": "Please fill out this form.",
+      "翻譯": "請填寫這張表格。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12",
+      "單字": "bold",
+      "音標": "[bold]",
+      "詞性": "adj.",
+      "中文": "粗體的",
+      "例句": "The title is written in bold letters.",
+      "翻譯": "標題是用粗體字寫的。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "giraffe",
+      "音標": "[dʒəˈræf]",
+      "詞性": "n.",
+      "中文": "長頸鹿",
+      "例句": "The giraffe is very tall.",
+      "翻譯": "長頸鹿非常高。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "present",
+      "音標": "[ˈprɛznt]",
+      "詞性": "n.",
+      "中文": "禮物",
+      "例句": "My mother gave me a present.",
+      "翻譯": "我媽媽給我一個禮物。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "Shanghai",
+      "音標": "[ʃæŋˈhaɪ]",
+      "詞性": "n.",
+      "中文": "上海",
+      "例句": "Shanghai is a big city in China.",
+      "翻譯": "上海是中國的一個大城市。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "order",
+      "音標": "[ˈɔrdɚ]",
+      "詞性": "n.",
+      "中文": "順序；命令",
+      "例句": "Please put the numbers in the correct order.",
+      "翻譯": "請把數字按照正確順序排列。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "complete",
+      "音標": "[kəmˈplit]",
+      "詞性": "v.",
+      "中文": "完成",
+      "例句": "She will complete her homework tonight.",
+      "翻譯": "她今晚會完成她的作業。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "change",
+      "音標": "[tʃendʒ]",
+      "詞性": "v.",
+      "中文": "改變",
+      "例句": "The weather can change quickly.",
+      "翻譯": "天氣可能很快改變。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "correct",
+      "音標": "[kəˈrɛkt]",
+      "詞性": "adj.",
+      "中文": "正確的",
+      "例句": "This answer is correct.",
+      "翻譯": "這個答案是正確的。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "possible",
+      "音標": "[ˈpɑsəbl]",
+      "詞性": "adj.",
+      "中文": "可能的",
+      "例句": "Is it possible to finish today?",
+      "翻譯": "今天完成是可能的嗎？"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "negative",
+      "音標": "[ˈnɛɡətɪv]",
+      "詞性": "adj.",
+      "中文": "否定的",
+      "例句": "This is a negative sentence.",
+      "翻譯": "這是一個否定句。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "continuous",
+      "音標": "[kənˈtɪnjuəs]",
+      "詞性": "adj.",
+      "中文": "連續的；進行的",
+      "例句": "She is learning the present continuous tense.",
+      "翻譯": "她正在學習現在進行式。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "interrogative",
+      "音標": "[ˌɪntəˈrɑɡətɪv]",
+      "詞性": "adj.",
+      "中文": "疑問的",
+      "例句": "This is an interrogative sentence.",
+      "翻譯": "這是一個疑問句。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "never",
+      "音標": "[ˈnɛvɚ]",
+      "詞性": "adv.",
+      "中文": "從不",
+      "例句": "I never eat candy before dinner.",
+      "翻譯": "我晚餐前從不吃糖。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "rarely",
+      "音標": "[ˈrɛrlɪ]",
+      "詞性": "adv.",
+      "中文": "很少",
+      "例句": "He rarely watches TV.",
+      "翻譯": "他很少看電視。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "seldom",
+      "音標": "[ˈsɛldəm]",
+      "詞性": "adv.",
+      "中文": "不常；很少",
+      "例句": "She seldom goes to the zoo.",
+      "翻譯": "她很少去動物園。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "sometimes",
+      "音標": "[ˈsʌmˌtaɪmz]",
+      "詞性": "adv.",
+      "中文": "有時",
+      "例句": "Sometimes we play soccer after school.",
+      "翻譯": "有時我們放學後踢足球。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "often",
+      "音標": "[ˈɔfən]",
+      "詞性": "adv.",
+      "中文": "常常",
+      "例句": "I often read books at night.",
+      "翻譯": "我常常在晚上讀書。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "usually",
+      "音標": "[ˈjuʒuəlɪ]",
+      "詞性": "adv.",
+      "中文": "通常",
+      "例句": "I usually get up at seven.",
+      "翻譯": "我通常七點起床。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "always",
+      "音標": "[ˈɔlwez]",
+      "詞性": "adv.",
+      "中文": "總是；一直",
+      "例句": "She always helps her friends.",
+      "翻譯": "她總是幫助她的朋友。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U13",
+      "單字": "adverbs of frequency",
+      "音標": "[ˈædvɚbz ʌv ˈfrikwənsɪ]",
+      "詞性": "n. phr.",
+      "中文": "頻率副詞",
+      "例句": "Always and often are adverbs of frequency.",
+      "翻譯": "always 和 often 是頻率副詞。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "stage",
+      "音標": "[stedʒ]",
+      "詞性": "n.",
+      "中文": "舞台",
+      "例句": "The actors are on the stage.",
+      "翻譯": "演員們在舞台上。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "concert",
+      "音標": "[ˈkɑnsɚt]",
+      "詞性": "n.",
+      "中文": "音樂會",
+      "例句": "We went to a concert last night.",
+      "翻譯": "我們昨晚去聽音樂會。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "sentence",
+      "音標": "[ˈsɛntəns]",
+      "詞性": "n.",
+      "中文": "句子",
+      "例句": "This is a long sentence.",
+      "翻譯": "這是一個很長的句子。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "exhibition",
+      "音標": "[ˌɛksəˈbɪʃən]",
+      "詞性": "n.",
+      "中文": "展覽",
+      "例句": "The museum has a new exhibition.",
+      "翻譯": "博物館有一個新的展覽。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "fall asleep",
+      "音標": "[fɔl əˈslip]",
+      "詞性": "v. phr.",
+      "中文": "入睡",
+      "例句": "I usually fall asleep at ten o'clock.",
+      "翻譯": "我通常十點入睡。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "exercise",
+      "音標": "[ˈɛksɚˌsaɪz]",
+      "詞性": "n.",
+      "中文": "練習；運動",
+      "例句": "We have a lot of exercises in English class.",
+      "翻譯": "我們英文課有很多練習。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "bracket",
+      "音標": "[ˈbrækɪt]",
+      "詞性": "n.",
+      "中文": "括號",
+      "例句": "Put the answer in the bracket.",
+      "翻譯": "把答案放在括號裡。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "examination",
+      "音標": "[ɪɡˌzæməˈneʃən]",
+      "詞性": "n.",
+      "中文": "考試",
+      "例句": "She is preparing for the examination.",
+      "翻譯": "她正在準備考試。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "excited",
+      "音標": "[ɪkˈsaɪtɪd]",
+      "詞性": "adj.",
+      "中文": "興奮的",
+      "例句": "I am excited about the trip.",
+      "翻譯": "我對這次旅行感到興奮。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "regular",
+      "音標": "[ˈrɛɡjəlɚ]",
+      "詞性": "adj.",
+      "中文": "規則的；有規律的",
+      "例句": "He goes to school at regular times.",
+      "翻譯": "他按規律時間上學。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "pass",
+      "音標": "[pæs]",
+      "詞性": "v.",
+      "中文": "通過；及格",
+      "例句": "She passed the test.",
+      "翻譯": "她通過了考試。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "tidy",
+      "音標": "[ˈtaɪdɪ]",
+      "詞性": "adj.",
+      "中文": "整齊的",
+      "例句": "Your room is very tidy.",
+      "翻譯": "你的房間很整齊。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "match",
+      "音標": "[mætʃ]",
+      "詞性": "n.",
+      "中文": "比賽",
+      "例句": "The football match starts at three.",
+      "翻譯": "足球比賽三點開始。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "circle",
+      "音標": "[ˈsɝkəl]",
+      "詞性": "n.",
+      "中文": "圓圈",
+      "例句": "Draw a circle around the correct answer.",
+      "翻譯": "在正確答案周圍畫一個圓圈。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "hard",
+      "音標": "[hɑrd]",
+      "詞性": "adj.",
+      "中文": "困難的；努力的",
+      "例句": "This exercise is hard.",
+      "翻譯": "這個練習很困難。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "conjunction",
+      "音標": "[kənˈdʒʌŋkʃən]",
+      "詞性": "n.",
+      "中文": "連接詞",
+      "例句": "And is a common conjunction.",
+      "翻譯": "“and”是一個常用的連接詞。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "because",
+      "音標": "[bɪˈkɔz]",
+      "詞性": "conj.",
+      "中文": "因為",
+      "例句": "I stayed home because it was raining.",
+      "翻譯": "因為下雨，我待在家裡。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "regular verb",
+      "音標": "[ˈrɛɡjəlɚ vɝb]",
+      "詞性": "n. phr.",
+      "中文": "規則動詞",
+      "例句": "“Walk” is a regular verb.",
+      "翻譯": "“walk”是一個規則動詞。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "irregular verb",
+      "音標": "[ɪˈrɛɡjəlɚ vɝb]",
+      "詞性": "n. phr.",
+      "中文": "不規則動詞",
+      "例句": "“Go” is an irregular verb.",
+      "翻譯": "“go”是一個不規則動詞。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U14",
+      "單字": "postcard",
+      "音標": "[ˈpostˌkɑrd]",
+      "詞性": "n.",
+      "中文": "明信片",
+      "例句": "I sent a postcard to my friend.",
+      "翻譯": "我寄了一張明信片給朋友。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "term",
+      "音標": "[tɝm]",
+      "詞性": "n.",
+      "中文": "期間",
+      "例句": "This term is very interesting.",
+      "翻譯": "這個學期很有趣。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "uniform",
+      "音標": "[ˈjunəˌfɔrm]",
+      "詞性": "n.",
+      "中文": "制服",
+      "例句": "The students wear a uniform to school.",
+      "翻譯": "學生上學穿制服。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "dinosaur",
+      "音標": "[ˈdaɪnəˌsɔr]",
+      "詞性": "n.",
+      "中文": "恐龍",
+      "例句": "The dinosaur is very big.",
+      "翻譯": "這隻恐龍很大。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "cheese",
+      "音標": "[tʃiz]",
+      "詞性": "n.",
+      "中文": "起司",
+      "例句": "I like cheese on my bread.",
+      "翻譯": "我喜歡在麵包上加起司。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "museum",
+      "音標": "[mjuˈziəm]",
+      "詞性": "n.",
+      "中文": "博物館",
+      "例句": "We visited the museum yesterday.",
+      "翻譯": "我們昨天參觀了博物館。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "review",
+      "音標": "[rɪˈvju]",
+      "詞性": "n. v.",
+      "中文": "複習；評論",
+      "例句": "We need to review our lessons.",
+      "翻譯": "我們需要複習課程。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "cycle",
+      "音標": "[ˈsaɪkəl]",
+      "詞性": "v.",
+      "中文": "騎自行車",
+      "例句": "I like to cycle around the park every morning.",
+      "翻譯": "我喜歡每天早上在公園騎自行車。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "waitress",
+      "音標": "[ˈwet rɪs]",
+      "詞性": "n.",
+      "中文": "女服務生",
+      "例句": "The waitress served us dinner.",
+      "翻譯": "女服務生給我們上晚餐。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "arrive",
+      "音標": "[əˈraɪv]",
+      "詞性": "v.",
+      "中文": "到達",
+      "例句": "Our train will arrive at eight.",
+      "翻譯": "我們的火車八點到達。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "celebrate",
+      "音標": "[ˈsɛləˌbret]",
+      "詞性": "v.",
+      "中文": "慶祝",
+      "例句": "We celebrate our birthdays every year.",
+      "翻譯": "我們每年慶祝生日。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "visit",
+      "音標": "[ˈvɪzɪt]",
+      "詞性": "v.",
+      "中文": "參觀；拜訪",
+      "例句": "They visit their grandparents on Sundays.",
+      "翻譯": "他們星期天去拜訪祖父母。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "during",
+      "音標": "[ˈdjʊrɪŋ]",
+      "詞性": "prep.",
+      "中文": "在…期間",
+      "例句": "During the holiday, we went to the beach.",
+      "翻譯": "假期期間，我們去了海邊。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "at the moment",
+      "音標": "[æt ðə ˈmomənt]",
+      "詞性": "adv. phr.",
+      "中文": "此刻；目前",
+      "例句": "I am busy at the moment.",
+      "翻譯": "我目前很忙。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "how often",
+      "音標": "[haʊ ˈɔfən]",
+      "詞性": "adv. phr.",
+      "中文": "多久一次",
+      "例句": "How often do you go to the library?",
+      "翻譯": "你多久去一次圖書館？"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U12-14",
+      "單字": "adverb",
+      "音標": "[ˈædvɚb]",
+      "詞性": "n.",
+      "中文": "副詞",
+      "例句": "“Quickly” is an adverb.",
+      "翻譯": "“quickly”是一個副詞。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "France",
+      "音標": "[fræns]",
+      "詞性": "n.",
+      "中文": "法國",
+      "例句": "France is famous for its wine.",
+      "翻譯": "法國以葡萄酒聞名。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "Japan",
+      "音標": "[dʒəˈpæn]",
+      "詞性": "n.",
+      "中文": "日本",
+      "例句": "Japan has many beautiful cherry blossoms.",
+      "翻譯": "日本有許多美麗的櫻花。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "China",
+      "音標": "[ˈtʃaɪnə]",
+      "詞性": "n.",
+      "中文": "中國",
+      "例句": "China is a large country.",
+      "翻譯": "中國是一個大國。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "exercise",
+      "音標": "[ˈɛksɚˌsaɪz]",
+      "詞性": "n.",
+      "中文": "練習；運動",
+      "例句": "We have an English exercise every day.",
+      "翻譯": "我們每天都有英文練習。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "advice",
+      "音標": "[ədˈvaɪs]",
+      "詞性": "n.",
+      "中文": "建議",
+      "例句": "My teacher gave me good advice.",
+      "翻譯": "老師給了我很好的建議。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "problem",
+      "音標": "[ˈprɑbləm]",
+      "詞性": "n.",
+      "中文": "問題",
+      "例句": "I have a problem with my homework.",
+      "翻譯": "我的作業有問題。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "restaurant",
+      "音標": "[ˈrɛstərənt]",
+      "詞性": "n.",
+      "中文": "餐廳",
+      "例句": "We went to a new restaurant for dinner.",
+      "翻譯": "我們去一家新餐廳吃晚餐。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "lake",
+      "音標": "[lek]",
+      "詞性": "n.",
+      "中文": "湖泊",
+      "例句": "There is a beautiful lake near our town.",
+      "翻譯": "我們鎮附近有一個美麗的湖。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "child",
+      "音標": "[tʃaɪld]",
+      "詞性": "n.",
+      "中文": "小孩",
+      "例句": "The child is playing in the garden.",
+      "翻譯": "小孩在花園裡玩。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "children",
+      "音標": "[ˈtʃɪldrən]",
+      "詞性": "n.",
+      "中文": "孩子們",
+      "例句": "The children are reading books.",
+      "翻譯": "孩子們在看書。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "French",
+      "音標": "[frɛntʃ]",
+      "詞性": "adj.",
+      "中文": "法國的；法語的",
+      "例句": "She can speak French.",
+      "翻譯": "她會說法語。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "Japanese",
+      "音標": "[ˌdʒæpəˈniz]",
+      "詞性": "adj.",
+      "中文": "日本的；日語的",
+      "例句": "He likes Japanese food.",
+      "翻譯": "他喜歡日本料理。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "Chinese",
+      "音標": "[tʃaɪˈniz]",
+      "詞性": "adj.",
+      "中文": "中國的；中文的",
+      "例句": "I am learning Chinese.",
+      "翻譯": "我正在學中文。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "test",
+      "音標": "[tɛst]",
+      "詞性": "n.",
+      "中文": "測驗",
+      "例句": "We have a test every Friday.",
+      "翻譯": "我們每週五有測驗。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "difficult",
+      "音標": "[ˈdɪfəˌkʌlt]",
+      "詞性": "adj.",
+      "中文": "困難的",
+      "例句": "This exercise is difficult.",
+      "翻譯": "這個練習很困難。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "foreign",
+      "音標": "[ˈfɔrən]",
+      "詞性": "adj.",
+      "中文": "外國的",
+      "例句": "He likes foreign movies.",
+      "翻譯": "他喜歡外國電影。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "empty",
+      "音標": "[ˈɛmptɪ]",
+      "詞性": "adj.",
+      "中文": "空的",
+      "例句": "The bottle is empty.",
+      "翻譯": "這個瓶子是空的。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "be full of",
+      "音標": "[bi fʊl ʌv]",
+      "詞性": "v. phr.",
+      "中文": "充滿",
+      "例句": "The box is full of toys.",
+      "翻譯": "這個箱子充滿玩具。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "have a cold",
+      "音標": "[hæv ə kold]",
+      "詞性": "v. phr.",
+      "中文": "感冒",
+      "例句": "I have a cold and a sore throat.",
+      "翻譯": "我感冒了，喉嚨痛。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "catch a cold",
+      "音標": "[kætʃ ə kold]",
+      "詞性": "v. phr.",
+      "中文": "得感冒",
+      "例句": "Be careful not to catch a cold.",
+      "翻譯": "小心不要感冒。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "can",
+      "音標": "[kæn]",
+      "詞性": "v.",
+      "中文": "能；可以",
+      "例句": "I can swim very well.",
+      "翻譯": "我游泳游得很好。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15",
+      "單字": "could",
+      "音標": "[kʊd]",
+      "詞性": "v.",
+      "中文": "過去能夠；可以",
+      "例句": "When I was young, I could run fast.",
+      "翻譯": "我年輕的時候跑得很快。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15-1",
+      "單字": "Spain",
+      "音標": "[spen]",
+      "詞性": "n.",
+      "中文": "西班牙",
+      "例句": "Spain is famous for its flamenco dance.",
+      "翻譯": "西班牙以佛朗明哥(flamenco)舞聞名。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15-1",
+      "單字": "Spanish",
+      "音標": "[ˈspænɪʃ]",
+      "詞性": "adj.",
+      "中文": "西班牙的；西班牙語的",
+      "例句": "She can speak Spanish.",
+      "翻譯": "她會說西班牙語。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15-1",
+      "單字": "Taiwan",
+      "音標": "[ˈtaɪˈwɑn]",
+      "詞性": "n.",
+      "中文": "台灣",
+      "例句": "Taiwan is an island in East Asia.",
+      "翻譯": "台灣是東亞(East Asia)的一個島嶼。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15-1",
+      "單字": "Taiwanese",
+      "音標": "[ˌtaɪwəˈniz]",
+      "詞性": "adj.",
+      "中文": "台灣的；台灣人",
+      "例句": "He is Taiwanese.",
+      "翻譯": "他是台灣人。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15-1",
+      "單字": "America",
+      "音標": "[əˈmɛrɪkə]",
+      "詞性": "n.",
+      "中文": "美國",
+      "例句": "America is a big country.",
+      "翻譯": "美國是一個大國。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15-1",
+      "單字": "England",
+      "音標": "[ˈɪŋɡlənd]",
+      "詞性": "n.",
+      "中文": "英格蘭",
+      "例句": "England is part of the United Kingdom.",
+      "翻譯": "英格蘭是英國的一部分。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15-1",
+      "單字": "English",
+      "音標": "[ˈɪŋɡlɪʃ]",
+      "詞性": "adj.",
+      "中文": "英國的；英語",
+      "例句": "I am learning English.",
+      "翻譯": "我正在學英文。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15-1",
+      "單字": "Italy",
+      "音標": "[ˈɪtəlɪ]",
+      "詞性": "n.",
+      "中文": "義大利",
+      "例句": "Italy is famous for pizza and pasta.",
+      "翻譯": "義大利以披薩和義大利麵聞名。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15-1",
+      "單字": "Italian",
+      "音標": "[ɪˈtæljən]",
+      "詞性": "adj.",
+      "中文": "義大利的；義大利語",
+      "例句": "She likes Italian food.",
+      "翻譯": "她喜歡義大利料理。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15-1",
+      "單字": "Germany",
+      "音標": "[ˈdʒɝmənɪ]",
+      "詞性": "n.",
+      "中文": "德國",
+      "例句": "Germany has many beautiful castles.",
+      "翻譯": "德國有許多美麗的城堡。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U15-1",
+      "單字": "German",
+      "音標": "[ˈdʒɝmən]",
+      "詞性": "adj.",
+      "中文": "德國的；德語",
+      "例句": "He is learning German.",
+      "翻譯": "他正在學德語。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "future",
+      "音標": "[ˈfjutʃɚ]",
+      "詞性": "n.",
+      "中文": "未來",
+      "例句": "We should think about the future.",
+      "翻譯": "我們應該思考未來。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "negative",
+      "音標": "[ˈnɛɡətɪv]",
+      "詞性": "adj.",
+      "中文": "否定的",
+      "例句": "This is a negative sentence.",
+      "翻譯": "這是一個否定句。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "affirmative",
+      "音標": "[əˈfɝmətɪv]",
+      "詞性": "adj.",
+      "中文": "肯定的",
+      "例句": "This is an affirmative sentence.",
+      "翻譯": "這是一個肯定句。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "pollution",
+      "音標": "[pəˈluʃən]",
+      "詞性": "n.",
+      "中文": "污染",
+      "例句": "The river suffers from pollution.",
+      "翻譯": "這條河受到污染。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "reptile",
+      "音標": "[ˈrɛptaɪl]",
+      "詞性": "n.",
+      "中文": "爬行動物",
+      "例句": "A snake is a reptile.",
+      "翻譯": "蛇是一種爬行動物。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "India",
+      "音標": "[ˈɪndɪə]",
+      "詞性": "n.",
+      "中文": "印度",
+      "例句": "India is known for its spicy food.",
+      "翻譯": "印度以辛辣食物聞名。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "film",
+      "音標": "[fɪlm]",
+      "詞性": "n.",
+      "中文": "電影",
+      "例句": "I watched a film last night.",
+      "翻譯": "我昨晚看了一部電影。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "rocket",
+      "音標": "[ˈrɑkɪt]",
+      "詞性": "n.",
+      "中文": "火箭",
+      "例句": "The rocket will launch tomorrow.",
+      "翻譯": "火箭明天將發射。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "cartoon",
+      "音標": "[kɑrˈtun]",
+      "詞性": "n.",
+      "中文": "卡通",
+      "例句": "I like to watch cartoons on TV.",
+      "翻譯": "我喜歡在電視上看卡通。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "cousin",
+      "音標": "[ˈkʌzn]",
+      "詞性": "n.",
+      "中文": "堂/表兄弟姊妹",
+      "例句": "My cousin lives in Taipei.",
+      "翻譯": "我的堂/表兄弟姊妹住在台北。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "city",
+      "音標": "[ˈsɪtɪ]",
+      "詞性": "n.",
+      "中文": "城市",
+      "例句": "New York is a big city.",
+      "翻譯": "紐約是一個大城市。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "town",
+      "音標": "[taʊn]",
+      "詞性": "n.",
+      "中文": "鎮",
+      "例句": "This town has many shops.",
+      "翻譯": "這個鎮有很多商店。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "photo",
+      "音標": "[ˈfoto]",
+      "詞性": "n.",
+      "中文": "照片",
+      "例句": "I took a photo of the sunset.",
+      "翻譯": "我拍了一張夕陽的照片。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "robot",
+      "音標": "[ˈrobət]",
+      "詞性": "n.",
+      "中文": "機器人",
+      "例句": "The robot can help clean the house.",
+      "翻譯": "這個機器人可以幫忙打掃房子。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "boring",
+      "音標": "[ˈbɔrɪŋ]",
+      "詞性": "adj.",
+      "中文": "無聊的",
+      "例句": "The movie is boring.",
+      "翻譯": "這部電影很無聊。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "safe",
+      "音標": "[sef]",
+      "詞性": "adj.",
+      "中文": "安全的",
+      "例句": "This place is safe at night.",
+      "翻譯": "這個地方夜晚很安全。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "soon",
+      "音標": "[sun]",
+      "詞性": "adv.",
+      "中文": "很快",
+      "例句": "I will see you soon.",
+      "翻譯": "我很快會見到你。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "later",
+      "音標": "[ˈletɚ]",
+      "詞性": "adv.",
+      "中文": "稍後",
+      "例句": "I will call you later.",
+      "翻譯": "我稍後會打電話給你。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "decorate",
+      "音標": "[ˈdɛkəˌret]",
+      "詞性": "v.",
+      "中文": "裝飾",
+      "例句": "We decorate the room for the party.",
+      "翻譯": "我們為派對裝飾房間。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U16",
+      "單字": "travel",
+      "音標": "[ˈtrævəl]",
+      "詞性": "v.",
+      "中文": "旅行",
+      "例句": "I like to travel to different countries.",
+      "翻譯": "我喜歡去不同國家旅行。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "hyena",
+      "音標": "[haɪˈinə]",
+      "詞性": "n.",
+      "中文": "鬣狗；土狼",
+      "例句": "The hyena is laughing loudly.",
+      "翻譯": "鬣狗發出大聲的笑聲。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "rhino",
+      "音標": "[ˈraɪno]",
+      "詞性": "n.",
+      "中文": "犀牛",
+      "例句": "The rhino has a big horn.",
+      "翻譯": "犀牛有一個大角。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "penguin",
+      "音標": "[ˈpɛnɡwɪn]",
+      "詞性": "n.",
+      "中文": "企鵝",
+      "例句": "Penguins live in cold places.",
+      "翻譯": "企鵝生活在寒冷的地方。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "ostrich",
+      "音標": "[ˈɑstrɪtʃ]",
+      "詞性": "n.",
+      "中文": "鴕鳥",
+      "例句": "The ostrich is the largest bird.",
+      "翻譯": "鴕鳥是最大的鳥。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "buffalo",
+      "音標": "[ˈbʌfəˌlo]",
+      "詞性": "n.",
+      "中文": "水牛",
+      "例句": "The buffalo works in the field.",
+      "翻譯": "水牛在田裡工作。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "crocodile",
+      "音標": "[ˈkrɑkəˌdaɪl]",
+      "詞性": "n.",
+      "中文": "鱷魚",
+      "例句": "The crocodile swims in the river.",
+      "翻譯": "鱷魚在河裡游泳。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "dolphin",
+      "音標": "[ˈdɑlfɪn]",
+      "詞性": "n.",
+      "中文": "海豚",
+      "例句": "Dolphins are very smart animals.",
+      "翻譯": "海豚是非常聰明的動物。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "python",
+      "音標": "[ˈpaɪθɑn]",
+      "詞性": "n.",
+      "中文": "蟒蛇",
+      "例句": "The python is very long.",
+      "翻譯": "蟒蛇非常長。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "dictionary",
+      "音標": "[ˈdɪkʃəˌnɛrɪ]",
+      "詞性": "n.",
+      "中文": "字典",
+      "例句": "I use a dictionary to check words.",
+      "翻譯": "我用字典查單字。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "lightning",
+      "音標": "[ˈlaɪtnɪŋ]",
+      "詞性": "n.",
+      "中文": "閃電",
+      "例句": "Lightning struck during the storm.",
+      "翻譯": "暴風雨期間閃電劈下。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "thunder",
+      "音標": "[ˈθʌndɚ]",
+      "詞性": "n.",
+      "中文": "雷聲",
+      "例句": "We heard thunder after the lightning.",
+      "翻譯": "閃電之後我們聽到雷聲。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "science",
+      "音標": "[ˈsaɪəns]",
+      "詞性": "n.",
+      "中文": "科學",
+      "例句": "She likes learning science.",
+      "翻譯": "她喜歡學科學。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "height",
+      "音標": "[haɪt]",
+      "詞性": "n.",
+      "中文": "高度",
+      "例句": "He is tall for his height.",
+      "翻譯": "以他的身高來說，他很高。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "high",
+      "音標": "[haɪ]",
+      "詞性": "adj.",
+      "中文": "高的",
+      "例句": "The mountain is very high.",
+      "翻譯": "這座山非常高。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "low",
+      "音標": "[lo]",
+      "詞性": "adj.",
+      "中文": "低的",
+      "例句": "The water level is low.",
+      "翻譯": "水位很低。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "comparative",
+      "音標": "[kəmˈpærətɪv]",
+      "詞性": "n.",
+      "中文": "比較級",
+      "例句": "“Bigger” is the comparative of “big”.",
+      "翻譯": "“bigger”是“big”的比較級。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "neat",
+      "音標": "[nit]",
+      "詞性": "adj.",
+      "中文": "整齊的",
+      "例句": "Her desk is very neat.",
+      "翻譯": "她的書桌很整齊。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "dangerous",
+      "音標": "[ˈdendʒərəs]",
+      "詞性": "adj.",
+      "中文": "危險的",
+      "例句": "Lions are dangerous animals.",
+      "翻譯": "獅子是危險的動物。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "close",
+      "音標": "[klos]",
+      "詞性": "adj.",
+      "中文": "接近的；親近的",
+      "例句": "We live close to the school.",
+      "翻譯": "我們住得離學校很近。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "interesting",
+      "音標": "[ˈɪntrɪstɪŋ]",
+      "詞性": "adj.",
+      "中文": "有趣的",
+      "例句": "This book is very interesting.",
+      "翻譯": "這本書很有趣。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U17",
+      "單字": "than",
+      "音標": "[ðæn]",
+      "詞性": "conj.",
+      "中文": "比；比起",
+      "例句": "She is taller than her brother.",
+      "翻譯": "她比她的弟弟高。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "blue whale",
+      "音標": "[blu hwel]",
+      "詞性": "n",
+      "中文": "藍鯨",
+      "例句": "The blue whale is the largest animal on Earth.",
+      "翻譯": "藍鯨是地球上最大的動物。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "kangaroo",
+      "音標": "[ˌkæŋɡəˈru]",
+      "詞性": "n",
+      "中文": "袋鼠",
+      "例句": "Kangaroos can jump very high.",
+      "翻譯": "袋鼠可以跳得很高。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "gibbon",
+      "音標": "[ˈɡɪbən]",
+      "詞性": "n",
+      "中文": "長臂猿",
+      "例句": "The gibbon swings easily from tree to tree.",
+      "翻譯": "長臂猿能輕鬆在樹間擺盪。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "cheetah",
+      "音標": "[ˈtʃitə]",
+      "詞性": "n",
+      "中文": "獵豹",
+      "例句": "The cheetah runs faster than any other land animal.",
+      "翻譯": "獵豹比任何其他陸地動物都跑得快。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "giraffe",
+      "音標": "[dʒəˈræf]",
+      "詞性": "n",
+      "中文": "長頸鹿",
+      "例句": "Giraffes have very long necks to reach leaves.",
+      "翻譯": "長頸鹿有很長的脖子來吃樹葉。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "ladybug",
+      "音標": "[ˈledɪˌbʌɡ]",
+      "詞性": "n",
+      "中文": "瓢蟲",
+      "例句": "A ladybug landed on my hand.",
+      "翻譯": "一隻瓢蟲落在我的手上。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "dinosaur",
+      "音標": "[ˈdaɪnəˌsɔr]",
+      "詞性": "n",
+      "中文": "恐龍",
+      "例句": "Dinosaurs lived millions of years ago.",
+      "翻譯": "恐龍生活在數百萬年前。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "form",
+      "音標": "[fɔrm]",
+      "詞性": "n",
+      "中文": "形式；表格",
+      "例句": "Please fill out this form.",
+      "翻譯": "請填寫這份表格。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "superlative",
+      "音標": "[sʊˈpɝlətɪv]",
+      "詞性": "n",
+      "中文": "最高級；最…的",
+      "例句": "The word “best” is a superlative.",
+      "翻譯": "“best” 是一個最高級。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "weigh",
+      "音標": "[we]",
+      "詞性": "v",
+      "中文": "稱重",
+      "例句": "She weighs herself every morning.",
+      "翻譯": "她每天早上都量體重。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "colorful",
+      "音標": "[ˈkʌlɚfəl]",
+      "詞性": "adj",
+      "中文": "色彩鮮豔的",
+      "例句": "The garden is colorful in spring.",
+      "翻譯": "春天的花園色彩鮮豔。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "dull",
+      "音標": "[dʌl]",
+      "詞性": "adj",
+      "中文": "暗淡的；無趣的",
+      "例句": "The knife is dull and cannot cut well.",
+      "翻譯": "這把刀鈍了，切不動。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "important",
+      "音標": "[ɪmˈpɔrtnt]",
+      "詞性": "adj",
+      "中文": "重要的",
+      "例句": "It's important to drink water every day.",
+      "翻譯": "每天喝水很重要。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "light",
+      "音標": "[laɪt]",
+      "詞性": "adj",
+      "中文": "輕的；明亮的",
+      "例句": "This bag is very light.",
+      "翻譯": "這個包很輕。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "sharp",
+      "音標": "[ʃɑrp]",
+      "詞性": "adj",
+      "中文": "鋒利的；敏銳的",
+      "例句": "Be careful, the scissors are sharp.",
+      "翻譯": "小心，剪刀很鋒利。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "dark",
+      "音標": "[dɑrk]",
+      "詞性": "adj",
+      "中文": "黑暗的；深色的",
+      "例句": "The room is dark at night.",
+      "翻譯": "房間在晚上很黑。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "difficult",
+      "音標": "[ˈdɪfəˌkʌlt]",
+      "詞性": "adj",
+      "中文": "困難的",
+      "例句": "Math can be difficult for some students.",
+      "翻譯": "對一些學生來說，數學可能很困難。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "hard",
+      "音標": "[hɑrd]",
+      "詞性": "adj",
+      "中文": "硬的；困難的",
+      "例句": "This table is very hard.",
+      "翻譯": "這張桌子很硬。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "weight",
+      "音標": "[wet]",
+      "詞性": "n",
+      "中文": "重量",
+      "例句": "What is the weight of this box?",
+      "翻譯": "這個箱子的重量是多少？"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "wrap",
+      "音標": "[ræp]",
+      "詞性": "v",
+      "中文": "包裹；裹住",
+      "例句": "Please wrap the gift with paper.",
+      "翻譯": "請用紙把禮物包起來。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U18",
+      "單字": "squeeze",
+      "音標": "[skwiz]",
+      "詞性": "v",
+      "中文": "擠；壓",
+      "例句": "Squeeze the lemon to get its juice.",
+      "翻譯": "擠檸檬汁。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "calm",
+      "音標": "[kɑm]",
+      "詞性": "adj.",
+      "中文": "冷靜的",
+      "例句": "He stayed calm during the test.",
+      "翻譯": "他在考試中保持冷靜。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "nervous",
+      "音標": "[ˈnɝvəs]",
+      "詞性": "adj.",
+      "中文": "緊張的",
+      "例句": "I feel nervous before the game.",
+      "翻譯": "我在比賽前感到緊張。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "careful",
+      "音標": "[ˈkɛrfəl]",
+      "詞性": "adj.",
+      "中文": "小心的",
+      "例句": "Be careful when you cross the street.",
+      "翻譯": "過馬路時要小心。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "careless",
+      "音標": "[ˈkɛrlɪs]",
+      "詞性": "adj.",
+      "中文": "粗心的",
+      "例句": "He was careless and made a mistake.",
+      "翻譯": "他很粗心，犯了錯。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "loud",
+      "音標": "[laʊd]",
+      "詞性": "adj.",
+      "中文": "大聲的",
+      "例句": "The music is too loud.",
+      "翻譯": "音樂太大聲了。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "describe",
+      "音標": "[dɪˈskraɪb]",
+      "詞性": "v.",
+      "中文": "描述",
+      "例句": "Can you describe the picture?",
+      "翻譯": "你可以描述這張圖片嗎？"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "main",
+      "音標": "[men]",
+      "詞性": "adj.",
+      "中文": "主要的",
+      "例句": "This is the main idea of the story.",
+      "翻譯": "這是故事的主要想法。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "hit",
+      "音標": "[hɪt]",
+      "詞性": "v.",
+      "中文": "打；擊中",
+      "例句": "He hit the ball hard.",
+      "翻譯": "他用力打球。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "national",
+      "音標": "[ˈnæʃənəl]",
+      "詞性": "adj.",
+      "中文": "國家的",
+      "例句": "This is a national holiday.",
+      "翻譯": "這是國定假日。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "player",
+      "音標": "[ˈpleɚ]",
+      "詞性": "n.",
+      "中文": "玩家；選手",
+      "例句": "He is a good soccer player.",
+      "翻譯": "他是一位優秀的足球選手。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "look at",
+      "音標": "[lʊk æt]",
+      "詞性": "phr.",
+      "中文": "看",
+      "例句": "Look at the board.",
+      "翻譯": "看黑板。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "hard",
+      "音標": "[hɑrd]",
+      "詞性": "adv.",
+      "中文": "努力地；用力地",
+      "例句": "She studies hard every day.",
+      "翻譯": "她每天努力學習。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "calmly",
+      "音標": "[ˈkɑmlɪ]",
+      "詞性": "adv.",
+      "中文": "冷靜地",
+      "例句": "He spoke calmly to the class.",
+      "翻譯": "他冷靜地對全班說話。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "nervously",
+      "音標": "[ˈnɝvəslɪ]",
+      "詞性": "adv.",
+      "中文": "緊張地",
+      "例句": "She waited nervously for the result.",
+      "翻譯": "她緊張地等待結果。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "carefully",
+      "音標": "[ˈkɛrfəlɪ]",
+      "詞性": "adv.",
+      "中文": "小心地",
+      "例句": "Read the question carefully.",
+      "翻譯": "仔細閱讀問題。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "carelessly",
+      "音標": "[ˈkɛrlɪslɪ]",
+      "詞性": "adv.",
+      "中文": "粗心地",
+      "例句": "He carelessly dropped the glass.",
+      "翻譯": "他粗心地把玻璃杯掉在地上。"
+    },
+    {
+      "sheet": "進階文法",
+      "tag": "U19",
+      "單字": "loudly",
+      "音標": "[ˈlaʊdlɪ]",
+      "詞性": "adv.",
+      "中文": "大聲地",
+      "例句": "They laughed loudly.",
+      "翻譯": "他們大聲地笑。"
+    }
+  ],
   "GEPT": [
     {
       "sheet": "GEPT",
