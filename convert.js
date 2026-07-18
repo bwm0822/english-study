@@ -10,7 +10,8 @@ const workbook = XLSX.readFile(filePath);
 const sheetsToConvert = [
   '進階文法',
   'GEPT',
-  '全民英檢(上)'
+  '全民英檢(上)',
+  '補充'
 ];
 
 // 輸出結果

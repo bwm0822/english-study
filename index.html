@@ -1180,8 +1180,8 @@
             display: flex;
             align-items: center;
             gap: 30px;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
+            margin-bottom: 0px;
+            padding-bottom: 10px;
             border-bottom: 1px solid #4a4a60;
         }
 
@@ -2480,10 +2480,20 @@
 
                 const sheetHeader = document.createElement('div');
                 sheetHeader.className = 'stats-sheet-header';
+                sheetHeader.style.cursor = 'pointer';
+                sheetHeader.style.userSelect = 'none';
+
+                const toggleIcon = document.createElement('span');
+                toggleIcon.textContent = '▼';
+                toggleIcon.style.marginRight = '8px';
+                toggleIcon.style.fontSize = '0.8em';
+                toggleIcon.style.transition = 'transform 0.2s';
+                toggleIcon.style.display = 'inline-block';
 
                 const sheetTitle = document.createElement('div');
                 sheetTitle.className = 'stats-sheet-title';
                 sheetTitle.innerHTML = `<span class="stats-sheet-title-text">${sheetName}</span>`;
+                sheetHeader.appendChild(toggleIcon);
                 sheetHeader.appendChild(sheetTitle);
 
                 const tagsSummary = document.createElement('div');
@@ -2617,6 +2627,16 @@
                     tagCard.appendChild(buttonGroup);
                     tagsContainer.appendChild(tagCard);
                 });
+
+                // toggle sheet 功能
+                let isExpanded = false;
+                tagsContainer.style.display = 'none';
+                toggleIcon.style.transform = 'rotate(-90deg)';
+                sheetHeader.onclick = (e) => {
+                    isExpanded = !isExpanded;
+                    tagsContainer.style.display = isExpanded ? 'grid' : 'none';
+                    toggleIcon.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
+                };
 
                 sheetDiv.appendChild(tagsContainer);
                 container.appendChild(sheetDiv);
