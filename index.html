@@ -3543,7 +3543,12 @@
 
             document.getElementById('modalPos').textContent = word.詞性;
             document.getElementById('modalChinese').textContent = word.中文;
-            document.getElementById('modalExample').textContent = word.例句;
+
+            const modalExampleEl = document.getElementById('modalExample');
+            modalExampleEl.textContent = word.例句;
+            modalExampleEl.style.cursor = 'pointer';
+            modalExampleEl.onclick = () => playPronunciation(word.例句);
+
             document.getElementById('modalTranslation').textContent = word.翻譯;
         }
 
