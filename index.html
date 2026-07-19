@@ -269,13 +269,7 @@
             font-size: 1.3em;
             font-weight: 600;
             color: #fff;
-            cursor: pointer;
-            transition: color 0.2s;
             flex: 1;
-        }
-
-        .story-title:hover {
-            color: #4CAF50;
         }
 
         .story-index {
@@ -292,16 +286,23 @@
             white-space: pre-wrap;
             word-break: break-word;
             cursor: pointer;
-            transition: color 0.2s;
-            padding: 8px;
-            border-radius: 4px;
-            margin: -8px;
-            padding: 8px;
         }
 
-        .story-content:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: #fff;
+        .story-read-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 14px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+
+        .story-read-btn:hover {
+            background: #45a049;
         }
 
         .quiz-panel {
@@ -1682,7 +1683,7 @@
                 </div>
                 <div class="word-modal-body" style="gap: 15px; font-size: 0.95em; text-align: left;">
                     <div>
-                        <strong style="color: #667eea; font-size: 1.1em;">版本：2026.07.19.a</strong>
+                        <strong style="color: #667eea; font-size: 1.1em;">版本：2026.07.20</strong>
                     </div>
 
                     <div>
@@ -4996,6 +4997,13 @@
         }
 
         function pronounceChineseText(text) {
+            // 停止當前的故事播放
+            if (currentStoryPlaying >= 0) {
+                speechSynthesis.cancel();
+                currentStoryPlaying = -1;
+                isStoryPaused = false;
+            }
+
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'zh-TW';
             const rate = localStorage.getItem('pronunciationRate') || '1.0';
@@ -5004,6 +5012,8 @@
         }
 
         function showChineseIdioms() {
+            stopStoryPlayback();
+
             loadChineseData().then(data => {
                 if (!data || !data['表現態度']) {
                     document.getElementById('chineseContent').innerHTML = '無法加載成語數據';
@@ -5054,7 +5064,8 @@
 
             sortedIdioms.forEach(idiom => {
                 const regex = new RegExp(idiom.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-                highlightedText = highlightedText.replace(regex, `<strong style="color: #4CAF50; font-weight: bold;">${idiom}</strong>`);
+                const escapedIdiom = idiom.replace(/'/g, "\\'");
+                highlightedText = highlightedText.replace(regex, `<strong style="color: #4CAF50; font-weight: bold; cursor: pointer;" onclick="pronounceChineseText('${escapedIdiom}')">${idiom}</strong>`);
             });
 
             return highlightedText;
@@ -5078,7 +5089,8 @@
                     html += `
                         <div class="story-item" data-story-index="${index}">
                             <div class="story-header">
-                                <div class="story-title" onclick="playStory(${index})" title="點擊開始朗讀故事">${item.標題}</div>
+                                <div class="story-title">${item.標題}</div>
+                                <button class="story-read-btn" onclick="playStory(${index})">朗讀</button>
                                 <div class="story-index">${index + 1}/${stories.length}</div>
                             </div>
                             <div class="story-content" onclick="toggleStoryPlayback(${index}); return false;" title="點擊暫停/繼續">${highlightedContent}</div>
