@@ -3957,6 +3957,83 @@
             document.getElementById('addTranslationInput').value = '';
         }
 
+        // IPA 到 KK 音標轉換映射表
+        const ipaToKKMap = {
+            // 元音
+            'i': 'i',
+            'ɪ': 'ɪ',
+            'e': 'e',
+            'ε': 'ε',
+            'æ': 'æ',
+            'ʌ': 'ʌ',
+            'ɑ': 'ɑ',
+            'ɔ': 'ɔ',
+            'o': 'o',
+            'ʊ': 'ʊ',
+            'u': 'u',
+            'ə': 'ə',
+            'ɐ': 'ʌ',
+            'ɝ': 'ɝ',
+            'ɚ': 'ɚ',
+            'ʉ': 'u',
+
+            // 雙元音
+            'aɪ': 'aɪ',
+            'aʊ': 'aʊ',
+            'ɔɪ': 'ɔɪ',
+            'oʊ': 'oʊ',
+            'eɪ': 'eɪ',
+            'ɪr': 'ɪr',
+            'ər': 'ər',
+
+            // 輔音
+            'p': 'p',
+            'b': 'b',
+            't': 't',
+            'd': 'd',
+            'k': 'k',
+            'g': 'g',
+            'f': 'f',
+            'v': 'v',
+            'θ': 'θ',
+            'ð': 'ð',
+            's': 's',
+            'z': 'z',
+            'ʃ': 'ʃ',
+            'ʒ': 'ʒ',
+            'h': 'h',
+            'tʃ': 'tʃ',
+            'dʒ': 'dʒ',
+            'm': 'm',
+            'n': 'n',
+            'ŋ': 'ŋ',
+            'l': 'l',
+            'r': 'r',
+            'w': 'w',
+            'j': 'j'
+        };
+
+        function convertIPAtoKK(ipaPhonetic) {
+            if (!ipaPhonetic) return '';
+
+            // 移除空格、冒號、長音符號
+            let result = ipaPhonetic.trim().replace(/[:ːˑ]/g, '');
+
+            // 先轉換雙元音和複合音素（需要在單個音素之前）
+            const complexSounds = ['aɪ', 'aʊ', 'ɔɪ', 'oʊ', 'eɪ', 'tʃ', 'dʒ', 'ɪr', 'ər', 'ɝr'];
+            complexSounds.forEach(sound => {
+                const kkSound = ipaToKKMap[sound] || sound;
+                result = result.replace(new RegExp(sound, 'g'), kkSound);
+            });
+
+            // 轉換單個音素
+            result = result.split('').map(char => {
+                return ipaToKKMap[char] || char;
+            }).join('');
+
+            return result;
+        }
+
         async function autoFillAllInfo() {
             const word = document.getElementById('addWordInput').value.trim();
             if (!word) {
@@ -3992,6 +4069,8 @@
                 let phonetic = entry?.phonetic || entry?.phonetics?.[0]?.text || '';
                 if (phonetic) {
                     phonetic = phonetic.replace(/^[\/\[]|[\/\]]*$/g, '');
+                    // 轉換 IPA 到 KK 音標
+                    phonetic = convertIPAtoKK(phonetic);
                     phoneticInput.value = '[' + phonetic + ']';
                 }
 
