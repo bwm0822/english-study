@@ -1365,6 +1365,7 @@
                     <option value="review">複習</option>
                     <option value="quiz">測驗</option>
                     <option value="statistics">統計</option>
+                    <option value="add">自訂</option>
                 </select>
             </div>
             <div class="tag-filter" id="tagFilterContainer">
@@ -1391,6 +1392,8 @@
             <div class="stats" id="stats"></div>
             <button class="refresh-btn" id="refreshBtn" onclick="refreshReview()" style="display: none; margin-left: auto;">刷新</button>
             <button class="start-quiz-btn" id="startQuizBtn" onclick="startQuiz()" style="display: none; margin-left: auto;">開始測驗</button>
+            <button class="refresh-btn" id="addWordBtn" onclick="openAddWordModal()" style="display: none; margin-left: auto;">新增</button>
+            <button class="refresh-btn" id="exportBtn" onclick="exportCustomWords()" style="display: none; margin-left: auto;">匯出</button>
             <div class="settings-menu" id="settingsMenuContainer">
                 <button class="settings-btn" onclick="toggleSettingsMenu()">⚙️</button>
                 <div class="settings-dropdown" id="settingsDropdown">
@@ -1603,7 +1606,11 @@
                         </div>
                         <span id="modalWordAccuracy" class="modal-accuracy"></span>
                     </div>
-                    <button class="modal-close-btn" onclick="closeWordModal()">離開</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button id="editWordBtn" onclick="editWord()" style="background: #FF9800; color: white; border: none; border-radius: 4px; padding: 6px 16px; font-size: 0.9em; cursor: pointer; font-weight: 600; display: none;">編輯</button>
+                        <button id="deleteWordBtn" onclick="deleteWord()" style="background: #f44336; color: white; border: none; border-radius: 4px; padding: 6px 16px; font-size: 0.9em; cursor: pointer; font-weight: 600; display: none;">刪除</button>
+                        <button class="modal-close-btn" onclick="closeWordModal()">離開</button>
+                    </div>
                 </div>
 
                 <!-- 單字信息 -->
@@ -1622,6 +1629,95 @@
                 <div class="word-modal-footer">
                     <button class="modal-nav-btn" onclick="previousWord()">上一個</button>
                     <button class="modal-nav-btn" onclick="nextWord()">下一個</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 自訂視窗 -->
+        <div class="word-modal" id="addWordModal" style="display: none;">
+            <div class="word-modal-content" style="max-width: 600px;">
+                <div class="word-modal-header">
+                    <span style="font-weight: bold; font-size: 1.2em;">➕ 新增自訂單字自訂單字</span>
+                    <button class="modal-close-btn" onclick="closeAddWordModal()">關閉</button>
+                </div>
+                <div class="word-modal-body" style="gap: 15px;">
+                    <div style="display: flex; gap: 10px; align-items: flex-end;">
+                        <div style="flex: 0.8;">
+                            <label style="color: white; font-weight: bold; display: block; margin-bottom: 5px;">單字 <span style="color: #f44336;">*</span></label>
+                            <input type="text" id="addWordInput" placeholder="必填" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #666;">
+                        </div>
+                        <button onclick="autoFillAllInfo()" style="background: #667eea; color: white; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer; font-weight: 600;">自動</button>
+                        <div style="flex: 1;">
+                            <label style="color: white; font-weight: bold; display: block; margin-bottom: 5px;">Tag</label>
+                            <input type="text" id="addTagInput" placeholder="其他" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #666;">
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: flex-end;">
+                        <div style="flex: 1;">
+                            <label style="color: white; font-weight: bold; display: block; margin-bottom: 5px;">音標 (KK)</label>
+                            <input type="text" id="addPhoneticInput" placeholder="[ɪɡ'zæmpl]" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #666;">
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <div>
+                            <label style="color: white; font-weight: bold; display: block; margin-bottom: 5px;">詞性</label>
+                            <div style="position: relative;">
+                                <button id="addPosDropdownBtn" onclick="togglePosDropdown()" type="button" style="width: 100%; background: #4a4a62; color: #b8b8b8; border: 1px solid #5a5a72; border-radius: 4px; padding: 8px 12px; text-align: left; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                                    <span id="addPosDisplay">請選擇</span>
+                                    <span>▼</span>
+                                </button>
+                                <div id="addPosDropdownMenu" style="position: absolute; top: 100%; left: 0; right: 0; background: #4a4a62; border: 1px solid #5a5a72; border-radius: 4px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); z-index: 100; max-height: 250px; overflow-y: auto; display: none; margin-top: 4px; width: 300px; min-width: 100%;">
+                                    <label style="display: flex; align-items: center; padding: 8px 12px; gap: 8px; cursor: pointer; color: #b8b8b8;">
+                                        <input type="checkbox" value="n." class="pos-checkbox" onchange="updatePosDisplay()">
+                                        <span>n. 名詞</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; padding: 8px 12px; gap: 8px; cursor: pointer; color: #b8b8b8;">
+                                        <input type="checkbox" value="v." class="pos-checkbox" onchange="updatePosDisplay()">
+                                        <span>v. 動詞</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; padding: 8px 12px; gap: 8px; cursor: pointer; color: #b8b8b8;">
+                                        <input type="checkbox" value="adj." class="pos-checkbox" onchange="updatePosDisplay()">
+                                        <span>adj. 形容詞</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; padding: 8px 12px; gap: 8px; cursor: pointer; color: #b8b8b8;">
+                                        <input type="checkbox" value="adv." class="pos-checkbox" onchange="updatePosDisplay()">
+                                        <span>adv. 副詞</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; padding: 8px 12px; gap: 8px; cursor: pointer; color: #b8b8b8;">
+                                        <input type="checkbox" value="prep." class="pos-checkbox" onchange="updatePosDisplay()">
+                                        <span>prep. 介詞</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; padding: 8px 12px; gap: 8px; cursor: pointer; color: #b8b8b8;">
+                                        <input type="checkbox" value="pron." class="pos-checkbox" onchange="updatePosDisplay()">
+                                        <span>pron. 代名詞</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; padding: 8px 12px; gap: 8px; cursor: pointer; color: #b8b8b8;">
+                                        <input type="checkbox" value="conj." class="pos-checkbox" onchange="updatePosDisplay()">
+                                        <span>conj. 連接詞</span>
+                                    </label>
+                                    <label style="display: flex; align-items: center; padding: 8px 12px; gap: 8px; cursor: pointer; color: #b8b8b8;">
+                                        <input type="checkbox" value="int." class="pos-checkbox" onchange="updatePosDisplay()">
+                                        <span>int. 感嘆詞</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label style="color: white; font-weight: bold; display: block; margin-bottom: 5px;">中文</label>
+                        <input type="text" id="addChineseInput" placeholder="中文解釋" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #666;">
+                    </div>
+                    <div>
+                        <label style="color: white; font-weight: bold; display: block; margin-bottom: 5px;">例句</label>
+                        <input type="text" id="addExampleInput" placeholder="This is an example." style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #666;">
+                    </div>
+                    <div>
+                        <label style="color: white; font-weight: bold; display: block; margin-bottom: 5px;">翻譯</label>
+                        <input type="text" id="addTranslationInput" placeholder="這是一個例子。" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #666;">
+                    </div>
+                </div>
+                <div class="word-modal-footer">
+                    <button class="modal-nav-btn" onclick="saveCustomWord()" style="flex: 1;">保存</button>
                 </div>
             </div>
         </div>
@@ -1897,6 +1993,132 @@
                     }
                 });
 
+                // 添加自訂單字到所有模式
+                const customWords = getCustomWords();
+                if (customWords.length > 0) {
+                    // 添加到 sheetData
+                    if (!sheetData['自訂']) {
+                        sheetData['自訂'] = [];
+                    }
+                    sheetData['自訂'] = customWords;
+
+                    // 添加到 allWords
+                    allWords = allWords.concat(customWords);
+
+                    // 添加到 normalModeSheetNames
+                    normalModeSheetNames.add('自訂');
+
+                    // 初始化 selectedTags
+                    const customTags = [...new Set(customWords.map(w => w.tag))];
+                    selectedTags.set('自訂', new Set(customTags));
+
+                    // 為自訂 sheet 創建下拉選單項目
+                    const sheetItem = document.createElement('div');
+                    sheetItem.className = 'sheet-item normal-sheet-item';
+
+                    const sheetHeader = document.createElement('div');
+                    sheetHeader.className = 'sheet-item-header';
+                    sheetHeader.dataset.sheetName = '自訂';
+
+                    const toggleSpan = document.createElement('span');
+                    toggleSpan.className = 'sheet-toggle';
+                    toggleSpan.textContent = '▶';
+
+                    const sheetCheckbox = document.createElement('input');
+                    sheetCheckbox.type = 'checkbox';
+                    sheetCheckbox.checked = true;
+                    sheetCheckbox.dataset.sheetName = '自訂';
+                    sheetCheckbox.className = 'normal-sheet-checkbox';
+                    sheetCheckbox.onchange = updateFilter;
+                    sheetCheckbox.onclick = (e) => {
+                        e.stopPropagation();
+                    };
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'sheet-name';
+                    nameSpan.textContent = '自訂';
+
+                    sheetHeader.appendChild(sheetCheckbox);
+                    sheetHeader.appendChild(nameSpan);
+
+                    const sheetSubmenu = document.createElement('div');
+                    sheetSubmenu.className = 'sheet-submenu';
+                    sheetSubmenu.dataset.sheetName = '自訂';
+                    document.body.appendChild(sheetSubmenu);
+
+                    const buttonsRow = document.createElement('div');
+                    buttonsRow.className = 'sheet-group-header';
+
+                    const selectBtn = document.createElement('button');
+                    selectBtn.textContent = '全選';
+                    selectBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        selectAllInSheet(e, '自訂');
+                    };
+
+                    const clearBtn = document.createElement('button');
+                    clearBtn.textContent = '清除';
+                    clearBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        clearAllInSheet(e, '自訂');
+                    };
+
+                    buttonsRow.appendChild(selectBtn);
+                    buttonsRow.appendChild(clearBtn);
+                    sheetSubmenu.appendChild(buttonsRow);
+
+                    customTags.forEach(tag => {
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = tag;
+                        checkbox.checked = true;
+                        checkbox.dataset.sheet = '自訂';
+                        checkbox.className = 'normal-tag-checkbox';
+                        checkbox.onchange = updateFilter;
+                        checkbox.onclick = (e) => {
+                            e.stopPropagation();
+                        };
+
+                        const label = document.createElement('div');
+                        label.className = 'tag-checkbox-item';
+                        label.appendChild(checkbox);
+                        const span = document.createElement('span');
+                        span.textContent = tag;
+                        label.appendChild(span);
+
+                        label.onclick = (e) => {
+                            e.stopPropagation();
+                            checkbox.checked = !checkbox.checked;
+                            updateFilter();
+                        };
+
+                        sheetSubmenu.appendChild(label);
+                    });
+
+                    sheetHeader.onclick = (e) => {
+                        if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT') {
+                            e.stopPropagation();
+
+                            document.querySelectorAll('.sheet-submenu.expanded').forEach(submenu => {
+                                if (submenu !== sheetSubmenu) {
+                                    submenu.classList.remove('expanded');
+                                }
+                            });
+
+                            sheetSubmenu.classList.toggle('expanded');
+
+                            if (sheetSubmenu.classList.contains('expanded')) {
+                                const rect = sheetHeader.getBoundingClientRect();
+                                sheetSubmenu.style.top = rect.top + 'px';
+                                sheetSubmenu.style.left = (rect.right + 5) + 'px';
+                            }
+                        }
+                    };
+
+                    sheetItem.appendChild(sheetHeader);
+                    container.appendChild(sheetItem);
+                }
+
                 renderWords();
 
                 // 搜尋輸入框事件監聽
@@ -1968,6 +2190,9 @@
                 }
             }
 
+            // 即時更新自訂單字
+            updateCustomWordsInAllModes();
+
             currentMode = mode;
             const wordsContainer = document.getElementById('wordsContainer');
             const quizContainer = document.getElementById('quizContainer');
@@ -2034,6 +2259,19 @@
                 stats.style.display = 'none';
                 settingsMenuContainer.style.display = 'none';
                 renderStatistics();
+            } else if (mode === 'add') {
+                wordsContainer.style.display = 'block';
+                quizContainer.style.display = 'none';
+                tagFilterContainer.style.display = 'none';
+                quizTagFilterContainer.style.display = 'none';
+                searchFilterContainer.style.display = 'none';
+                refreshBtn.style.display = 'none';
+                startQuizBtn.style.display = 'none';
+                stats.style.display = 'none';
+                settingsMenuContainer.style.display = 'none';
+                document.getElementById('addWordBtn').style.display = 'block';
+                document.getElementById('exportBtn').style.display = 'block';
+                renderCustomWords();
             } else {
                 wordsContainer.style.display = 'block';
                 quizContainer.style.display = 'none';
@@ -2044,6 +2282,8 @@
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'block';
                 settingsMenuContainer.style.display = 'block';
+                document.getElementById('addWordBtn').style.display = 'none';
+                document.getElementById('exportBtn').style.display = 'none';
                 // 改變標籤回「選擇單元」
                 tagFilterContainer.querySelector('label').textContent = '選擇單元：';
                 // 顯示所有sheet項目
@@ -3515,8 +3755,19 @@
             const wordModal = document.getElementById('wordModal');
             const prevBtn = wordModal.querySelector('.word-modal-footer .modal-nav-btn:nth-child(1)');
             const nextBtn = wordModal.querySelector('.word-modal-footer .modal-nav-btn:nth-child(2)');
+            const editBtn = document.getElementById('editWordBtn');
+            const deleteBtn = document.getElementById('deleteWordBtn');
             prevBtn.style.visibility = wordIndex > 0 ? 'visible' : 'hidden';
             nextBtn.style.visibility = wordIndex < filteredWords.length - 1 ? 'visible' : 'hidden';
+
+            // 只有自訂 sheet 的單字才顯示編輯/刪除按鈕
+            if (word.sheet === '自訂') {
+                editBtn.style.display = 'block';
+                deleteBtn.style.display = 'block';
+            } else {
+                editBtn.style.display = 'none';
+                deleteBtn.style.display = 'none';
+            }
 
             // 更新頁頭
             document.getElementById('modalWordIndex').textContent = wordIndex + 1;
@@ -3639,6 +3890,614 @@
                 allowRetest = e.target.checked;
                 localStorage.setItem('allowRetest', allowRetest.toString());
             });
+        }
+
+        // ======== 自訂相關函數 ========
+        function openAddWordModal() {
+            document.getElementById('addWordModal').style.display = 'flex';
+            document.getElementById('addWordInput').focus();
+            document.getElementById('addTagInput').value = '其他';
+        }
+
+        function togglePosDropdown() {
+            const menu = document.getElementById('addPosDropdownMenu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function updatePosDisplay() {
+            const checkboxes = document.querySelectorAll('#addPosDropdownMenu input.pos-checkbox:checked');
+            const selected = Array.from(checkboxes).map(cb => {
+                const label = cb.nextElementSibling.textContent.trim();
+                return label;
+            }).join(', ');
+
+            const display = document.getElementById('addPosDisplay');
+            display.textContent = selected || '請選擇';
+        }
+
+        // 點擊外部時關閉下拉菜單
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('addPosDropdownMenu');
+            const btn = document.getElementById('addPosDropdownBtn');
+            if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.style.display = 'none';
+            }
+        });
+
+        function closeAddWordModal() {
+            document.getElementById('addWordModal').style.display = 'none';
+            document.getElementById('addWordInput').value = '';
+            document.getElementById('addTagInput').value = '其他';
+            document.getElementById('addPhoneticInput').value = '';
+
+            // 清除詞性複選框
+            document.querySelectorAll('#addPosDropdownMenu input.pos-checkbox').forEach(cb => {
+                cb.checked = false;
+            });
+            document.getElementById('addPosDisplay').textContent = '請選擇';
+            document.getElementById('addPosDropdownMenu').style.display = 'none';
+
+            document.getElementById('addChineseInput').value = '';
+            document.getElementById('addExampleInput').value = '';
+            document.getElementById('addTranslationInput').value = '';
+        }
+
+        async function autoFillAllInfo() {
+            const word = document.getElementById('addWordInput').value.trim();
+            if (!word) {
+                alert('請先輸入單字');
+                return;
+            }
+
+            // 顯示加載狀態
+            const phoneticInput = document.getElementById('addPhoneticInput');
+            const posCheckboxes = document.querySelectorAll('#addPosDropdownMenu input.pos-checkbox');
+            const posBtn = document.getElementById('addPosDropdownBtn');
+            const chineseInput = document.getElementById('addChineseInput');
+            const exampleInput = document.getElementById('addExampleInput');
+            const translationInput = document.getElementById('addTranslationInput');
+
+            phoneticInput.value = '搜尋中...';
+            phoneticInput.disabled = true;
+            posBtn.disabled = true;
+            posCheckboxes.forEach(cb => cb.disabled = true);
+            chineseInput.disabled = true;
+            exampleInput.disabled = true;
+            translationInput.disabled = true;
+
+            try {
+                // 用 Free Dictionary API 獲取詞義、音標和例句
+                const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
+                if (!response.ok) throw new Error('找不到單字');
+
+                const data = await response.json();
+                const entry = data[0];
+
+                // 填充音標
+                let phonetic = entry?.phonetic || entry?.phonetics?.[0]?.text || '';
+                if (phonetic) {
+                    phonetic = phonetic.replace(/^[\/\[]|[\/\]]*$/g, '');
+                    phoneticInput.value = '[' + phonetic + ']';
+                }
+
+                // 填充詞性
+                if (entry?.meanings?.[0]?.partOfSpeech) {
+                    const posMap = {
+                        'noun': 'n.',
+                        'verb': 'v.',
+                        'adjective': 'adj.',
+                        'adverb': 'adv.',
+                        'preposition': 'prep.',
+                        'pronoun': 'pron.',
+                        'conjunction': 'conj.',
+                        'interjection': 'int.'
+                    };
+                    const pos = posMap[entry.meanings[0].partOfSpeech] || entry.meanings[0].partOfSpeech;
+                    // 設置對應的詞性複選框
+                    posCheckboxes.forEach(cb => {
+                        if (cb.value === pos) {
+                            cb.checked = true;
+                        }
+                    });
+                    updatePosDisplay();
+                }
+
+                // 填充例句
+                const example = entry?.meanings?.[0]?.definitions?.[0]?.example || '';
+                if (example) {
+                    exampleInput.value = example;
+                }
+
+                // 獲取中文翻譯
+                const definition = entry?.meanings?.[0]?.definitions?.[0]?.definition || '';
+                if (definition) {
+                    try {
+                        const zhResponse = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(definition)}&langpair=en|zh-TW`);
+                        const zhData = await zhResponse.json();
+                        if (zhData.responseStatus === 200) {
+                            chineseInput.value = zhData.responseData.translatedText || '';
+                        }
+                    } catch (e) {
+                        chineseInput.value = definition;
+                    }
+                }
+
+                // 填充翻譯
+                if (example) {
+                    try {
+                        const exampleZhResponse = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(example)}&langpair=en|zh-TW`);
+                        const exampleZhData = await exampleZhResponse.json();
+                        if (exampleZhData.responseStatus === 200) {
+                            translationInput.value = exampleZhData.responseData.translatedText || '';
+                        }
+                    } catch (e) {
+                        // 翻譯失敗，保持空
+                    }
+                }
+
+            } catch (error) {
+                alert('無法自動填寫：' + error.message);
+                phoneticInput.value = '';
+            } finally {
+                phoneticInput.disabled = false;
+                posBtn.disabled = false;
+                posCheckboxes.forEach(cb => cb.disabled = false);
+                chineseInput.disabled = false;
+                exampleInput.disabled = false;
+                translationInput.disabled = false;
+            }
+        }
+
+        async function autoFillPhonetic() {
+            const word = document.getElementById('addWordInput').value.trim();
+            if (!word) {
+                alert('請先輸入單字');
+                return;
+            }
+
+            const phoneticInput = document.getElementById('addPhoneticInput');
+            phoneticInput.value = '搜尋中...';
+            phoneticInput.disabled = true;
+
+            try {
+                const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`);
+                if (!response.ok) throw new Error('找不到單字');
+
+                const data = await response.json();
+                let phonetic = data[0]?.phonetic || data[0]?.phonetics?.[0]?.text || '';
+
+                // 轉換為 KK 音標格式 [...]
+                if (phonetic) {
+                    // 移除現有的斜線格式 /.../ 或 [...]
+                    phonetic = phonetic.replace(/^[\/\[]|[\/\]]*$/g, '');
+                    // 添加方括號 KK 音標格式
+                    phoneticInput.value = '[' + phonetic + ']';
+                } else {
+                    phoneticInput.value = '';
+                }
+            } catch (error) {
+                alert('無法自動填寫音標：' + error.message);
+                phoneticInput.value = '';
+            } finally {
+                phoneticInput.disabled = false;
+            }
+        }
+
+        function saveCustomWord() {
+            const word = document.getElementById('addWordInput').value.trim();
+            const tag = document.getElementById('addTagInput').value.trim() || '其他';
+            const phonetic = document.getElementById('addPhoneticInput').value.trim();
+            // 獲取所有選中的詞性複選框
+            const posCheckboxes = document.querySelectorAll('#addPosDropdownMenu input.pos-checkbox:checked');
+            const pos = Array.from(posCheckboxes).map(cb => cb.value).join(', ');
+            const chinese = document.getElementById('addChineseInput').value.trim();
+            const example = document.getElementById('addExampleInput').value.trim();
+            const translation = document.getElementById('addTranslationInput').value.trim();
+
+            if (!word) {
+                alert('單字為必填項目');
+                return;
+            }
+
+            const customWords = getCustomWords();
+            const newWord = {
+                sheet: '自訂',
+                tag: tag,
+                單字: word,
+                音標: phonetic,
+                詞性: pos,
+                中文: chinese,
+                例句: example,
+                翻譯: translation
+            };
+
+            customWords.push(newWord);
+            localStorage.setItem('customWords', JSON.stringify(customWords));
+
+            alert('單字已保存');
+            closeAddWordModal();
+            renderCustomWords();
+        }
+
+        function getCustomWords() {
+            const stored = localStorage.getItem('customWords');
+            return stored ? JSON.parse(stored) : [];
+        }
+
+        function renderCustomWords() {
+            const container = document.getElementById('wordsContainer');
+            container.innerHTML = '';
+
+            const customWords = getCustomWords();
+            if (customWords.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #999; padding: 40px;">還沒有新增任何單字<br>點擊[新增]按鈕開始新增</div>';
+                return;
+            }
+
+            customWords.forEach((word, index) => {
+                const row = document.createElement('div');
+                row.className = 'word-row';
+
+                // 創建序號
+                const indexDiv = document.createElement('div');
+                indexDiv.className = 'word-index';
+                indexDiv.textContent = index + 1;
+
+                // 創建星號按鈕
+                const starBtn = document.createElement('div');
+                starBtn.className = 'word-star';
+                const wordKey = `自訂/${word.tag}/${word.單字}`;
+                const isFavorited = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                starBtn.textContent = isFavorited ? '★' : '☆';
+                starBtn.dataset.wordKey = wordKey;
+                starBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const isFav = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                    if (isFav) {
+                        localStorage.removeItem(`favorite_${wordKey}`);
+                        starBtn.textContent = '☆';
+                    } else {
+                        localStorage.setItem(`favorite_${wordKey}`, 'true');
+                        starBtn.textContent = '★';
+                    }
+                };
+
+                // 計算正確率
+                const historyKey = `quizHistory_自訂/${word.tag}/${word.單字}`;
+                const hasHistory = localStorage.getItem(historyKey) !== null;
+                let accuracyDisplay = '--';
+                if (hasHistory) {
+                    const correctCount = getQuizHistory(historyKey);
+                    const accuracy = calculateAccuracy(correctCount);
+                    accuracyDisplay = `${accuracy}%`;
+                }
+
+                // 創建左側內容
+                const wordLeft = document.createElement('div');
+                wordLeft.className = 'word-left';
+                wordLeft.innerHTML = `
+                    <span class="word-tag"><div class="word-tag-sheet">自訂</div><div class="word-tag-tag">${word.tag || ''}</div></span>
+                    <span class="word-accuracy">${accuracyDisplay}</span>
+                    <span class="word-word">${word.單字}</span>
+                    <span class="word-phonetic">${word.音標 || '--'}</span>
+                    <span class="word-pos">${word.詞性 || '--'}</span>
+                    <span class="word-chinese">${word.中文 || '--'}</span>
+                `;
+
+                // 為單字和音標添加發音事件
+                const wordWordSpan = wordLeft.querySelector('.word-word');
+                const wordPhoneticSpan = wordLeft.querySelector('.word-phonetic');
+
+                const handlePronunciation = (e) => {
+                    e.stopPropagation();
+                    playPronunciation(word.單字);
+                };
+
+                if (wordWordSpan) {
+                    wordWordSpan.style.cursor = 'pointer';
+                    wordWordSpan.onclick = handlePronunciation;
+                }
+                if (wordPhoneticSpan) {
+                    wordPhoneticSpan.style.cursor = 'pointer';
+                    wordPhoneticSpan.onclick = handlePronunciation;
+                }
+
+                // 創建詳細按鈕
+                const sentenceBtn = document.createElement('button');
+                sentenceBtn.className = 'sentence-btn';
+                sentenceBtn.textContent = 'ⓘ';
+                sentenceBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    currentFilteredWords = customWords;
+                    modalCurrentWordIndex = index;
+                    displayWordInModal(index, customWords);
+                    document.getElementById('wordModal').style.display = 'flex';
+                };
+
+                row.appendChild(indexDiv);
+                row.appendChild(starBtn);
+                row.appendChild(wordLeft);
+                row.appendChild(sentenceBtn);
+
+                container.appendChild(row);
+            });
+        }
+
+        function exportCustomWords() {
+            const customWords = getCustomWords();
+            if (customWords.length === 0) {
+                alert('沒有任何自訂可導出');
+                return;
+            }
+
+            const exportData = { '自訂': customWords };
+            const jsonString = JSON.stringify(exportData, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'custom_words.json';
+            link.click();
+            URL.revokeObjectURL(url);
+
+            alert('已導出 custom_words.json');
+        }
+
+        // ======== 編輯/刪除單字函數 ========
+        let editingWordIndex = -1;
+
+        function editWord() {
+            if (modalCurrentWordIndex < 0 || modalCurrentWordIndex >= currentFilteredWords.length) return;
+
+            const word = currentFilteredWords[modalCurrentWordIndex];
+            if (word.sheet !== '自訂') return;
+
+            editingWordIndex = modalCurrentWordIndex;
+
+            // 填充編輯表單
+            document.getElementById('addWordInput').value = word.單字;
+            document.getElementById('addTagInput').value = word.tag || '其他';
+            document.getElementById('addPhoneticInput').value = word.音標 || '';
+
+            // 設置詞性複選框
+            const posValues = word.詞性 ? word.詞性.split(', ').map(p => p.trim()) : [];
+            document.querySelectorAll('#addPosDropdownMenu input.pos-checkbox').forEach(checkbox => {
+                checkbox.checked = posValues.includes(checkbox.value);
+            });
+            updatePosDisplay();
+
+            document.getElementById('addChineseInput').value = word.中文 || '';
+            document.getElementById('addExampleInput').value = word.例句 || '';
+            document.getElementById('addTranslationInput').value = word.翻譯 || '';
+
+            // 改為編輯模式
+            document.getElementById('wordModal').style.display = 'none';
+            document.getElementById('addWordModal').style.display = 'flex';
+
+            // 修改保存按鈕文字和行為
+            const modalBody = document.querySelector('#addWordModal .word-modal-footer');
+            const saveBtn = modalBody.querySelector('.modal-nav-btn');
+            const originalText = saveBtn.textContent;
+            saveBtn.textContent = '更新';
+            saveBtn.onclick = () => updateCustomWord();
+
+            // 顯示刪除提示
+            const headerSpan = document.querySelector('#addWordModal .word-modal-header span');
+            headerSpan.textContent = '✏️ 編輯自訂單字';
+        }
+
+        function updateCustomWord() {
+            if (editingWordIndex < 0) return;
+
+            const customWords = getCustomWords();
+            const word = customWords[editingWordIndex];
+
+            // 更新單字信息
+            word.tag = document.getElementById('addTagInput').value.trim() || '其他';
+            word.音標 = document.getElementById('addPhoneticInput').value.trim();
+            // 獲取所有選中的詞性複選框
+            const posCheckboxes = document.querySelectorAll('#addPosDropdownMenu input.pos-checkbox:checked');
+            word.詞性 = Array.from(posCheckboxes).map(cb => cb.value).join(', ');
+            word.中文 = document.getElementById('addChineseInput').value.trim();
+            word.例句 = document.getElementById('addExampleInput').value.trim();
+            word.翻譯 = document.getElementById('addTranslationInput').value.trim();
+
+            // 保存到 localStorage
+            localStorage.setItem('customWords', JSON.stringify(customWords));
+
+            alert('單字已更新');
+            closeAddWordModal();
+            renderCustomWords();
+
+            // 重新打開單字詳情
+            displayWordInModal(editingWordIndex, getCustomWords());
+            document.getElementById('wordModal').style.display = 'flex';
+
+            editingWordIndex = -1;
+
+            // 恢復按鈕
+            const modalBody = document.querySelector('#addWordModal .word-modal-footer');
+            const saveBtn = modalBody.querySelector('.modal-nav-btn');
+            saveBtn.textContent = '保存';
+            saveBtn.onclick = () => saveCustomWord();
+
+            const headerSpan = document.querySelector('#addWordModal .word-modal-header span');
+            headerSpan.textContent = '➕ 自訂';
+        }
+
+        function deleteWord() {
+            if (modalCurrentWordIndex < 0 || modalCurrentWordIndex >= currentFilteredWords.length) return;
+
+            const word = currentFilteredWords[modalCurrentWordIndex];
+            if (word.sheet !== '自訂') return;
+
+            if (!confirm(`確定要刪除單字「${word.單字}」嗎？`)) return;
+
+            // 刪除 localStorage 中的星星和正確率
+            const wordKey = `自訂/${word.tag}/${word.單字}`;
+            localStorage.removeItem(`favorite_${wordKey}`);
+            localStorage.removeItem(`quizHistory_${wordKey}`);
+
+            // 刪除自訂單字
+            const customWords = getCustomWords();
+            customWords.splice(modalCurrentWordIndex, 1);
+            localStorage.setItem('customWords', JSON.stringify(customWords));
+
+            alert('單字已刪除');
+            closeWordModal();
+            renderCustomWords();
+
+            editingWordIndex = -1;
+        }
+
+        // 切換模式時更新自訂單字
+        function updateCustomWordsInAllModes() {
+            const customWords = getCustomWords();
+
+            // 移除舊的自訂單字
+            allWords = allWords.filter(word => word.sheet !== '自訂');
+
+            // 添加新的自訂單字
+            if (customWords.length > 0) {
+                allWords = allWords.concat(customWords);
+
+                // 更新 sheetData
+                sheetData['自訂'] = customWords;
+
+                // 更新 selectedTags
+                const customTags = [...new Set(customWords.map(w => w.tag))];
+                selectedTags.set('自訂', new Set(customTags));
+
+                // 移除舊的「自訂」submenu（更新 tags）
+                const oldCustomSubmenu = document.querySelector('[data-sheet-name="自訂"].sheet-submenu');
+                if (oldCustomSubmenu) {
+                    oldCustomSubmenu.remove();
+                }
+
+                // 確保 UI 中有「自訂」sheet 項目
+                let sheetHeader = document.querySelector('.sheet-item-header[data-sheet-name="自訂"]');
+                if (!sheetHeader) {
+                    // 如果不存在，創建「自訂」sheet 項目
+                    const container = document.getElementById('sheetGroupsContainer');
+                    if (container) {
+                        const sheetItem = document.createElement('div');
+                        sheetItem.className = 'sheet-item normal-sheet-item';
+
+                        sheetHeader = document.createElement('div');
+                        sheetHeader.className = 'sheet-item-header';
+                        sheetHeader.dataset.sheetName = '自訂';
+
+                        const toggleSpan = document.createElement('span');
+                        toggleSpan.className = 'sheet-toggle';
+                        toggleSpan.textContent = '▶';
+
+                        const sheetCheckbox = document.createElement('input');
+                        sheetCheckbox.type = 'checkbox';
+                        sheetCheckbox.checked = true;
+                        sheetCheckbox.dataset.sheetName = '自訂';
+                        sheetCheckbox.className = 'normal-sheet-checkbox';
+                        sheetCheckbox.onchange = updateFilter;
+
+                        const nameSpan = document.createElement('span');
+                        nameSpan.className = 'sheet-name';
+                        nameSpan.textContent = '自訂';
+
+                        sheetHeader.appendChild(sheetCheckbox);
+                        sheetHeader.appendChild(nameSpan);
+
+                        sheetItem.appendChild(sheetHeader);
+                        container.appendChild(sheetItem);
+                    }
+                }
+
+                // 創建/更新「自訂」submenu（每次都重新創建以更新 tags）
+                const sheetSubmenu = document.createElement('div');
+                sheetSubmenu.className = 'sheet-submenu';
+                sheetSubmenu.dataset.sheetName = '自訂';
+                document.body.appendChild(sheetSubmenu);
+
+                const buttonsRow = document.createElement('div');
+                buttonsRow.className = 'sheet-group-header';
+
+                const selectBtn = document.createElement('button');
+                selectBtn.textContent = '全選';
+                selectBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    selectAllInSheet(e, '自訂');
+                };
+
+                const clearBtn = document.createElement('button');
+                clearBtn.textContent = '清除';
+                clearBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    clearAllInSheet(e, '自訂');
+                };
+
+                buttonsRow.appendChild(selectBtn);
+                buttonsRow.appendChild(clearBtn);
+                sheetSubmenu.appendChild(buttonsRow);
+
+                customTags.forEach(tag => {
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = tag;
+                    checkbox.checked = true;
+                    checkbox.dataset.sheet = '自訂';
+                    checkbox.className = 'normal-tag-checkbox';
+                    checkbox.onchange = updateFilter;
+
+                    const label = document.createElement('div');
+                    label.className = 'tag-checkbox-item';
+                    label.appendChild(checkbox);
+                    const span = document.createElement('span');
+                    span.textContent = tag;
+                    label.appendChild(span);
+
+                    label.onclick = (e) => {
+                        e.stopPropagation();
+                        checkbox.checked = !checkbox.checked;
+                        updateFilter();
+                    };
+
+                    sheetSubmenu.appendChild(label);
+                });
+
+                sheetHeader.onclick = (e) => {
+                    if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT') {
+                        e.stopPropagation();
+
+                        document.querySelectorAll('.sheet-submenu.expanded').forEach(submenu => {
+                            if (submenu !== sheetSubmenu) {
+                                submenu.classList.remove('expanded');
+                            }
+                        });
+
+                        sheetSubmenu.classList.toggle('expanded');
+
+                        if (sheetSubmenu.classList.contains('expanded')) {
+                            const rect = sheetHeader.getBoundingClientRect();
+                            sheetSubmenu.style.top = rect.top + 'px';
+                            sheetSubmenu.style.left = (rect.right + 5) + 'px';
+                        }
+                    }
+                }
+            } else {
+                // 如果沒有自訂單字，移除該 sheet
+                delete sheetData['自訂'];
+                selectedTags.delete('自訂');
+
+                // 移除 UI 中的「自訂」sheet 項目
+                const customSheetItem = document.querySelector('.sheet-item.normal-sheet-item [data-sheet-name="自訂"]')?.closest('.sheet-item');
+                if (customSheetItem) {
+                    customSheetItem.remove();
+                }
+
+                // 移除 submenu
+                const customSubmenu = document.querySelector('[data-sheet-name="自訂"].sheet-submenu');
+                if (customSubmenu) {
+                    customSubmenu.remove();
+                }
+            }
         }
     </script>
 </body>
