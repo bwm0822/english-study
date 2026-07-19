@@ -48,6 +48,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .chinese-buttons {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
         }
 
         .mode-selector label {
@@ -96,6 +104,204 @@
             overflow: hidden;
             min-height: 0;
             color: #b8b8b8;
+        }
+
+        .chinese-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #3a3a52;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            min-height: 0;
+            color: #b8b8b8;
+            padding: 20px;
+        }
+
+        .chinese-panel {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 0;
+        }
+
+        .chinese-mode-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 12px 40px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            max-width: 200px;
+            transition: background 0.2s;
+        }
+
+        .chinese-mode-btn:hover {
+            background: #0b7dda;
+        }
+
+        .chinese-mode-btn.active {
+            background: #667eea;
+        }
+
+        .chinese-mode-btn-top {
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 16px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .chinese-mode-btn-top:hover {
+            background: #0b7dda;
+        }
+
+        .chinese-mode-btn-top.active {
+            background: #667eea;
+        }
+
+        .chinese-content {
+            flex: 1;
+            overflow-y: auto;
+            background: #2a2a52;
+            border-radius: 8px;
+            padding: 20px;
+            min-height: 0;
+        }
+
+        .idiom-item {
+            background: #3a3a52;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .idiom-left {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            min-width: 80px;
+        }
+
+        .idiom-word {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .idiom-word:hover {
+            color: #ffa500;
+        }
+
+        .idiom-phonetic {
+            color: #ffa500;
+            font-size: 0.75em;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        .idiom-middle {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .idiom-explanation {
+            color: #b8b8b8;
+            font-size: 1em;
+            line-height: 1.6;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .idiom-explanation:hover {
+            color: #fff;
+        }
+
+        .idiom-index {
+            color: #999;
+            font-size: 0.9em;
+            flex-shrink: 0;
+            white-space: nowrap;
+            align-self: flex-start;
+            margin-top: 2px;
+        }
+
+        .story-item {
+            background: #3a3a52;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4CAF50;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+        }
+
+        .story-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .story-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.2s;
+            flex: 1;
+        }
+
+        .story-title:hover {
+            color: #4CAF50;
+        }
+
+        .story-index {
+            color: #999;
+            font-size: 0.9em;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .story-content {
+            color: #b8b8b8;
+            font-size: 0.95em;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            cursor: pointer;
+            transition: color 0.2s;
+            padding: 8px;
+            border-radius: 4px;
+            margin: -8px;
+            padding: 8px;
+        }
+
+        .story-content:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
         }
 
         .quiz-panel {
@@ -1365,8 +1571,13 @@
                     <option value="review">複習</option>
                     <option value="quiz">測驗</option>
                     <option value="statistics">統計</option>
+                    <option value="chinese">中文</option>
                     <option value="add">自訂</option>
                 </select>
+            </div>
+            <div class="chinese-buttons" id="chineseButtonsTop" style="display: none; gap: 10px; margin-left: 20px;">
+                <button class="chinese-mode-btn-top" onclick="showChineseIdioms()">成語</button>
+                <button class="chinese-mode-btn-top" onclick="showChineseStories()">故事</button>
             </div>
             <div class="tag-filter" id="tagFilterContainer">
                 <label>選擇單元：</label>
@@ -1455,6 +1666,13 @@
             </div>
         </div>
 
+        <!-- 中文模式 -->
+        <div class="chinese-container" id="chineseContainer" style="display: none;">
+            <div class="chinese-panel">
+                <div class="chinese-content" id="chineseContent"></div>
+            </div>
+        </div>
+
         <!-- 資訊視窗 -->
         <div class="word-modal" id="aboutModal" style="display: none;">
             <div class="word-modal-content" style="max-width: 600px;">
@@ -1474,6 +1692,7 @@
                             • 複習模式：根據準確率複習低分單字<br>
                             • 測驗模式：隨機測試單字拼寫<br>
                             • 統計模式：查看每個tag的熟練度統計<br>
+                            • 中文模式：學習成語和成語故事<br>
                             • 自訂模式：新增、編輯、刪除自訂單字
                         </div>
                     </div>
@@ -2209,6 +2428,7 @@
             }
 
             if (mode === 'review') {
+                stopStoryPlayback();
                 wordsContainer.style.display = 'block';
                 quizContainer.style.display = 'none';
                 tagFilterContainer.style.display = 'flex';
@@ -2218,6 +2438,8 @@
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'block';
                 settingsMenuContainer.style.display = 'none';
+                document.getElementById('chineseContainer').style.display = 'none';
+                document.getElementById('chineseButtonsTop').style.display = 'none';
                 // 改變標籤為「過濾單元」
                 tagFilterContainer.querySelector('label').textContent = '過濾單元：';
                 // 隱藏所有sheet項目，只顯示過濾器
@@ -2232,6 +2454,7 @@
                 updateDropdownButton();
                 renderWords();
             } else if (mode === 'quiz') {
+                stopStoryPlayback();
                 wordsContainer.style.display = 'none';
                 quizContainer.style.display = 'flex';
                 tagFilterContainer.style.display = 'none';
@@ -2241,11 +2464,14 @@
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'block';
                 settingsMenuContainer.style.display = 'none';
+                document.getElementById('chineseContainer').style.display = 'none';
+                document.getElementById('chineseButtonsTop').style.display = 'none';
                 document.getElementById('quizStartPanel').style.display = 'flex';
                 document.getElementById('quizSession').style.display = 'none';
                 document.getElementById('quizResult').style.display = 'none';
                 initQuizPanel();
             } else if (mode === 'statistics') {
+                stopStoryPlayback();
                 wordsContainer.style.display = 'block';
                 quizContainer.style.display = 'none';
                 tagFilterContainer.style.display = 'none';
@@ -2255,10 +2481,30 @@
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'none';
                 settingsMenuContainer.style.display = 'none';
+                document.getElementById('chineseContainer').style.display = 'none';
+                document.getElementById('chineseButtonsTop').style.display = 'none';
                 renderStatistics();
+            } else if (mode === 'chinese') {
+                wordsContainer.style.display = 'none';
+                quizContainer.style.display = 'none';
+                document.getElementById('chineseContainer').style.display = 'flex';
+                document.getElementById('chineseButtonsTop').style.display = 'flex';
+                tagFilterContainer.style.display = 'none';
+                quizTagFilterContainer.style.display = 'none';
+                searchFilterContainer.style.display = 'none';
+                refreshBtn.style.display = 'none';
+                startQuizBtn.style.display = 'none';
+                stats.style.display = 'none';
+                settingsMenuContainer.style.display = 'none';
+                document.getElementById('addWordBtn').style.display = 'none';
+                document.getElementById('exportBtn').style.display = 'none';
+                showChineseIdioms();
             } else if (mode === 'add') {
+                stopStoryPlayback();
                 wordsContainer.style.display = 'block';
                 quizContainer.style.display = 'none';
+                document.getElementById('chineseContainer').style.display = 'none';
+                document.getElementById('chineseButtonsTop').style.display = 'none';
                 tagFilterContainer.style.display = 'none';
                 quizTagFilterContainer.style.display = 'none';
                 searchFilterContainer.style.display = 'none';
@@ -2270,8 +2516,11 @@
                 document.getElementById('exportBtn').style.display = 'block';
                 renderCustomWords();
             } else {
+                stopStoryPlayback();
                 wordsContainer.style.display = 'block';
                 quizContainer.style.display = 'none';
+                document.getElementById('chineseContainer').style.display = 'none';
+                document.getElementById('chineseButtonsTop').style.display = 'none';
                 tagFilterContainer.style.display = 'flex';
                 quizTagFilterContainer.style.display = 'none';
                 searchFilterContainer.style.display = 'flex';
@@ -4604,6 +4853,247 @@
                     customSubmenu.remove();
                 }
             }
+        }
+
+        // Chinese mode functions
+        let chineseData = null;
+        let currentStoryPlaying = -1;
+        let isStoryPaused = false;
+        let currentStoryText = '';
+        let currentCharIndex = 0;
+
+        function loadChineseData() {
+            if (chineseData) return Promise.resolve(chineseData);
+
+            return fetch('chinese.json?t=' + new Date().getTime())
+                .then(r => r.json())
+                .then(data => {
+                    chineseData = data;
+                    return data;
+                })
+                .catch(e => {
+                    console.error('Failed to load chinese.json:', e);
+                    return null;
+                });
+        }
+
+        function stopStoryPlayback() {
+            speechSynthesis.cancel();
+            currentStoryPlaying = -1;
+            isStoryPaused = false;
+        }
+
+        function playStory(index) {
+            if (!chineseData || !chineseData['成語故事'] || !chineseData['成語故事'][index]) {
+                console.error('Story data not found');
+                return;
+            }
+
+            const story = chineseData['成語故事'][index];
+
+            // 停止之前的播放
+            speechSynthesis.cancel();
+
+            // 使窗口获得焦点
+            window.focus();
+
+            currentStoryPlaying = index;
+            isStoryPaused = false;
+            currentStoryText = story.標題 + '。' + story.故事;
+            currentCharIndex = 0;
+
+            const utterance = new SpeechSynthesisUtterance(currentStoryText);
+            utterance.lang = 'zh-TW';
+            const rate = localStorage.getItem('pronunciationRate') || '1.0';
+            utterance.rate = parseFloat(rate);
+
+            utterance.onboundary = (event) => {
+                currentCharIndex = event.charIndex || 0;
+                updateStoryHighlight(index);
+            };
+
+            utterance.onend = () => {
+                currentStoryPlaying = -1;
+                isStoryPaused = false;
+                currentCharIndex = 0;
+                updateStoryContentDisplay(index);
+            };
+
+            speechSynthesis.speak(utterance);
+            updateStoryContentDisplay(index);
+        }
+
+        function toggleStoryPlayback(index) {
+            if (currentStoryPlaying !== index) return;
+
+            if (speechSynthesis.paused) {
+                speechSynthesis.resume();
+                isStoryPaused = false;
+            } else {
+                speechSynthesis.pause();
+                isStoryPaused = true;
+            }
+            updateStoryHighlight(index);
+        }
+
+        function updateStoryHighlight(index) {
+            const storyItem = document.querySelector(`[data-story-index="${index}"]`);
+            if (!storyItem) return;
+
+            const contentDiv = storyItem.querySelector('.story-content');
+            if (!contentDiv) return;
+
+            if (!chineseData || !chineseData['成語故事'] || !chineseData['成語故事'][index]) {
+                return;
+            }
+
+            const story = chineseData['成語故事'][index];
+            const beforeText = currentStoryText.substring(0, currentCharIndex);
+            const afterText = currentStoryText.substring(currentCharIndex);
+
+            // 高亮成语
+            let beforeHtml = highlightIdiomsInStory(beforeText);
+            let afterHtml = highlightIdiomsInStory(afterText);
+
+            // 创建反白效果 - 已读部分灰色背景，当前位置无背景
+            const statusText = currentStoryPlaying === index ? (isStoryPaused ? ' ⏸ [暫停中 - 點擊繼續]' : ' ▶ [播放中 - 點擊暫停]') : '';
+            const highlighted =
+                '<span style="background: rgba(128, 128, 128, 0.4); padding: 2px;">' + beforeHtml + '</span>' +
+                '<span id="story-cursor-' + index + '"></span>' +
+                afterHtml +
+                (statusText ? '<span style="color: #4CAF50;">' + statusText + '</span>' : '');
+
+            contentDiv.innerHTML = highlighted;
+
+            // 滚动当前位置到视窗中央
+            const cursor = document.getElementById('story-cursor-' + index);
+            if (cursor) {
+                cursor.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function updateStoryContentDisplay(index) {
+            const storyItem = document.querySelector(`[data-story-index="${index}"]`);
+            if (!storyItem) return;
+
+            const contentDiv = storyItem.querySelector('.story-content');
+            if (!contentDiv) return;
+
+            // 获取原始故事内容
+            if (!chineseData || !chineseData['成語故事'] || !chineseData['成語故事'][index]) {
+                return;
+            }
+
+            const story = chineseData['成語故事'][index];
+            let displayHtml = highlightIdiomsInStory(story.故事);
+
+            if (currentStoryPlaying === index) {
+                const statusText = isStoryPaused ? ' ⏸ [暫停中 - 點擊繼續]' : ' ▶ [播放中 - 點擊暫停]';
+                displayHtml += `<span style="color: #4CAF50;">${statusText}</span>`;
+            }
+
+            contentDiv.innerHTML = displayHtml;
+        }
+
+        function pronounceChineseText(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-TW';
+            const rate = localStorage.getItem('pronunciationRate') || '1.0';
+            utterance.rate = parseFloat(rate);
+            speechSynthesis.speak(utterance);
+        }
+
+        function showChineseIdioms() {
+            loadChineseData().then(data => {
+                if (!data || !data['表現態度']) {
+                    document.getElementById('chineseContent').innerHTML = '無法加載成語數據';
+                    return;
+                }
+
+                const idioms = data['表現態度'];
+                let html = '<div style="font-size: 1.2em; margin-bottom: 20px; color: #667eea; font-weight: bold;">表現態度 - 成語</div>';
+
+                idioms.forEach((item, index) => {
+                    const explanation = item.說明.replace(/'/g, "\\'");
+                    html += `
+                        <div class="idiom-item">
+                            <div class="idiom-left">
+                                <div class="idiom-word" onclick="pronounceChineseText('${item.成語}')" title="點擊發音">${item.成語}</div>
+                                <div class="idiom-phonetic">${item.注音}</div>
+                            </div>
+                            <div class="idiom-middle">
+                                <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.說明}</div>
+                            </div>
+                            <div class="idiom-index">${index + 1}/${idioms.length}</div>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('chineseContent').innerHTML = html;
+
+                // Update button states
+                document.querySelectorAll('.chinese-mode-btn-top').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelectorAll('.chinese-mode-btn-top')[0].classList.add('active');
+            });
+        }
+
+        function highlightIdiomsInStory(text) {
+            if (!chineseData || !chineseData['表現態度']) {
+                return text;
+            }
+
+            let highlightedText = text;
+            const idioms = chineseData['表現態度'];
+
+            // 按成語長度排序（從長到短），避免短成語被先替換
+            const sortedIdioms = idioms
+                .map(item => item.成語)
+                .sort((a, b) => b.length - a.length);
+
+            sortedIdioms.forEach(idiom => {
+                const regex = new RegExp(idiom.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                highlightedText = highlightedText.replace(regex, `<strong style="color: #4CAF50; font-weight: bold;">${idiom}</strong>`);
+            });
+
+            return highlightedText;
+        }
+
+        function showChineseStories() {
+            stopStoryPlayback();
+
+            loadChineseData().then(data => {
+                if (!data || !data['成語故事']) {
+                    document.getElementById('chineseContent').innerHTML = '無法加載故事數據';
+                    return;
+                }
+
+                const stories = data['成語故事'];
+                let html = '<div style="font-size: 1.2em; margin-bottom: 20px; color: #4CAF50; font-weight: bold;">成語故事</div>';
+
+                stories.forEach((item, index) => {
+                    const highlightedContent = highlightIdiomsInStory(item.故事);
+
+                    html += `
+                        <div class="story-item" data-story-index="${index}">
+                            <div class="story-header">
+                                <div class="story-title" onclick="playStory(${index})" title="點擊開始朗讀故事">${item.標題}</div>
+                                <div class="story-index">${index + 1}/${stories.length}</div>
+                            </div>
+                            <div class="story-content" onclick="toggleStoryPlayback(${index}); return false;" title="點擊暫停/繼續">${highlightedContent}</div>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('chineseContent').innerHTML = html;
+
+                // Update button states
+                document.querySelectorAll('.chinese-mode-btn-top').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelectorAll('.chinese-mode-btn-top')[1].classList.add('active');
+            });
         }
     </script>
 </body>

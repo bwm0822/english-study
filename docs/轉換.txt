@@ -2,3 +2,8 @@
 單字 [KK音標] 詞性(縮寫) 中文 例句 翻譯
 「給我 Excel tab 格式（用 code block）」
 unit 之間要空一行
+
+
+輸出格式如下，最上面不要加註解欄位，
+成語 注音 說明
+「給我 Excel tab 格式（用 code block）」
