@@ -2592,11 +2592,15 @@
                 // 創建左側內容
                 const wordLeft = document.createElement('div');
                 wordLeft.className = 'word-left';
+                const formatPhonetic = (phonetic) => {
+                    if (!phonetic) return '--';
+                    return phonetic.replace(/^\[/, '[ ').replace(/\]$/, ' ]');
+                };
                 wordLeft.innerHTML = `
                     ${word.sheet || word.tag ? `<span class="word-tag"><div class="word-tag-sheet">${word.sheet || ''}</div><div class="word-tag-tag">${word.tag || ''}</div></span>` : ''}
                     <span class="word-accuracy">${accuracyDisplay}</span>
                     <span class="word-word">${word.單字}</span>
-                    <span class="word-phonetic">${word.音標}</span>
+                    <span class="word-phonetic">${formatPhonetic(word.音標)}</span>
                     <span class="word-pos">${word.詞性}</span>
                     <span class="word-chinese">${word.中文}</span>
                 `;
@@ -3805,7 +3809,8 @@
             modalWordEl.onclick = () => playPronunciation(word.單字);
 
             const modalPhoneticEl = document.getElementById('modalPhonetic');
-            modalPhoneticEl.textContent = word.音標;
+            const formattedPhonetic = word.音標 ? word.音標.replace(/^\[/, '[ ').replace(/\]$/, ' ]') : '';
+            modalPhoneticEl.textContent = formattedPhonetic;
             modalPhoneticEl.style.cursor = 'pointer';
             modalPhoneticEl.onclick = () => playPronunciation(word.單字);
 
@@ -4272,11 +4277,15 @@
                 // 創建左側內容
                 const wordLeft = document.createElement('div');
                 wordLeft.className = 'word-left';
+                const formatPhonetic2 = (phonetic) => {
+                    if (!phonetic) return '--';
+                    return phonetic.replace(/^\[/, '[ ').replace(/\]$/, ' ]');
+                };
                 wordLeft.innerHTML = `
                     <span class="word-tag"><div class="word-tag-sheet">自訂</div><div class="word-tag-tag">${word.tag || ''}</div></span>
                     <span class="word-accuracy">${accuracyDisplay}</span>
                     <span class="word-word">${word.單字}</span>
-                    <span class="word-phonetic">${word.音標 || '--'}</span>
+                    <span class="word-phonetic">${formatPhonetic2(word.音標)}</span>
                     <span class="word-pos">${word.詞性 || '--'}</span>
                     <span class="word-chinese">${word.中文 || '--'}</span>
                 `;
