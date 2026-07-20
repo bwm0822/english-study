@@ -281,11 +281,94 @@
 
         .story-content {
             color: #b8b8b8;
-            font-size: 0.95em;
+            font-size: 1.2em;
             line-height: 1.8;
             white-space: pre-wrap;
             word-break: break-word;
             cursor: pointer;
+        }
+
+        /* 方案2: Flexbox 竖排注音 - 注音和声符分开 */
+        .zhuyin-char-v2 {
+            display: inline-flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0px;
+            margin: 0 0px;
+            vertical-align: middle;
+            border-radius: 4px;
+            padding: 0px 0px;
+            transition: background-color 0.2s;
+        }
+
+        .zhuyin-char-v2[onclick] {
+            cursor: pointer;
+        }
+
+        .idiom-phonetic:hover .char {
+            color: #667eea;
+            transition: color 0.2s;
+        }
+
+        .zhuyin-char-v2 .char {
+            font-size: 2.8em;
+            font-weight: bold;
+            color: #b8b8b8;
+            min-width: 55px;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .zhuyin-char-story .char {
+            font-size: 1em;
+            min-width: auto;
+        }
+
+        .zhuyin-char-v2 .zhuyin-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 0px;
+        }
+
+        .zhuyin-char-v2 .zhuyin-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0px;
+            font-size: 0.7em;
+            color: #ff9999;
+            line-height: 0.95;
+            min-width: 16px;
+        }
+
+        .zhuyin-char-v2 .zhuyin-box .zhuyin-symbol {
+            display: block;
+            height: 13px;
+            width: 100%;
+            text-align: center;
+            line-height: 13px;
+        }
+
+        .zhuyin-char-v2 .tone-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0px;
+            font-size: 0.6em;
+            color: #ffaa99;
+            line-height: 0.8;
+            min-width: 12px;
+        }
+
+        .zhuyin-char-v2 .tone-box .tone-symbol {
+            display: block;
+            height: 13px;
+            width: 100%;
+            text-align: center;
+            line-height: 13px;
         }
 
         .story-read-btn {
@@ -1683,7 +1766,7 @@
                 </div>
                 <div class="word-modal-body" style="gap: 15px; font-size: 0.95em; text-align: left;">
                     <div>
-                        <strong style="color: #667eea; font-size: 1.1em;">版本：2026.07.20</strong>
+                        <strong style="color: #667eea; font-size: 1.1em;">版本：2026.07.20.a</strong>
                     </div>
 
                     <div>
@@ -4863,6 +4946,84 @@
         let currentStoryText = '';
         let currentCharIndex = 0;
 
+        // 声调符号定义
+        const TONE_MARKS = ['ˉ', 'ˊ', 'ˇ', 'ˋ', '˙'];
+
+        // 分离注音和声调符号
+        function separateZhuyinAndTone(zhuyin) {
+            if (!zhuyin) return { zhuyin: '', tones: [] };
+
+            const tones = [];
+            let zhuyinOnly = '';
+
+            for (let char of zhuyin) {
+                if (TONE_MARKS.includes(char)) {
+                    tones.push(char);
+                } else {
+                    zhuyinOnly += char;
+                }
+            }
+
+            return { zhuyin: zhuyinOnly, tones };
+        }
+
+        // 将注音和声调拆分为单个符号
+        function splitToSymbols(str) {
+            const symbols = [];
+            for (let char of str) {
+                symbols.push(char);
+            }
+            return symbols;
+        }
+
+        // 生成竖排注音HTML（方案2）- 注音和声调分开
+        function createZhuyinHTML_V2(text, zhuyinArray, enableSound = false, soundText = '', isStory = false) {
+            if (!zhuyinArray || zhuyinArray.length === 0) return text;
+
+            let html = '';
+            const zhuyins = zhuyinArray.join(' ').split(' ').filter(z => z);
+            const escapedSoundText = soundText.replace(/'/g, "\\'");
+            const soundAttr = enableSound && soundText ? ` onclick="pronounceChineseText('${escapedSoundText}')" style="cursor: pointer;" title="點擊發音"` : '';
+            const charClass = isStory ? 'zhuyin-char-v2 zhuyin-char-story' : 'zhuyin-char-v2';
+
+            for (let i = 0; i < text.length; i++) {
+                const char = text[i];
+                const zhuyin = zhuyins[i];
+
+                if (zhuyin && zhuyin.trim()) {
+                    const { zhuyin: zhuyinSymbols, tones } = separateZhuyinAndTone(zhuyin);
+                    const zhuyinArr = splitToSymbols(zhuyinSymbols);
+                    const toneArr = splitToSymbols(tones.join(''));
+
+                    let zhuyinHtml = '';
+                    for (let symbol of zhuyinArr) {
+                        zhuyinHtml += `<span class="zhuyin-symbol">${symbol}</span>`;
+                    }
+
+                    let toneHtml = '';
+                    for (let tone of toneArr) {
+                        toneHtml += `<span class="tone-symbol">${tone}</span>`;
+                    }
+
+                    html += `<div class="${charClass}"${soundAttr}>
+                        <div class="char">${char}</div>
+                        <div class="zhuyin-container">
+                            <div class="zhuyin-box">
+                                ${zhuyinHtml}
+                            </div>
+                            ${toneHtml ? `<div class="tone-box">
+                                ${toneHtml}
+                            </div>` : ''}
+                        </div>
+                    </div>`;
+                } else {
+                    html += char;
+                }
+            }
+
+            return html;
+        }
+
         function loadChineseData() {
             if (chineseData) return Promise.resolve(chineseData);
 
@@ -5025,11 +5186,12 @@
 
                 idioms.forEach((item, index) => {
                     const explanation = item.說明.replace(/'/g, "\\'");
+                    const zhuyinArray = item.注音.split(' ');
+                    const zhuyinHtml = createZhuyinHTML_V2(item.成語, zhuyinArray, true, item.成語);
                     html += `
                         <div class="idiom-item">
                             <div class="idiom-left">
-                                <div class="idiom-word" onclick="pronounceChineseText('${item.成語}')" title="點擊發音">${item.成語}</div>
-                                <div class="idiom-phonetic">${item.注音}</div>
+                                <div class="idiom-phonetic">${zhuyinHtml}</div>
                             </div>
                             <div class="idiom-middle">
                                 <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.說明}</div>
@@ -5049,6 +5211,13 @@
             });
         }
 
+        // 获取成语的注音
+        function getIdiomZhuyin(idiom) {
+            if (!chineseData || !chineseData['表現態度']) return null;
+            const item = chineseData['表現態度'].find(i => i.成語 === idiom);
+            return item ? item.注音 : null;
+        }
+
         function highlightIdiomsInStory(text) {
             if (!chineseData || !chineseData['表現態度']) {
                 return text;
@@ -5065,7 +5234,7 @@
             sortedIdioms.forEach(idiom => {
                 const regex = new RegExp(idiom.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
                 const escapedIdiom = idiom.replace(/'/g, "\\'");
-                highlightedText = highlightedText.replace(regex, `<strong style="color: #4CAF50; font-weight: bold; cursor: pointer;" onclick="pronounceChineseText('${escapedIdiom}')">${idiom}</strong>`);
+                highlightedText = highlightedText.replace(regex, `<strong style="color: #FF8C00; font-weight: bold; cursor: pointer;" onclick="pronounceChineseText('${escapedIdiom}')">${idiom}</strong>`);
             });
 
             return highlightedText;
