@@ -226,9 +226,60 @@
         function clearHistory() {
             if (confirm('確定要清除所有學習紀錄嗎？此操作無法撤銷。')) {
                 localStorage.clear();
+                initializeLocalStorage();
                 alert('紀錄已清除');
             }
         }
+
+        // localStorage 版本控制
+        const STORAGE_VERSION = '1.0';
+
+        function initializeLocalStorage() {
+            const version = localStorage.getItem('_storageVersion');
+            if (!version || version !== STORAGE_VERSION) {
+                migrateLocalStorage(version);
+                localStorage.setItem('_storageVersion', STORAGE_VERSION);
+            }
+        }
+
+        function migrateLocalStorage(oldVersion) {
+            if (!oldVersion) {
+                // 舊版本遷移邏輯
+                const oldData = {};
+
+                // 收集舊的localStorage數據
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && !key.startsWith('_')) {
+                        oldData[key] = localStorage.getItem(key);
+                    }
+                }
+
+                // 清除舊數據
+                const keysToDelete = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && !key.startsWith('_') && key !== '_storageVersion') {
+                        keysToDelete.push(key);
+                    }
+                }
+                keysToDelete.forEach(key => localStorage.removeItem(key));
+
+                // 初始化新結構
+                localStorage.setItem('setting', JSON.stringify({}));
+                localStorage.setItem('english', JSON.stringify({
+                    favorite: {},
+                    quiz: {},
+                    customWords: []
+                }));
+                localStorage.setItem('chinese', JSON.stringify({}));
+
+                console.log('已將localStorage升級至版本 ' + STORAGE_VERSION);
+            }
+        }
+
+        // 頁面加載時初始化localStorage
+        initializeLocalStorage();
 
         // 點擊外部時關閉菜單
         document.addEventListener('click', function(event) {

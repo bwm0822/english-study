@@ -180,14 +180,17 @@
         }
 
         .idiom-item {
-            background: #3a3a52;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-left: 4px solid #667eea;
+            background: #333;
+            border-radius: 0;
+            padding: 8px 12px;
+            margin-bottom: 0;
+            border-left: 0;
+            border-bottom: 1px solid #4a4a60;
             display: flex;
-            gap: 20px;
-            align-items: flex-start;
+            gap: 10px;
+            align-items: center;
+            font-size: 1.1em;
+            color: #b8b8b8;
         }
 
         .idiom-left {
@@ -228,7 +231,7 @@
 
         .idiom-explanation {
             color: #b8b8b8;
-            font-size: 1.15em;
+            font-size: 1.35em;
             line-height: 1.6;
             cursor: pointer;
             transition: color 0.2s;
@@ -240,7 +243,7 @@
 
         .idiom-example {
             color: #b8b8b8;
-            font-size: 1.1em;
+            font-size: 1.35em;
             line-height: 1.6;
             margin-top: 10px;
             padding: 8px 0;
@@ -308,6 +311,35 @@
             white-space: pre-wrap;
             word-break: break-word;
             cursor: pointer;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #444;
+        }
+
+        .quiz-progress {
+            font-size: 1.2em;
+            color: #aaa;
+        }
+
+        .cancel-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 1.1em;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .cancel-btn:hover {
+            background: #da190b;
         }
 
         /* 方案2: Flexbox 竖排注音 - 注音和声符分开 */
@@ -502,8 +534,8 @@
             color: white;
             border: none;
             border-radius: 4px;
-            padding: 6px 16px;
-            font-size: 0.9em;
+            padding: 10px 20px;
+            font-size: 1.1em;
             cursor: pointer;
             font-weight: 600;
         }
@@ -882,7 +914,7 @@
         }
 
         .sheet-item-header::after {
-            content: '▶';
+            content: '';
             position: absolute;
             right: 8px;
             font-size: 0.7em;
@@ -1676,25 +1708,36 @@
                 <select id="chineseModeSelect" onchange="changeChineseMode(this.value)">
                     <option value="idioms">成語</option>
                     <option value="stories">故事</option>
+                    <option value="review">複習</option>
+                    <option value="quiz">測驗</option>
                 </select>
             </div>
             <div class="tag-filter" id="tagFilterContainer" style="display: none;">
                 <label>選擇單元：</label>
                 <div class="tag-filter-dropdown">
-                    <button class="tag-dropdown-btn" onclick="toggleDropdown()">全部 <span>▼</span></button>
+                    <button class="tag-dropdown-btn" id="tagDropdownBtn" onclick="toggleDropdown()">全部 <span>▼</span></button>
                     <div class="tag-dropdown-menu" id="tagDropdownMenu">
                         <div id="sheetGroupsContainer"></div>
                     </div>
                 </div>
+                <span id="tagCountDisplay" class="stats" style="background: rgba(255, 255, 255, 0.1); margin-left: auto;"></span>
             </div>
             <div class="tag-filter" id="quizTagFilterContainer" style="display: none;">
                 <label>選擇單元：</label>
                 <div class="tag-filter-dropdown">
-                    <button class="tag-dropdown-btn" onclick="toggleQuizDropdown()">全部 <span>▼</span></button>
+                    <button class="tag-dropdown-btn" id="quizTagDropdownBtn" onclick="toggleQuizDropdown()">全部 <span>▼</span></button>
                     <div class="tag-dropdown-menu" id="quizTagDropdownMenu">
                         <div id="quizSheetGroupsContainer"></div>
                     </div>
                 </div>
+                <span id="quizTagCountDisplay" class="stats" style="background: rgba(255, 255, 255, 0.1); margin-left: auto;"></span>
+            </div>
+            <div style="display: none; align-items: center; gap: 20px;" id="chineseQuizModeContainer">
+                <label style="color: white; font-weight: bold;">測驗方式：</label>
+                <select id="chineseQuizMethodSelect" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="explanation">解釋</option>
+                    <option value="sentence">造句</option>
+                </select>
             </div>
             <div class="search-filter" id="searchFilterContainer" style="display: none;">
                 <input type="text" id="searchInput" placeholder="搜尋單字..." class="search-input">
@@ -2076,30 +2119,144 @@
         let currentFilteredWords = [];
         let modalCurrentWordIndex = -1;
 
-        // 批量轉換舊的正確率記錄檔格式
-        function migrateOldFormatToNew() {
-            const keys = Object.keys(localStorage);
-            let convertedCount = 0;
+        // ============================================
+        // localStorage 版本控制與遷移系統
+        // ============================================
 
-            keys.forEach(key => {
-                if (key.startsWith('quizHistory_')) {
-                    const data = localStorage.getItem(key);
+        const STORAGE_CONFIG = {
+            VERSION: '1.0',
+            MARKER: '_storageVersion'
+        };
+
+        // 初始化storage結構
+        const INITIAL_STORAGE = {
+            setting: {},
+            english: {
+                favorite: {},
+                quiz: {},
+                customWords: []
+            },
+            chinese: {}
+        };
+
+        function getStorageVersion() {
+            return localStorage.getItem(STORAGE_CONFIG.MARKER);
+        }
+
+        function setStorageVersion(version) {
+            localStorage.setItem(STORAGE_CONFIG.MARKER, version);
+        }
+
+        function initializeLocalStorage() {
+            const currentVersion = getStorageVersion();
+
+            if (!currentVersion) {
+                console.log('[Storage] 首次初始化，執行舊版遷移');
+                migrateFromLegacy();
+            } else if (currentVersion !== STORAGE_CONFIG.VERSION) {
+                console.log(`[Storage] 版本不符 (${currentVersion} → ${STORAGE_CONFIG.VERSION})，執行版本升級`);
+                migrateVersion(currentVersion, STORAGE_CONFIG.VERSION);
+            } else {
+                console.log(`[Storage] 版本驗證通過 (${STORAGE_CONFIG.VERSION})`);
+            }
+
+            setStorageVersion(STORAGE_CONFIG.VERSION);
+        }
+
+        // 從舊版本遷移（無版本號）
+        function migrateFromLegacy() {
+            const englishData = {
+                favorite: {},
+                quiz: {},
+                customWords: []
+            };
+            const chineseData = {};
+
+            const keysToDelete = [];
+
+            // 掃描所有舊鍵值
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (!key || key.startsWith('_')) continue;
+
+                if (key.startsWith('favorite_')) {
+                    const value = localStorage.getItem(key);
+                    const cleanKey = key.replace('favorite_', '');
+                    englishData.favorite[cleanKey] = value;
+                    keysToDelete.push(key);
+                }
+                else if (key.startsWith('quizHistory_')) {
+                    const value = localStorage.getItem(key);
+                    const cleanKey = key.replace('quizHistory_', '');
+                    englishData.quiz[cleanKey] = value;
+                    keysToDelete.push(key);
+                }
+                else if (key === 'customWords') {
                     try {
-                        const parsed = JSON.parse(data);
-                        // 如果是舊格式（boolean 陣列），轉換為新格式（數值）
-                        if (Array.isArray(parsed)) {
-                            const correct = parsed.filter(v => v).length;
-                            localStorage.setItem(key, correct.toString());
-                            convertedCount++;
+                        const words = JSON.parse(localStorage.getItem(key));
+                        if (Array.isArray(words)) {
+                            englishData.customWords = words;
                         }
-                    } catch (e) {
-                        // 不是有效的 JSON，可能已經是新格式，忽略
+                    } catch (e) {}
+                    keysToDelete.push(key);
+                }
+            }
+
+            // 清除舊數據
+            keysToDelete.forEach(key => localStorage.removeItem(key));
+
+            // 建立新結構
+            localStorage.setItem('setting', JSON.stringify(INITIAL_STORAGE.setting));
+            localStorage.setItem('english', JSON.stringify(englishData));
+            localStorage.setItem('chinese', JSON.stringify(INITIAL_STORAGE.chinese));
+
+            console.log('[Storage] 舊版遷移完成：', {
+                favorites: Object.keys(englishData.favorite).length,
+                quizzes: Object.keys(englishData.quiz).length,
+                customWords: englishData.customWords.length
+            });
+        }
+
+        // 版本升級（未來使用）
+        function migrateVersion(fromVersion, toVersion) {
+            console.log(`[Storage] 版本升級邏輯 (${fromVersion} → ${toVersion}) 待實現`);
+        }
+
+        // 清理favorite中的舊前綴（data cleanup）
+        function cleanupStoragePrefixes() {
+            try {
+                const englishData = localStorage.getItem('english');
+                if (englishData) {
+                    const data = JSON.parse(englishData);
+                    if (data.favorite) {
+                        let hasChanges = false;
+                        const newFavorite = {};
+
+                        for (const key in data.favorite) {
+                            if (key.startsWith('favorite_')) {
+                                const cleanKey = key.replace('favorite_', '');
+                                newFavorite[cleanKey] = data.favorite[key];
+                                hasChanges = true;
+                            } else {
+                                newFavorite[key] = data.favorite[key];
+                            }
+                        }
+
+                        if (hasChanges) {
+                            data.favorite = newFavorite;
+                            localStorage.setItem('english', JSON.stringify(data));
+                            console.log('[Storage] 清理favorite前綴完成');
+                        }
                     }
                 }
-            });
-
-            return convertedCount;
+            } catch (e) {
+                console.error('[Storage] 清理前綴失敗:', e);
+            }
         }
+
+        // 初始化localStorage版本與清理
+        initializeLocalStorage();
+        cleanupStoragePrefixes();
 
         fetch('english.json?t=' + new Date().getTime())
             .then(r => r.json())
@@ -2107,15 +2264,6 @@
                 sheetData = data;
                 allWords = [];
 
-                // 批量轉換舊格式（只在第一次加載時進行一次）
-                if (!localStorage.getItem('_migrationDone')) {
-                    const convertedCount = migrateOldFormatToNew();
-                    localStorage.setItem('_migrationDone', 'true');
-                    // 如果有轉換過的記錄，可選擇顯示提示
-                    if (convertedCount > 0) {
-                        console.log(`已將 ${convertedCount} 筆舊格式記錄轉換為新格式`);
-                    }
-                }
 
                 // 建立分組下拉選單
                 const container = document.getElementById('sheetGroupsContainer');
@@ -2834,15 +2982,15 @@
 
                         // 如果勾選星號過濾，檢查是否有星號
                         if (filterByStar) {
-                            if (localStorage.getItem(`favorite_${wordKey}`) !== 'true') {
+                            if (getFavoriteFromStorage(wordKey) !== 'true') {
                                 return false;
                             }
                         }
 
                         // 如果勾選正確率過濾，檢查是否符合條件
                         if (filterByAccuracy !== null) {
-                            const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                            const hasHistory = localStorage.getItem(historyKey) !== null;
+                            const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                            const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                             if (!hasHistory) {
                                 return false;
                             }
@@ -2860,11 +3008,11 @@
                 // 複習模式：如果勾選正確率過濾，按正確率從低到高排序
                 if (filterByAccuracy !== null) {
                     filteredWords.sort((a, b) => {
-                        const historyKeyA = `quizHistory_${a.sheet}/${a.tag}/${a.單字}`;
+                        const historyKeyA = `${a.sheet}/${a.tag}/${a.單字}`;
                         const correctCountA = getQuizHistory(historyKeyA);
                         const accuracyA = calculateAccuracy(correctCountA);
 
-                        const historyKeyB = `quizHistory_${b.sheet}/${b.tag}/${b.單字}`;
+                        const historyKeyB = `${b.sheet}/${b.tag}/${b.單字}`;
                         const correctCountB = getQuizHistory(historyKeyB);
                         const accuracyB = calculateAccuracy(correctCountB);
 
@@ -2885,14 +3033,14 @@
                     // 如果勾選星號過濾，只顯示有星號的
                     if (filterByStar) {
                         const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                        if (localStorage.getItem(`favorite_${wordKey}`) !== 'true') {
+                        if (getFavoriteFromStorage(wordKey) !== 'true') {
                             return false;
                         }
                     }
                     // 如果勾選正確率過濾，檢查是否符合條件
                     if (filterByAccuracy !== null) {
-                        const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                        const hasHistory = localStorage.getItem(historyKey) !== null;
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                         if (!hasHistory) {
                             return false;
                         }
@@ -2922,24 +3070,24 @@
                 const starBtn = document.createElement('div');
                 starBtn.className = 'word-star';
                 const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                const isFavorited = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
                 starBtn.textContent = isFavorited ? '★' : '☆';
                 starBtn.dataset.wordKey = wordKey;
                 starBtn.onclick = (e) => {
                     e.stopPropagation();
-                    const isFav = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                    const isFav = getFavoriteFromStorage(wordKey) === 'true';
                     if (isFav) {
-                        localStorage.removeItem(`favorite_${wordKey}`);
+                        deleteFavoriteFromStorage(wordKey);
                         starBtn.textContent = '☆';
                     } else {
-                        localStorage.setItem(`favorite_${wordKey}`, 'true');
+                        saveFavoriteToStorage(wordKey, 'true');
                         starBtn.textContent = '★';
                     }
                 };
 
                 // 計算正確率
-                const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                const hasHistory = localStorage.getItem(historyKey) !== null;
+                const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                 let accuracyDisplay = '--';
                 if (hasHistory) {
                     const correctCount = getQuizHistory(historyKey);
@@ -3044,8 +3192,8 @@
                     let hasAnyTested = false;
 
                     tagWords.forEach(word => {
-                        const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                        const hasHistory = localStorage.getItem(historyKey) !== null;
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                         if (hasHistory) {
                             hasAnyTested = true;
                             testedCount++;
@@ -3571,14 +3719,14 @@
                     // 如果勾選星號篩選，只包含有星號的單字
                     if (filterByStar) {
                         const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                        if (localStorage.getItem(`favorite_${wordKey}`) !== 'true') {
+                        if (getFavoriteFromStorage(wordKey) !== 'true') {
                             return false;
                         }
                     }
                     // 如果勾選正確率篩選，只包含符合條件的單字
                     if (filterByAccuracy !== null) {
-                        const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                        const hasHistory = localStorage.getItem(historyKey) !== null;
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                         if (!hasHistory) {
                             return false;
                         }
@@ -3712,14 +3860,14 @@
                 // 如果勾選星號篩選，只包含有星號的單字
                 if (filterByStar) {
                     const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                    if (localStorage.getItem(`favorite_${wordKey}`) !== 'true') {
+                    if (getFavoriteFromStorage(wordKey) !== 'true') {
                         return false;
                     }
                 }
                 // 如果勾選正確率篩選，只包含符合條件的單字
                 if (filterByAccuracy !== null) {
-                    const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                    const hasHistory = localStorage.getItem(historyKey) !== null;
+                    const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                     if (!hasHistory) {
                         return false; // 沒有歷史記錄的單字不包含
                     }
@@ -3839,7 +3987,7 @@
             // 保存每個單詞的測驗結果到localStorage（新格式：只存數值）
             testedResults.forEach(result => {
                 const word = result.word;
-                const wordKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
+                const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
                 let cnt = getQuizHistory(wordKey); // 讀取舊格式並自動轉換
 
                 // 更新計數：正確加1，錯誤減1，範圍0~5
@@ -3849,7 +3997,7 @@
                     cnt = Math.max(cnt - 1, 0); // 錯誤減1，最低0
                 }
                 // 保存為數值（新格式）
-                localStorage.setItem(wordKey, cnt.toString());
+                saveQuizHistoryToStorage(wordKey, cnt.toString());
             });
 
             const correctCount = testedResults.filter(r => r.isCorrect).length;
@@ -3866,7 +4014,7 @@
 
                 const word = result.word;
                 const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                const isFavorited = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
 
                 // 星號
                 const starSpan = document.createElement('div');
@@ -3875,12 +4023,12 @@
                 starSpan.onclick = (e) => {
                     e.stopPropagation();
                     // 重新檢查當前狀態
-                    const currentIsFav = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                    const currentIsFav = getFavoriteFromStorage(wordKey) === 'true';
                     if (currentIsFav) {
-                        localStorage.removeItem(`favorite_${wordKey}`);
+                        deleteFavoriteFromStorage(wordKey);
                         starSpan.textContent = '☆';
                     } else {
-                        localStorage.setItem(`favorite_${wordKey}`, 'true');
+                        saveFavoriteToStorage(wordKey, 'true');
                         starSpan.textContent = '★';
                     }
                 };
@@ -3891,8 +4039,8 @@
                 tagDiv.innerHTML = `<div>${word.sheet}</div><div>${word.tag}</div>`;
 
                 // 計算正確率
-                const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                const hasHistory = localStorage.getItem(historyKey) !== null;
+                const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                 let accuracyDisplay = '--';
                 if (hasHistory) {
                     const correctCount = getQuizHistory(historyKey);
@@ -3961,7 +4109,7 @@
 
         // 獲取歷史記錄，支援舊格式（boolean陣列）和新格式（數值）
         function getQuizHistory(historyKey) {
-            const data = localStorage.getItem(historyKey);
+            const data = getQuizHistoryFromStorage(historyKey);
             if (!data) {
                 return 0;
             }
@@ -3974,7 +4122,7 @@
                 if (Array.isArray(parsed)) {
                     const correct = parsed.filter(v => v).length;
                     // 自動轉換為新格式
-                    localStorage.setItem(historyKey, correct.toString());
+                    saveQuizHistoryToStorage(historyKey, correct.toString());
                     return correct;
                 }
 
@@ -4132,16 +4280,16 @@
             document.getElementById('modalWordIndex').textContent = wordIndex + 1;
 
             const starSpan = document.getElementById('modalWordStar');
-            const isFavorited = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+            const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
             starSpan.textContent = isFavorited ? '★' : '☆';
             starSpan.onclick = (e) => {
                 e.stopPropagation();
-                const currentIsFav = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                const currentIsFav = getFavoriteFromStorage(wordKey) === 'true';
                 if (currentIsFav) {
-                    localStorage.removeItem(`favorite_${wordKey}`);
+                    deleteFavoriteFromStorage(wordKey);
                     starSpan.textContent = '☆';
                 } else {
-                    localStorage.setItem(`favorite_${wordKey}`, 'true');
+                    saveFavoriteToStorage(wordKey, 'true');
                     starSpan.textContent = '★';
                 }
             };
@@ -4150,8 +4298,8 @@
             tagDiv.querySelector('.modal-tag-sheet').textContent = word.sheet;
             tagDiv.querySelector('.modal-tag-tag').textContent = word.tag;
 
-            const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-            const hasHistory = localStorage.getItem(historyKey) !== null;
+            const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+            const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
             let accuracyDisplay = '--';
             if (hasHistory) {
                 const correctCount = getQuizHistory(historyKey);
@@ -4579,6 +4727,187 @@
             renderCustomWords();
         }
 
+        // Quiz 歷史記錄管理函數
+        function getQuizHistoryFromStorage(quizKey) {
+            try {
+                const englishData = localStorage.getItem('english');
+                if (englishData) {
+                    const data = JSON.parse(englishData);
+                    if (data.quiz && data.quiz[quizKey] !== undefined) {
+                        return data.quiz[quizKey];
+                    }
+                }
+            } catch (e) {
+                console.error('讀取quiz歷史失敗:', e);
+            }
+            // 向後相容：嘗試從舊格式讀取
+            return localStorage.getItem(`quizHistory_${quizKey}`);
+        }
+
+        function saveQuizHistoryToStorage(quizKey, value) {
+            try {
+                let englishData = {};
+                const stored = localStorage.getItem('english');
+                if (stored) {
+                    englishData = JSON.parse(stored);
+                }
+                if (!englishData.quiz) {
+                    englishData.quiz = {};
+                }
+                englishData.quiz[quizKey] = value;
+                localStorage.setItem('english', JSON.stringify(englishData));
+            } catch (e) {
+                console.error('保存quiz歷史失敗:', e);
+            }
+        }
+
+        function deleteQuizHistoryFromStorage(quizKey) {
+            try {
+                let englishData = {};
+                const stored = localStorage.getItem('english');
+                if (stored) {
+                    englishData = JSON.parse(stored);
+                }
+                if (englishData.quiz && englishData.quiz[quizKey] !== undefined) {
+                    delete englishData.quiz[quizKey];
+                    localStorage.setItem('english', JSON.stringify(englishData));
+                }
+            } catch (e) {
+                console.error('刪除quiz歷史失敗:', e);
+            }
+        }
+
+        // 中文測驗結果存儲函數
+        function saveChineseQuizResultToStorage(quizKey, isCorrect) {
+            try {
+                let chineseData = {};
+                const stored = localStorage.getItem('chinese');
+                if (stored) {
+                    chineseData = JSON.parse(stored);
+                }
+                if (!chineseData.quiz) {
+                    chineseData.quiz = {};
+                }
+                chineseData.quiz[quizKey] = isCorrect;
+                localStorage.setItem('chinese', JSON.stringify(chineseData));
+            } catch (e) {
+                console.error('保存中文測驗結果失敗:', e);
+            }
+        }
+
+        function getChineseQuizResultFromStorage(quizKey) {
+            try {
+                const chineseData = localStorage.getItem('chinese');
+                if (chineseData) {
+                    const data = JSON.parse(chineseData);
+                    if (data.quiz && data.quiz[quizKey] !== undefined) {
+                        return data.quiz[quizKey];
+                    }
+                }
+            } catch (e) {
+                console.error('讀取中文測驗結果失敗:', e);
+            }
+            return null;
+        }
+
+        // 中文 Favorite 存儲函數
+        function getChineseFavoriteFromStorage(favoriteKey) {
+            try {
+                const chineseData = localStorage.getItem('chinese');
+                if (chineseData) {
+                    const data = JSON.parse(chineseData);
+                    if (data.favorite && data.favorite[favoriteKey] !== undefined) {
+                        return data.favorite[favoriteKey];
+                    }
+                }
+            } catch (e) {
+                console.error('讀取中文favorite失敗:', e);
+            }
+            return null;
+        }
+
+        function saveChineseFavoriteToStorage(favoriteKey, value) {
+            try {
+                let chineseData = {};
+                const stored = localStorage.getItem('chinese');
+                if (stored) {
+                    chineseData = JSON.parse(stored);
+                }
+                if (!chineseData.favorite) {
+                    chineseData.favorite = {};
+                }
+                chineseData.favorite[favoriteKey] = value;
+                localStorage.setItem('chinese', JSON.stringify(chineseData));
+            } catch (e) {
+                console.error('保存中文favorite失敗:', e);
+            }
+        }
+
+        function deleteChineseFavoriteFromStorage(favoriteKey) {
+            try {
+                let chineseData = {};
+                const stored = localStorage.getItem('chinese');
+                if (stored) {
+                    chineseData = JSON.parse(stored);
+                }
+                if (chineseData.favorite && chineseData.favorite[favoriteKey] !== undefined) {
+                    delete chineseData.favorite[favoriteKey];
+                    localStorage.setItem('chinese', JSON.stringify(chineseData));
+                }
+            } catch (e) {
+                console.error('刪除中文favorite失敗:', e);
+            }
+        }
+
+        function getFavoriteFromStorage(favoriteKey) {
+            try {
+                const englishData = localStorage.getItem('english');
+                if (englishData) {
+                    const data = JSON.parse(englishData);
+                    if (data.favorite && data.favorite[favoriteKey] !== undefined) {
+                        return data.favorite[favoriteKey];
+                    }
+                }
+            } catch (e) {
+                console.error('讀取favorite失敗:', e);
+            }
+            // 向後相容：嘗試從舊格式讀取
+            return localStorage.getItem(`favorite_${favoriteKey}`);
+        }
+
+        function saveFavoriteToStorage(favoriteKey, value) {
+            try {
+                let englishData = {};
+                const stored = localStorage.getItem('english');
+                if (stored) {
+                    englishData = JSON.parse(stored);
+                }
+                if (!englishData.favorite) {
+                    englishData.favorite = {};
+                }
+                englishData.favorite[favoriteKey] = value;
+                localStorage.setItem('english', JSON.stringify(englishData));
+            } catch (e) {
+                console.error('保存favorite失敗:', e);
+            }
+        }
+
+        function deleteFavoriteFromStorage(favoriteKey) {
+            try {
+                let englishData = {};
+                const stored = localStorage.getItem('english');
+                if (stored) {
+                    englishData = JSON.parse(stored);
+                }
+                if (englishData.favorite && englishData.favorite[favoriteKey] !== undefined) {
+                    delete englishData.favorite[favoriteKey];
+                    localStorage.setItem('english', JSON.stringify(englishData));
+                }
+            } catch (e) {
+                console.error('刪除favorite失敗:', e);
+            }
+        }
+
         function getCustomWords() {
             const stored = localStorage.getItem('customWords');
             return stored ? JSON.parse(stored) : [];
@@ -4607,24 +4936,24 @@
                 const starBtn = document.createElement('div');
                 starBtn.className = 'word-star';
                 const wordKey = `自訂/${word.tag}/${word.單字}`;
-                const isFavorited = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
                 starBtn.textContent = isFavorited ? '★' : '☆';
                 starBtn.dataset.wordKey = wordKey;
                 starBtn.onclick = (e) => {
                     e.stopPropagation();
-                    const isFav = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                    const isFav = getFavoriteFromStorage(wordKey) === 'true';
                     if (isFav) {
-                        localStorage.removeItem(`favorite_${wordKey}`);
+                        deleteFavoriteFromStorage(wordKey);
                         starBtn.textContent = '☆';
                     } else {
-                        localStorage.setItem(`favorite_${wordKey}`, 'true');
+                        saveFavoriteToStorage(wordKey, 'true');
                         starBtn.textContent = '★';
                     }
                 };
 
                 // 計算正確率
-                const historyKey = `quizHistory_自訂/${word.tag}/${word.單字}`;
-                const hasHistory = localStorage.getItem(historyKey) !== null;
+                const historyKey = `自訂/${word.tag}/${word.單字}`;
+                const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                 let accuracyDisplay = '--';
                 if (hasHistory) {
                     const correctCount = getQuizHistory(historyKey);
@@ -4799,8 +5128,8 @@
 
             // 刪除 localStorage 中的星星和正確率
             const wordKey = `自訂/${word.tag}/${word.單字}`;
-            localStorage.removeItem(`favorite_${wordKey}`);
-            localStorage.removeItem(`quizHistory_${wordKey}`);
+            deleteFavoriteFromStorage(wordKey);
+            deleteQuizHistoryFromStorage(wordKey);
 
             // 刪除自訂單字
             const customWords = getCustomWords();
@@ -5049,6 +5378,8 @@
             return html;
         }
 
+        let currentChineseSheet = null; // 存儲當前的 sheet 名稱
+
         function loadChineseData() {
             if (chineseData) return Promise.resolve(chineseData);
 
@@ -5056,6 +5387,8 @@
                 .then(r => r.json())
                 .then(data => {
                     chineseData = data;
+                    // 獲取第一個 sheet 名稱
+                    currentChineseSheet = Object.keys(data)[0];
                     return data;
                 })
                 .catch(e => {
@@ -5071,12 +5404,12 @@
         }
 
         function playStory(index) {
-            if (!chineseData || !chineseData['成語故事'] || !chineseData['成語故事'][index]) {
+            if (!chineseData || !currentChineseSheet || !chineseData[currentChineseSheet].故事 || !chineseData[currentChineseSheet].故事[index]) {
                 console.error('Story data not found');
                 return;
             }
 
-            const story = chineseData['成語故事'][index];
+            const story = chineseData[currentChineseSheet].故事[index];
 
             // 停止之前的播放
             speechSynthesis.cancel();
@@ -5130,11 +5463,11 @@
             const contentDiv = storyItem.querySelector('.story-content');
             if (!contentDiv) return;
 
-            if (!chineseData || !chineseData['成語故事'] || !chineseData['成語故事'][index]) {
+            if (!chineseData || !currentChineseSheet || !chineseData[currentChineseSheet].故事 || !chineseData[currentChineseSheet].故事[index]) {
                 return;
             }
 
-            const story = chineseData['成語故事'][index];
+            const story = chineseData[currentChineseSheet].故事[index];
             const beforeText = currentStoryText.substring(0, currentCharIndex);
             const afterText = currentStoryText.substring(currentCharIndex);
 
@@ -5167,11 +5500,11 @@
             if (!contentDiv) return;
 
             // 获取原始故事内容
-            if (!chineseData || !chineseData['成語故事'] || !chineseData['成語故事'][index]) {
+            if (!chineseData || !currentChineseSheet || !chineseData[currentChineseSheet].故事 || !chineseData[currentChineseSheet].故事[index]) {
                 return;
             }
 
-            const story = chineseData['成語故事'][index];
+            const story = chineseData[currentChineseSheet].故事[index];
             let displayHtml = highlightIdiomsInStory(story.故事);
 
             if (currentStoryPlaying === index) {
@@ -5200,8 +5533,12 @@
         function changeChineseMode(mode) {
             if (mode === 'idioms') {
                 showChineseIdioms();
+            } else if (mode === 'review') {
+                showChineseReview();
             } else if (mode === 'stories') {
                 showChineseStories();
+            } else if (mode === 'quiz') {
+                showChineseQuizSetup();
             }
         }
 
@@ -5213,21 +5550,78 @@
             document.getElementById('wordsContainer').style.display = 'none';
 
             loadChineseData().then(data => {
-                if (!data || !data['表現態度']) {
+                if (!data || !currentChineseSheet || !data[currentChineseSheet] || !data[currentChineseSheet].成語) {
                     document.getElementById('chineseContent').innerHTML = '無法加載成語數據';
                     return;
                 }
 
-                const idioms = data['表現態度'];
-                let html = '<div style="font-size: 1.2em; margin-bottom: 20px; color: #667eea; font-weight: bold;">表現態度 - 成語</div>';
+                const idioms = data[currentChineseSheet].成語;
+
+                // 生成單元選擇器（以 sheet 為單位）
+                const container = document.getElementById('sheetGroupsContainer');
+                container.innerHTML = '';
+
+                const sheetItem = document.createElement('div');
+                sheetItem.className = 'sheet-item';
+
+                const sheetHeader = document.createElement('div');
+                sheetHeader.className = 'sheet-item-header';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = true;
+                checkbox.id = 'chinese-sheet-checkbox';
+                checkbox.className = 'sheet-checkbox';
+                checkbox.dataset.sheetName = currentChineseSheet;
+
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = currentChineseSheet;
+
+                const countSpan = document.createElement('span');
+                countSpan.textContent = idioms.length;
+                countSpan.style.marginLeft = 'auto';
+                countSpan.style.color = '#667eea';
+                countSpan.style.fontWeight = 'bold';
+
+                sheetHeader.appendChild(checkbox);
+                sheetHeader.appendChild(nameSpan);
+                sheetHeader.appendChild(countSpan);
+                sheetItem.appendChild(sheetHeader);
+                container.appendChild(sheetItem);
+
+                // 显示单元选择容器
+                document.getElementById('tagFilterContainer').style.display = 'flex';
+                document.getElementById('quizTagFilterContainer').style.display = 'none';
+                document.getElementById('chineseQuizModeContainer').style.display = 'none';
+
+                // 生成成語列表
+                let html = '';
 
                 idioms.forEach((item, index) => {
                     const explanation = item.解釋.replace(/'/g, "\\'");
                     const zhuyinArray = item.注音.split(' ');
                     const zhuyinHtml = createZhuyinHTML_V2(item.成語, zhuyinArray, true, item.成語);
+
+                    // 計算正確率
+                    const quizKey = `${currentChineseSheet}/${item.成語}`;
+                    const quizResult = getChineseQuizResultFromStorage(quizKey);
+                    let accuracyDisplay = '--';
+                    if (quizResult !== null) {
+                        accuracyDisplay = quizResult ? '100' : '0';
+                    }
+
+                    // 檢查收藏狀態
+                    const favoriteKey = `${currentChineseSheet}/${item.成語}`;
+                    const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+
                     html += `
-                        <div class="idiom-item">
-                            <div class="idiom-index">${index + 1}/${idioms.length}</div>
+                        <div class="idiom-item" data-sheet="${currentChineseSheet}">
+                            <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${index + 1}</div>
+                            <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; if (el.textContent === '★') { saveChineseFavoriteToStorage('${favoriteKey}', 'true'); } else { deleteChineseFavoriteFromStorage('${favoriteKey}'); }">${isFavorited ? '★' : '☆'}</div>
+                            <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%;">${currentChineseSheet}</div>
+                                <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
+                            </div>
                             <div class="idiom-left">
                                 <div class="idiom-phonetic">${zhuyinHtml}</div>
                             </div>
@@ -5241,6 +5635,27 @@
 
                 document.getElementById('chineseContent').innerHTML = html;
                 document.getElementById('chineseModeSelect').value = 'idioms';
+
+                // 更新計數顯示
+                const updateCountDisplay = () => {
+                    const count = checkbox.checked ? idioms.length : 0;
+                    const display = document.getElementById('tagCountDisplay');
+                    if (display) {
+                        display.textContent = `共 ${count} 項`;
+                    }
+                };
+                updateCountDisplay();
+
+                // 添加 sheet 複選框事件監聽
+                checkbox.addEventListener('change', () => {
+                    const sheetName = checkbox.dataset.sheetName;
+                    const items = document.querySelectorAll(`[data-sheet="${sheetName}"]`);
+                    items.forEach(item => {
+                        item.style.display = checkbox.checked ? 'flex' : 'none';
+                    });
+                    // 更新計數顯示
+                    updateCountDisplay();
+                });
             });
         }
 
@@ -5253,18 +5668,18 @@
 
         // 获取成语的注音
         function getIdiomZhuyin(idiom) {
-            if (!chineseData || !chineseData['表現態度']) return null;
-            const item = chineseData['表現態度'].find(i => i.成語 === idiom);
+            if (!chineseData || !currentChineseSheet || !chineseData[currentChineseSheet].成語) return null;
+            const item = chineseData[currentChineseSheet].成語.find(i => i.成語 === idiom);
             return item ? item.注音 : null;
         }
 
         function highlightIdiomsInStory(text) {
-            if (!chineseData || !chineseData['表現態度']) {
+            if (!chineseData || !currentChineseSheet || !chineseData[currentChineseSheet].成語) {
                 return text;
             }
 
             let highlightedText = text;
-            const idioms = chineseData['表現態度'];
+            const idioms = chineseData[currentChineseSheet].成語;
 
             // 按成語長度排序（從長到短），避免短成語被先替換
             const sortedIdioms = idioms
@@ -5280,6 +5695,171 @@
             return highlightedText;
         }
 
+        function showChineseReview() {
+            stopStoryPlayback();
+
+            // 显示中文容器，隐藏单词容器
+            document.getElementById('chineseContainer').style.display = 'flex';
+            document.getElementById('wordsContainer').style.display = 'none';
+
+            loadChineseData().then(data => {
+                if (!data || !currentChineseSheet || !data[currentChineseSheet] || !data[currentChineseSheet].成語) {
+                    document.getElementById('chineseContent').innerHTML = '無法加載成語數據';
+                    return;
+                }
+
+                const idioms = data[currentChineseSheet].成語;
+
+                // 生成單元選擇器（以 sheet 為單位）
+                const container = document.getElementById('sheetGroupsContainer');
+                container.innerHTML = '';
+
+                // 添加星號篩選
+                const starFilterItem = document.createElement('div');
+                starFilterItem.className = 'tag-checkbox-item';
+                starFilterItem.style.borderBottom = '1px solid #eee';
+                starFilterItem.style.paddingBottom = '10px';
+                starFilterItem.style.marginBottom = '10px';
+
+                const starCheckbox = document.createElement('input');
+                starCheckbox.type = 'checkbox';
+                starCheckbox.id = 'chinese-review-star-filter';
+
+                const starLabel = document.createElement('span');
+                starLabel.textContent = '★ 已收藏';
+
+                starFilterItem.appendChild(starCheckbox);
+                starFilterItem.appendChild(starLabel);
+                container.appendChild(starFilterItem);
+
+                // 添加正確率篩選
+                const accuracyFilterContainer = document.createElement('div');
+                accuracyFilterContainer.className = 'tag-checkbox-item';
+                accuracyFilterContainer.style.borderBottom = '1px solid #eee';
+                accuracyFilterContainer.style.paddingBottom = '10px';
+                accuracyFilterContainer.style.marginBottom = '10px';
+
+                const accuracyCheckbox = document.createElement('input');
+                accuracyCheckbox.type = 'checkbox';
+                accuracyCheckbox.id = 'chinese-review-accuracy-filter-checkbox';
+
+                const accuracyLabel = document.createElement('span');
+                accuracyLabel.textContent = '正確率=0';
+
+                accuracyFilterContainer.appendChild(accuracyCheckbox);
+                accuracyFilterContainer.appendChild(accuracyLabel);
+                container.appendChild(accuracyFilterContainer);
+
+                // 显示单元选择容器
+                document.getElementById('tagFilterContainer').style.display = 'flex';
+                document.getElementById('quizTagFilterContainer').style.display = 'none';
+                document.getElementById('chineseQuizModeContainer').style.display = 'none';
+
+                // 生成成語列表
+                let html = '';
+
+                idioms.forEach((item, index) => {
+                    const explanation = item.解釋.replace(/'/g, "\\'");
+                    const zhuyinArray = item.注音.split(' ');
+                    const zhuyinHtml = createZhuyinHTML_V2(item.成語, zhuyinArray, true, item.成語);
+
+                    // 計算正確率
+                    const quizKey = `${currentChineseSheet}/${item.成語}`;
+                    const quizResult = getChineseQuizResultFromStorage(quizKey);
+                    let accuracyDisplay = '--';
+                    let accuracyValue = null;
+                    if (quizResult !== null) {
+                        accuracyDisplay = quizResult ? '100' : '0';
+                        accuracyValue = quizResult ? 100 : 0;
+                    }
+
+                    // 檢查收藏狀態
+                    const favoriteKey = `${currentChineseSheet}/${item.成語}`;
+                    const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+
+                    html += `
+                        <div class="idiom-item" data-sheet="${currentChineseSheet}" data-favorite-key="${favoriteKey}" data-favorite="${isFavorited}" data-accuracy="${accuracyValue}">
+                            <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${index + 1}</div>
+                            <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" class="review-star-btn" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; const parent = el.closest('.idiom-item'); if (el.textContent === '★') { saveChineseFavoriteToStorage(parent.dataset.favoriteKey, 'true'); parent.dataset.favorite = 'true'; } else { deleteChineseFavoriteFromStorage(parent.dataset.favoriteKey); parent.dataset.favorite = 'false'; } updateChineseReviewFilter();">${isFavorited ? '★' : '☆'}</div>
+                            <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%;">${currentChineseSheet}</div>
+                                <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
+                            </div>
+                            <div class="idiom-left">
+                                <div class="idiom-phonetic">${zhuyinHtml}</div>
+                            </div>
+                            <div class="idiom-middle">
+                                <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.解釋}</div>
+                                <div class="idiom-example" onclick="pronounceChineseText('${item.造句.replace(/'/g, "\\'")}')" title="點擊朗讀" style="cursor: pointer;">${highlightIdiomInSentence(item.成語, item.造句)}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('chineseContent').innerHTML = html;
+                document.getElementById('chineseModeSelect').value = 'review';
+
+                // 過濾函數
+                function updateChineseReviewFilter() {
+                    const starCheckbox = document.getElementById('chinese-review-star-filter');
+                    const accuracyCheckbox = document.getElementById('chinese-review-accuracy-filter-checkbox');
+
+                    const items = document.querySelectorAll('.idiom-item');
+                    let visibleCount = 0;
+
+                    items.forEach(item => {
+                        let shouldDisplay = true;
+
+                        // 星號篩選
+                        if (starCheckbox && starCheckbox.checked) {
+                            const isFav = item.dataset.favorite === 'true';
+                            if (!isFav) {
+                                shouldDisplay = false;
+                            }
+                        }
+
+                        // 正確率篩選（只檢查 =0）
+                        if (shouldDisplay && accuracyCheckbox && accuracyCheckbox.checked) {
+                            const itemAccuracy = item.dataset.accuracy;
+                            if (itemAccuracy !== '0') {
+                                shouldDisplay = false;
+                            }
+                        }
+
+                        // 如果兩個篩選器都未勾選，不顯示任何成語
+                        if (!starCheckbox?.checked && !(accuracyCheckbox?.checked)) {
+                            shouldDisplay = false;
+                        }
+
+                        item.style.display = shouldDisplay ? 'flex' : 'none';
+                        if (shouldDisplay) {
+                            visibleCount++;
+                        }
+                    });
+
+                    // 更新計數顯示
+                    const display = document.getElementById('tagCountDisplay');
+                    if (display) {
+                        display.textContent = `共 ${visibleCount} 項`;
+                    }
+                }
+
+                // 篩選事件監聽
+                const reviewStarCheckbox = document.getElementById('chinese-review-star-filter');
+                const reviewAccuracyCheckbox = document.getElementById('chinese-review-accuracy-filter-checkbox');
+
+                if (reviewStarCheckbox) {
+                    reviewStarCheckbox.addEventListener('change', updateChineseReviewFilter);
+                }
+                if (reviewAccuracyCheckbox) {
+                    reviewAccuracyCheckbox.addEventListener('change', updateChineseReviewFilter);
+                }
+
+                // 初始調用過濾函數
+                updateChineseReviewFilter();
+            });
+        }
+
         function showChineseStories() {
             stopStoryPlayback();
 
@@ -5288,19 +5868,58 @@
             document.getElementById('wordsContainer').style.display = 'none';
 
             loadChineseData().then(data => {
-                if (!data || !data['成語故事']) {
+                if (!data || !currentChineseSheet || !data[currentChineseSheet] || !data[currentChineseSheet].故事) {
                     document.getElementById('chineseContent').innerHTML = '無法加載故事數據';
                     return;
                 }
 
-                const stories = data['成語故事'];
+                const stories = data[currentChineseSheet].故事;
+
+                // 生成單元選擇器（以 sheet 為單位）
+                const container = document.getElementById('quizSheetGroupsContainer');
+                container.innerHTML = '';
+
+                const sheetItem = document.createElement('div');
+                sheetItem.className = 'sheet-item';
+
+                const sheetHeader = document.createElement('div');
+                sheetHeader.className = 'sheet-item-header';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = true;
+                checkbox.id = 'chinese-story-sheet-checkbox';
+                checkbox.className = 'sheet-checkbox';
+                checkbox.dataset.sheetName = currentChineseSheet;
+
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = currentChineseSheet;
+
+                const countSpan = document.createElement('span');
+                countSpan.textContent = stories.length;
+                countSpan.style.marginLeft = 'auto';
+                countSpan.style.color = '#667eea';
+                countSpan.style.fontWeight = 'bold';
+
+                sheetHeader.appendChild(checkbox);
+                sheetHeader.appendChild(nameSpan);
+                sheetHeader.appendChild(countSpan);
+                sheetItem.appendChild(sheetHeader);
+                container.appendChild(sheetItem);
+
+                // 显示单元选择容器
+                document.getElementById('tagFilterContainer').style.display = 'none';
+                document.getElementById('quizTagFilterContainer').style.display = 'flex';
+                document.getElementById('chineseQuizModeContainer').style.display = 'none';
+
+                // 生成故事列表
                 let html = '<div style="font-size: 1.2em; margin-bottom: 20px; color: #4CAF50; font-weight: bold;">成語故事</div>';
 
                 stories.forEach((item, index) => {
                     const highlightedContent = highlightIdiomsInStory(item.故事);
 
                     html += `
-                        <div class="story-item" data-story-index="${index}">
+                        <div class="story-item" data-sheet="${currentChineseSheet}">
                             <div class="story-header">
                                 <div class="story-title">${item.標題}</div>
                                 <button class="story-read-btn" onclick="playStory(${index})">朗讀</button>
@@ -5313,7 +5932,522 @@
 
                 document.getElementById('chineseContent').innerHTML = html;
                 document.getElementById('chineseModeSelect').value = 'stories';
+
+                // 更新計數顯示
+                const updateCountDisplay = () => {
+                    const count = checkbox.checked ? stories.length : 0;
+                    const display = document.getElementById('quizTagCountDisplay');
+                    if (display) {
+                        display.textContent = `共 ${count} 項`;
+                    }
+                };
+                updateCountDisplay();
+
+                // 添加 sheet 複選框事件監聽
+                checkbox.addEventListener('change', () => {
+                    const sheetName = checkbox.dataset.sheetName;
+                    const items = document.querySelectorAll(`[data-sheet="${sheetName}"]`);
+                    items.forEach(item => {
+                        item.style.display = checkbox.checked ? 'block' : 'none';
+                    });
+                    // 更新計數顯示
+                    updateCountDisplay();
+                });
             });
+        }
+
+        // 測驗模式相關函數
+        let chineseQuizWords = [];
+        let chineseQuizIndex = 0;
+        let chineseQuizResults = [];
+
+        function showChineseQuizSetup() {
+            document.getElementById('chineseContainer').style.display = 'flex';
+            document.getElementById('wordsContainer').style.display = 'none';
+
+            loadChineseData().then(data => {
+                if (!data || !currentChineseSheet || !data[currentChineseSheet] || !data[currentChineseSheet].成語) {
+                    document.getElementById('chineseContent').innerHTML = '無法加載成語數據';
+                    return;
+                }
+
+                const idioms = data[currentChineseSheet].成語;
+
+                // 生成單元選擇器
+                const container = document.getElementById('sheetGroupsContainer');
+                container.innerHTML = '';
+
+                const sheetItem = document.createElement('div');
+                sheetItem.className = 'sheet-item';
+
+                const sheetHeader = document.createElement('div');
+                sheetHeader.className = 'sheet-item-header';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = true;
+                checkbox.id = 'chinese-quiz-sheet-checkbox';
+                checkbox.className = 'sheet-checkbox';
+                checkbox.dataset.sheetName = currentChineseSheet;
+
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = currentChineseSheet;
+
+                const countSpan = document.createElement('span');
+                countSpan.textContent = idioms.length;
+                countSpan.style.marginLeft = 'auto';
+                countSpan.style.color = '#667eea';
+                countSpan.style.fontWeight = 'bold';
+
+                sheetHeader.appendChild(checkbox);
+                sheetHeader.appendChild(nameSpan);
+                sheetHeader.appendChild(countSpan);
+                sheetItem.appendChild(sheetHeader);
+                container.appendChild(sheetItem);
+
+                // 更新計數顯示
+                const updateCountDisplay = () => {
+                    const count = checkbox.checked ? idioms.length : 0;
+                    const display = document.getElementById('tagCountDisplay');
+                    if (display) {
+                        display.textContent = `共 ${count} 項`;
+                    }
+                };
+                updateCountDisplay();
+
+                // 添加 sheet 複選框事件監聽
+                checkbox.addEventListener('change', () => {
+                    // 更新計數顯示
+                    updateCountDisplay();
+                });
+
+                // 顯示測驗過濾容器和方式選擇
+                document.getElementById('tagFilterContainer').style.display = 'flex';
+                document.getElementById('quizTagFilterContainer').style.display = 'none';
+                document.getElementById('chineseQuizModeContainer').style.display = 'flex';
+
+                // 顯示開始測驗按鈕
+                let html = `
+                    <div style="display: flex; align-items: center; justify-content: center; min-height: 400px;">
+                        <button onclick="startChineseQuiz()" style="
+                            padding: 15px 40px;
+                            font-size: 1.5em;
+                            background: #667eea;
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                            font-weight: bold;
+                        ">開始測驗</button>
+                    </div>
+                `;
+
+                document.getElementById('chineseContent').innerHTML = html;
+            });
+        }
+
+        function startChineseQuiz() {
+            const quizMethod = document.getElementById('chineseQuizMethodSelect').value;
+            const checkbox = document.getElementById('chinese-quiz-sheet-checkbox');
+
+            if (!checkbox.checked) {
+                alert('請先勾選要測驗的單元');
+                return;
+            }
+
+            loadChineseData().then(data => {
+                if (!data || !currentChineseSheet || !data[currentChineseSheet].成語) {
+                    return;
+                }
+
+                chineseQuizWords = data[currentChineseSheet].成語;
+                // 隨機打亂順序
+                chineseQuizWords = chineseQuizWords.sort(() => Math.random() - 0.5);
+                chineseQuizIndex = 0;
+                chineseQuizResults = [];
+
+                if (quizMethod === 'explanation') {
+                    showChineseQuizExplanation();
+                } else if (quizMethod === 'sentence') {
+                    showChineseQuizSentence();
+                }
+            });
+        }
+
+        function showChineseQuizExplanation() {
+            if (chineseQuizIndex >= chineseQuizWords.length) {
+                showChineseQuizResults();
+                return;
+            }
+
+            const word = chineseQuizWords[chineseQuizIndex];
+            const progress = chineseQuizIndex + 1;
+            const total = chineseQuizWords.length;
+
+            let html = `
+                <div style="padding: 30px; max-width: 600px; margin: 0 auto;">
+                    <div class="quiz-header">
+                        <div class="quiz-progress">
+                            <span>${progress}/${total}</span>
+                        </div>
+                        <button class="cancel-btn" onclick="cancelChineseQuiz()">中斷</button>
+                    </div>
+
+                    <div style="
+                        background: #3a3a52;
+                        padding: 30px;
+                        border-radius: 8px;
+                        margin-bottom: 30px;
+                        text-align: center;
+                    ">
+                        <div style="color: #b8b8b8; margin-bottom: 10px; font-size: 0.9em;">解釋</div>
+                        <div style="color: white; font-size: 1.5em; line-height: 1.8;">
+                            ${word.解釋}
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                        <input type="text" id="chineseQuizInput" style="
+                            width: auto;
+                            min-width: 150px;
+                            max-width: 400px;
+                            padding: 10px;
+                            border-radius: 4px;
+                            border: 1px solid #ccc;
+                            font-size: 1.3em;
+                            text-align: center;
+                        " placeholder="輸入成語並按 Enter" autofocus>
+
+                        <div id="answerDisplay" style="
+                            display: none;
+                            text-align: center;
+                            font-size: 1.2em;
+                            font-weight: bold;
+                            color: white;
+                            background: #f44336;
+                            padding: 6px 10px;
+                            border-radius: 4px;
+                            width: fit-content;
+                        "></div>
+
+                        <div id="resultContainer" style="
+                            display: none;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: space-between;
+                            gap: 20px;
+                            width: 100%;
+                        ">
+                            <div id="answerResult" style="
+                                font-size: 1.4em;
+                                font-weight: bold;
+                                color: white;
+                            "></div>
+                            <button onclick="continueChineseQuiz()" style="
+                                padding: 10px 25px;
+                                background: #667eea;
+                                color: white;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                font-weight: bold;
+                                font-size: 1.2em;
+                                white-space: nowrap;
+                            ">下一個</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('chineseContent').innerHTML = html;
+            document.getElementById('tagFilterContainer').style.display = 'none';
+            document.getElementById('quizTagFilterContainer').style.display = 'none';
+            document.getElementById('chineseQuizModeContainer').style.display = 'none';
+
+            document.getElementById('chineseQuizInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkChineseQuizAnswerAndShow();
+                }
+            });
+        }
+
+        function checkChineseQuizAnswerAndShow() {
+            const word = chineseQuizWords[chineseQuizIndex];
+            const userInput = document.getElementById('chineseQuizInput').value.trim();
+            const isCorrect = userInput === word.成語;
+
+            chineseQuizResults.push({
+                word: word,
+                userAnswer: userInput,
+                isCorrect: isCorrect
+            });
+
+            const resultDiv = document.getElementById('answerResult');
+            const answerDisplay = document.getElementById('answerDisplay');
+            const inputField = document.getElementById('chineseQuizInput');
+            const resultContainer = document.getElementById('resultContainer');
+
+            if (isCorrect) {
+                resultDiv.textContent = '正確';
+                resultDiv.style.color = '#4CAF50';
+                answerDisplay.style.display = 'none';
+            } else {
+                resultDiv.textContent = '錯誤';
+                resultDiv.style.color = '#f44336';
+                answerDisplay.style.display = 'block';
+                answerDisplay.textContent = word.成語;
+            }
+
+            inputField.disabled = true;
+            inputField.style.backgroundColor = '#999999';
+            resultContainer.style.display = 'flex';
+        }
+
+        function continueChineseQuiz() {
+            chineseQuizIndex++;
+
+            if (chineseQuizIndex < chineseQuizWords.length) {
+                const quizMethod = document.getElementById('chineseQuizMethodSelect').value;
+                if (quizMethod === 'explanation') {
+                    setTimeout(showChineseQuizExplanation, 300);
+                } else if (quizMethod === 'sentence') {
+                    setTimeout(showChineseQuizSentence, 300);
+                }
+            } else {
+                showChineseQuizResults();
+            }
+        }
+
+        function cancelChineseQuiz() {
+            if (confirm('確定要中斷測驗嗎？')) {
+                showChineseQuizResults();
+            }
+        }
+
+        function showChineseQuizSentence() {
+            if (chineseQuizIndex >= chineseQuizWords.length) {
+                showChineseQuizResults();
+                return;
+            }
+
+            const word = chineseQuizWords[chineseQuizIndex];
+            const progress = chineseQuizIndex + 1;
+            const total = chineseQuizWords.length;
+
+            // 將成語替換為輸入框
+            const sentence = word.造句;
+            const idiomPlaceholder = `<input type="text" id="chineseQuizInput" placeholder="填空" style="
+                width: 100px;
+                padding: 5px;
+                border-radius: 4px;
+                border: 1px solid #ffa500;
+                text-align: center;
+                font-weight: bold;
+                font-size: 1.3em;
+                background: #2a2a3e;
+                color: #ffa500;
+            " autofocus>`;
+            const sentenceWithInput = sentence.replace(word.成語, `&nbsp;&nbsp;${idiomPlaceholder}&nbsp;&nbsp;`);
+
+            let html = `
+                <div style="padding: 30px; max-width: 600px; margin: 0 auto;">
+                    <div class="quiz-header">
+                        <div class="quiz-progress">
+                            <span>${progress}/${total}</span>
+                        </div>
+                        <button class="cancel-btn" onclick="cancelChineseQuiz()">中斷</button>
+                    </div>
+
+                    <div style="
+                        background: #3a3a52;
+                        padding: 30px;
+                        border-radius: 8px;
+                        margin-bottom: 30px;
+                    ">
+                        <div style="color: #b8b8b8; margin-bottom: 10px; font-size: 0.9em;">造句（請填空成語，填空後按 Enter）</div>
+                        <div style="color: white; font-size: 1.4em; line-height: 2; text-align: center;">
+                            ${sentenceWithInput}
+                        </div>
+
+                        <div id="answerDisplay" style="
+                            display: none;
+                            margin: 15px auto 0;
+                            text-align: center;
+                            font-size: 1.2em;
+                            font-weight: bold;
+                            color: white;
+                            background: #f44336;
+                            padding: 10px 15px;
+                            border-radius: 4px;
+                            width: fit-content;
+                        "></div>
+
+                        <div id="resultContainer" style="
+                            display: none;
+                            margin-top: 15px;
+                            flex-direction: column;
+                            align-items: center;
+                            gap: 15px;
+                        ">
+                            <div id="answerResult" style="
+                                font-size: 1.4em;
+                                font-weight: bold;
+                                color: white;
+                            "></div>
+                            <div style="display: flex; gap: 15px; align-items: center; justify-content: center;">
+                                <button onclick="continueChineseQuiz()" style="
+                                    padding: 10px 25px;
+                                    background: #667eea;
+                                    color: white;
+                                    border: none;
+                                    border-radius: 4px;
+                                    cursor: pointer;
+                                    font-weight: bold;
+                                    font-size: 1.2em;
+                                    white-space: nowrap;
+                                ">下一個</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('chineseContent').innerHTML = html;
+            document.getElementById('tagFilterContainer').style.display = 'none';
+            document.getElementById('quizTagFilterContainer').style.display = 'none';
+            document.getElementById('chineseQuizModeContainer').style.display = 'none';
+
+            document.getElementById('chineseQuizInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkChineseQuizAnswerAndShow();
+                }
+            });
+        }
+
+        function showChineseQuizResults() {
+            // 保存測驗結果到 localStorage
+            chineseQuizResults.forEach(result => {
+                const key = `${currentChineseSheet}/${result.word.成語}`;
+                saveChineseQuizResultToStorage(key, result.isCorrect);
+            });
+
+            const correctCount = chineseQuizResults.filter(r => r.isCorrect).length;
+            const accuracy = chineseQuizResults.length > 0 ? Math.round((correctCount / chineseQuizResults.length) * 100) : 0;
+
+            const container = document.getElementById('chineseContent');
+            container.innerHTML = '';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.gap = '20px';
+            container.style.padding = '20px';
+
+            // 正確率標題
+            const headerDiv = document.createElement('div');
+            headerDiv.style.display = 'flex';
+            headerDiv.style.justifyContent = 'space-between';
+            headerDiv.style.alignItems = 'center';
+
+            const scoreDiv = document.createElement('div');
+            scoreDiv.innerHTML = `正確率: ${accuracy}% (${correctCount}/${chineseQuizResults.length})`;
+            scoreDiv.style.fontSize = '1.3em';
+            scoreDiv.style.fontWeight = 'bold';
+            scoreDiv.style.color = '#667eea';
+
+            const backBtn = document.createElement('button');
+            backBtn.textContent = '返回';
+            backBtn.style.padding = '12px 30px';
+            backBtn.style.background = '#667eea';
+            backBtn.style.color = 'white';
+            backBtn.style.border = 'none';
+            backBtn.style.borderRadius = '4px';
+            backBtn.style.cursor = 'pointer';
+            backBtn.style.fontWeight = 'bold';
+            backBtn.style.fontSize = '1.2em';
+            backBtn.onclick = () => changeChineseMode('quiz');
+
+            headerDiv.appendChild(scoreDiv);
+            headerDiv.appendChild(backBtn);
+            container.appendChild(headerDiv);
+
+            // 成語列表
+            const resultWordsDiv = document.createElement('div');
+            resultWordsDiv.style.display = 'flex';
+            resultWordsDiv.style.flexDirection = 'column';
+            resultWordsDiv.style.gap = '10px';
+
+            chineseQuizResults.forEach((result, index) => {
+                const wordDiv = document.createElement('div');
+                wordDiv.className = `result-word ${result.isCorrect ? 'correct' : 'wrong'}`;
+                wordDiv.style.display = 'flex';
+                wordDiv.style.alignItems = 'center';
+                wordDiv.style.padding = '12px 15px';
+                wordDiv.style.backgroundColor = result.isCorrect ? '#333' : '#4a2020';
+                wordDiv.style.borderBottom = '1px solid #4a4a60';
+                wordDiv.style.gap = '15px';
+                wordDiv.style.fontSize = '1.1em';
+                wordDiv.style.cursor = 'pointer';
+
+                // 星號
+                const favoriteKey = `${currentChineseSheet}/${result.word.成語}`;
+                const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+                const starDiv = document.createElement('div');
+                starDiv.textContent = isFavorited ? '★' : '☆';
+                starDiv.style.flex = '0 0 40px';
+                starDiv.style.textAlign = 'center';
+                starDiv.style.fontSize = '1.5em';
+                starDiv.style.cursor = 'pointer';
+                starDiv.style.color = '#ffa500';
+                starDiv.onclick = (e) => {
+                    e.stopPropagation();
+                    const currentIsFav = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+                    if (currentIsFav) {
+                        deleteChineseFavoriteFromStorage(favoriteKey);
+                        starDiv.textContent = '☆';
+                    } else {
+                        saveChineseFavoriteToStorage(favoriteKey, 'true');
+                        starDiv.textContent = '★';
+                    }
+                };
+
+                // sheet
+                const sheetDiv = document.createElement('div');
+                sheetDiv.style.flex = '0 0 100px';
+                sheetDiv.style.textAlign = 'center';
+                sheetDiv.style.background = '#667eea';
+                sheetDiv.style.color = 'white';
+                sheetDiv.style.padding = '6px 10px';
+                sheetDiv.style.borderRadius = '3px';
+                sheetDiv.style.fontSize = '1em';
+                sheetDiv.style.fontWeight = '600';
+                sheetDiv.textContent = currentChineseSheet;
+
+                // 正確/錯誤
+                const statusDiv = document.createElement('div');
+                statusDiv.style.flex = '0 0 100px';
+                statusDiv.style.textAlign = 'center';
+                statusDiv.style.fontSize = '1.2em';
+                statusDiv.style.fontWeight = 'bold';
+                statusDiv.style.color = result.isCorrect ? '#4CAF50' : '#f44336';
+                statusDiv.textContent = result.isCorrect ? '正確' : '錯誤';
+
+                // 成語
+                const idiomDiv = document.createElement('div');
+                idiomDiv.style.flex = '1';
+                idiomDiv.style.fontSize = '1.3em';
+                idiomDiv.style.fontWeight = 'bold';
+                idiomDiv.style.color = result.isCorrect ? '#b8b8b8' : '#ff8080';
+                idiomDiv.style.textAlign = 'left';
+                idiomDiv.textContent = result.word.成語;
+
+                wordDiv.appendChild(starDiv);
+                wordDiv.appendChild(sheetDiv);
+                wordDiv.appendChild(statusDiv);
+                wordDiv.appendChild(idiomDiv);
+
+                resultWordsDiv.appendChild(wordDiv);
+            });
+
+            container.appendChild(resultWordsDiv);
         }
 
         // 在页面加载完成后自动进入中文模式

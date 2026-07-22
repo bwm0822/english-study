@@ -1996,30 +1996,143 @@
         let currentFilteredWords = [];
         let modalCurrentWordIndex = -1;
 
-        // 批量轉換舊的正確率記錄檔格式
-        function migrateOldFormatToNew() {
-            const keys = Object.keys(localStorage);
-            let convertedCount = 0;
+        // ============================================
+        // localStorage 版本控制與遷移系統
+        // ============================================
 
-            keys.forEach(key => {
-                if (key.startsWith('quizHistory_')) {
-                    const data = localStorage.getItem(key);
+        const STORAGE_CONFIG = {
+            VERSION: '1.0',
+            MARKER: '_storageVersion'
+        };
+
+        // 初始化storage結構
+        const INITIAL_STORAGE = {
+            setting: {},
+            english: {
+                favorite: {},
+                quiz: {},
+                customWords: []
+            },
+            chinese: {}
+        };
+
+        function getStorageVersion() {
+            return localStorage.getItem(STORAGE_CONFIG.MARKER);
+        }
+
+        function setStorageVersion(version) {
+            localStorage.setItem(STORAGE_CONFIG.MARKER, version);
+        }
+
+        function initializeLocalStorage() {
+            const currentVersion = getStorageVersion();
+
+            if (!currentVersion) {
+                console.log('[Storage] 首次初始化，執行舊版遷移');
+                migrateFromLegacy();
+            } else if (currentVersion !== STORAGE_CONFIG.VERSION) {
+                console.log(`[Storage] 版本不符 (${currentVersion} → ${STORAGE_CONFIG.VERSION})，執行版本升級`);
+                migrateVersion(currentVersion, STORAGE_CONFIG.VERSION);
+            } else {
+                console.log(`[Storage] 版本驗證通過 (${STORAGE_CONFIG.VERSION})`);
+            }
+
+            setStorageVersion(STORAGE_CONFIG.VERSION);
+        }
+
+        // 從舊版本遷移（無版本號）
+        function migrateFromLegacy() {
+            const englishData = {
+                favorite: {},
+                quiz: {},
+                customWords: []
+            };
+
+            const keysToDelete = [];
+
+            // 掃描所有舊鍵值
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (!key || key.startsWith('_')) continue;
+
+                if (key.startsWith('favorite_')) {
+                    const value = localStorage.getItem(key);
+                    const cleanKey = key.replace('favorite_', '');
+                    englishData.favorite[cleanKey] = value;
+                    keysToDelete.push(key);
+                }
+                else if (key.startsWith('quizHistory_')) {
+                    const value = localStorage.getItem(key);
+                    const cleanKey = key.replace('quizHistory_', '');
+                    englishData.quiz[cleanKey] = value;
+                    keysToDelete.push(key);
+                }
+                else if (key === 'customWords') {
                     try {
-                        const parsed = JSON.parse(data);
-                        // 如果是舊格式（boolean 陣列），轉換為新格式（數值）
-                        if (Array.isArray(parsed)) {
-                            const correct = parsed.filter(v => v).length;
-                            localStorage.setItem(key, correct.toString());
-                            convertedCount++;
+                        const words = JSON.parse(localStorage.getItem(key));
+                        if (Array.isArray(words)) {
+                            englishData.customWords = words;
                         }
-                    } catch (e) {
-                        // 不是有效的 JSON，可能已經是新格式，忽略
+                    } catch (e) {}
+                    keysToDelete.push(key);
+                }
+            }
+
+            // 清除舊數據
+            keysToDelete.forEach(key => localStorage.removeItem(key));
+
+            // 建立新結構
+            localStorage.setItem('setting', JSON.stringify(INITIAL_STORAGE.setting));
+            localStorage.setItem('english', JSON.stringify(englishData));
+            localStorage.setItem('chinese', JSON.stringify(INITIAL_STORAGE.chinese));
+
+            console.log('[Storage] 舊版遷移完成：', {
+                favorites: Object.keys(englishData.favorite).length,
+                quizzes: Object.keys(englishData.quiz).length,
+                customWords: englishData.customWords.length
+            });
+        }
+
+        // 版本升級（未來使用）
+        function migrateVersion(fromVersion, toVersion) {
+            console.log(`[Storage] 版本升級邏輯 (${fromVersion} → ${toVersion}) 待實現`);
+        }
+
+        // 清理favorite中的舊前綴（data cleanup）
+        function cleanupStoragePrefixes() {
+            try {
+                const englishData = localStorage.getItem('english');
+                if (englishData) {
+                    const data = JSON.parse(englishData);
+                    if (data.favorite) {
+                        let hasChanges = false;
+                        const newFavorite = {};
+
+                        for (const key in data.favorite) {
+                            if (key.startsWith('favorite_')) {
+                                const cleanKey = key.replace('favorite_', '');
+                                newFavorite[cleanKey] = data.favorite[key];
+                                hasChanges = true;
+                            } else {
+                                newFavorite[key] = data.favorite[key];
+                            }
+                        }
+
+                        if (hasChanges) {
+                            data.favorite = newFavorite;
+                            localStorage.setItem('english', JSON.stringify(data));
+                            console.log('[Storage] 清理favorite前綴完成');
+                        }
                     }
                 }
-            });
-
-            return convertedCount;
+            } catch (e) {
+                console.error('[Storage] 清理前綴失敗:', e);
+            }
         }
+
+        // 初始化localStorage版本與清理
+        initializeLocalStorage();
+        cleanupStoragePrefixes();
 
         fetch('english.json?t=' + new Date().getTime())
             .then(r => r.json())
@@ -2027,15 +2140,6 @@
                 sheetData = data;
                 allWords = [];
 
-                // 批量轉換舊格式（只在第一次加載時進行一次）
-                if (!localStorage.getItem('_migrationDone')) {
-                    const convertedCount = migrateOldFormatToNew();
-                    localStorage.setItem('_migrationDone', 'true');
-                    // 如果有轉換過的記錄，可選擇顯示提示
-                    if (convertedCount > 0) {
-                        console.log(`已將 ${convertedCount} 筆舊格式記錄轉換為新格式`);
-                    }
-                }
 
                 // 建立分組下拉選單
                 const container = document.getElementById('sheetGroupsContainer');
@@ -2753,15 +2857,15 @@
 
                         // 如果勾選星號過濾，檢查是否有星號
                         if (filterByStar) {
-                            if (localStorage.getItem(`favorite_${wordKey}`) !== 'true') {
+                            if (getFavoriteFromStorage(wordKey) !== 'true') {
                                 return false;
                             }
                         }
 
                         // 如果勾選正確率過濾，檢查是否符合條件
                         if (filterByAccuracy !== null) {
-                            const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                            const hasHistory = localStorage.getItem(historyKey) !== null;
+                            const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                            const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                             if (!hasHistory) {
                                 return false;
                             }
@@ -2779,11 +2883,11 @@
                 // 複習模式：如果勾選正確率過濾，按正確率從低到高排序
                 if (filterByAccuracy !== null) {
                     filteredWords.sort((a, b) => {
-                        const historyKeyA = `quizHistory_${a.sheet}/${a.tag}/${a.單字}`;
+                        const historyKeyA = `${a.sheet}/${a.tag}/${a.單字}`;
                         const correctCountA = getQuizHistory(historyKeyA);
                         const accuracyA = calculateAccuracy(correctCountA);
 
-                        const historyKeyB = `quizHistory_${b.sheet}/${b.tag}/${b.單字}`;
+                        const historyKeyB = `${b.sheet}/${b.tag}/${b.單字}`;
                         const correctCountB = getQuizHistory(historyKeyB);
                         const accuracyB = calculateAccuracy(correctCountB);
 
@@ -2804,14 +2908,14 @@
                     // 如果勾選星號過濾，只顯示有星號的
                     if (filterByStar) {
                         const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                        if (localStorage.getItem(`favorite_${wordKey}`) !== 'true') {
+                        if (getFavoriteFromStorage(wordKey) !== 'true') {
                             return false;
                         }
                     }
                     // 如果勾選正確率過濾，檢查是否符合條件
                     if (filterByAccuracy !== null) {
-                        const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                        const hasHistory = localStorage.getItem(historyKey) !== null;
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                         if (!hasHistory) {
                             return false;
                         }
@@ -2841,24 +2945,24 @@
                 const starBtn = document.createElement('div');
                 starBtn.className = 'word-star';
                 const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                const isFavorited = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
                 starBtn.textContent = isFavorited ? '★' : '☆';
                 starBtn.dataset.wordKey = wordKey;
                 starBtn.onclick = (e) => {
                     e.stopPropagation();
-                    const isFav = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                    const isFav = getFavoriteFromStorage(wordKey) === 'true';
                     if (isFav) {
-                        localStorage.removeItem(`favorite_${wordKey}`);
+                        deleteFavoriteFromStorage(wordKey);
                         starBtn.textContent = '☆';
                     } else {
-                        localStorage.setItem(`favorite_${wordKey}`, 'true');
+                        saveFavoriteToStorage(wordKey, 'true');
                         starBtn.textContent = '★';
                     }
                 };
 
                 // 計算正確率
-                const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                const hasHistory = localStorage.getItem(historyKey) !== null;
+                const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                 let accuracyDisplay = '--';
                 if (hasHistory) {
                     const correctCount = getQuizHistory(historyKey);
@@ -2963,8 +3067,8 @@
                     let hasAnyTested = false;
 
                     tagWords.forEach(word => {
-                        const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                        const hasHistory = localStorage.getItem(historyKey) !== null;
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                         if (hasHistory) {
                             hasAnyTested = true;
                             testedCount++;
@@ -3490,14 +3594,14 @@
                     // 如果勾選星號篩選，只包含有星號的單字
                     if (filterByStar) {
                         const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                        if (localStorage.getItem(`favorite_${wordKey}`) !== 'true') {
+                        if (getFavoriteFromStorage(wordKey) !== 'true') {
                             return false;
                         }
                     }
                     // 如果勾選正確率篩選，只包含符合條件的單字
                     if (filterByAccuracy !== null) {
-                        const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                        const hasHistory = localStorage.getItem(historyKey) !== null;
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                         if (!hasHistory) {
                             return false;
                         }
@@ -3631,14 +3735,14 @@
                 // 如果勾選星號篩選，只包含有星號的單字
                 if (filterByStar) {
                     const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                    if (localStorage.getItem(`favorite_${wordKey}`) !== 'true') {
+                    if (getFavoriteFromStorage(wordKey) !== 'true') {
                         return false;
                     }
                 }
                 // 如果勾選正確率篩選，只包含符合條件的單字
                 if (filterByAccuracy !== null) {
-                    const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                    const hasHistory = localStorage.getItem(historyKey) !== null;
+                    const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                     if (!hasHistory) {
                         return false; // 沒有歷史記錄的單字不包含
                     }
@@ -3758,7 +3862,7 @@
             // 保存每個單詞的測驗結果到localStorage（新格式：只存數值）
             testedResults.forEach(result => {
                 const word = result.word;
-                const wordKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
+                const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
                 let cnt = getQuizHistory(wordKey); // 讀取舊格式並自動轉換
 
                 // 更新計數：正確加1，錯誤減1，範圍0~5
@@ -3768,7 +3872,7 @@
                     cnt = Math.max(cnt - 1, 0); // 錯誤減1，最低0
                 }
                 // 保存為數值（新格式）
-                localStorage.setItem(wordKey, cnt.toString());
+                saveQuizHistoryToStorage(wordKey, cnt.toString());
             });
 
             const correctCount = testedResults.filter(r => r.isCorrect).length;
@@ -3785,7 +3889,7 @@
 
                 const word = result.word;
                 const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                const isFavorited = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
 
                 // 星號
                 const starSpan = document.createElement('div');
@@ -3794,12 +3898,12 @@
                 starSpan.onclick = (e) => {
                     e.stopPropagation();
                     // 重新檢查當前狀態
-                    const currentIsFav = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                    const currentIsFav = getFavoriteFromStorage(wordKey) === 'true';
                     if (currentIsFav) {
-                        localStorage.removeItem(`favorite_${wordKey}`);
+                        deleteFavoriteFromStorage(wordKey);
                         starSpan.textContent = '☆';
                     } else {
-                        localStorage.setItem(`favorite_${wordKey}`, 'true');
+                        saveFavoriteToStorage(wordKey, 'true');
                         starSpan.textContent = '★';
                     }
                 };
@@ -3810,8 +3914,8 @@
                 tagDiv.innerHTML = `<div>${word.sheet}</div><div>${word.tag}</div>`;
 
                 // 計算正確率
-                const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-                const hasHistory = localStorage.getItem(historyKey) !== null;
+                const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                 let accuracyDisplay = '--';
                 if (hasHistory) {
                     const correctCount = getQuizHistory(historyKey);
@@ -3880,7 +3984,7 @@
 
         // 獲取歷史記錄，支援舊格式（boolean陣列）和新格式（數值）
         function getQuizHistory(historyKey) {
-            const data = localStorage.getItem(historyKey);
+            const data = getQuizHistoryFromStorage(historyKey);
             if (!data) {
                 return 0;
             }
@@ -3893,7 +3997,7 @@
                 if (Array.isArray(parsed)) {
                     const correct = parsed.filter(v => v).length;
                     // 自動轉換為新格式
-                    localStorage.setItem(historyKey, correct.toString());
+                    saveQuizHistoryToStorage(historyKey, correct.toString());
                     return correct;
                 }
 
@@ -4038,16 +4142,16 @@
             document.getElementById('modalWordIndex').textContent = wordIndex + 1;
 
             const starSpan = document.getElementById('modalWordStar');
-            const isFavorited = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+            const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
             starSpan.textContent = isFavorited ? '★' : '☆';
             starSpan.onclick = (e) => {
                 e.stopPropagation();
-                const currentIsFav = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                const currentIsFav = getFavoriteFromStorage(wordKey) === 'true';
                 if (currentIsFav) {
-                    localStorage.removeItem(`favorite_${wordKey}`);
+                    deleteFavoriteFromStorage(wordKey);
                     starSpan.textContent = '☆';
                 } else {
-                    localStorage.setItem(`favorite_${wordKey}`, 'true');
+                    saveFavoriteToStorage(wordKey, 'true');
                     starSpan.textContent = '★';
                 }
             };
@@ -4056,8 +4160,8 @@
             tagDiv.querySelector('.modal-tag-sheet').textContent = word.sheet;
             tagDiv.querySelector('.modal-tag-tag').textContent = word.tag;
 
-            const historyKey = `quizHistory_${word.sheet}/${word.tag}/${word.單字}`;
-            const hasHistory = localStorage.getItem(historyKey) !== null;
+            const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+            const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
             let accuracyDisplay = '--';
             if (hasHistory) {
                 const correctCount = getQuizHistory(historyKey);
@@ -4478,16 +4582,148 @@
             };
 
             customWords.push(newWord);
-            localStorage.setItem('customWords', JSON.stringify(customWords));
+            saveCustomWords(customWords);
 
             alert('單字已保存');
             closeAddWordModal();
             renderCustomWords();
         }
 
+        // Quiz 歷史記錄管理函數
+        function getQuizHistoryFromStorage(quizKey) {
+            try {
+                const englishData = localStorage.getItem('english');
+                if (englishData) {
+                    const data = JSON.parse(englishData);
+                    if (data.quiz && data.quiz[quizKey] !== undefined) {
+                        return data.quiz[quizKey];
+                    }
+                }
+            } catch (e) {
+                console.error('讀取quiz歷史失敗:', e);
+            }
+            // 向後相容：嘗試從舊格式讀取
+            return localStorage.getItem(`quizHistory_${quizKey}`);
+        }
+
+        function saveQuizHistoryToStorage(quizKey, value) {
+            try {
+                let englishData = {};
+                const stored = localStorage.getItem('english');
+                if (stored) {
+                    englishData = JSON.parse(stored);
+                }
+                if (!englishData.quiz) {
+                    englishData.quiz = {};
+                }
+                englishData.quiz[quizKey] = value;
+                localStorage.setItem('english', JSON.stringify(englishData));
+            } catch (e) {
+                console.error('保存quiz歷史失敗:', e);
+            }
+        }
+
+        function deleteQuizHistoryFromStorage(quizKey) {
+            try {
+                let englishData = {};
+                const stored = localStorage.getItem('english');
+                if (stored) {
+                    englishData = JSON.parse(stored);
+                }
+                if (englishData.quiz && englishData.quiz[quizKey] !== undefined) {
+                    delete englishData.quiz[quizKey];
+                    localStorage.setItem('english', JSON.stringify(englishData));
+                }
+            } catch (e) {
+                console.error('刪除quiz歷史失敗:', e);
+            }
+        }
+
+        function getFavoriteFromStorage(favoriteKey) {
+            try {
+                const englishData = localStorage.getItem('english');
+                if (englishData) {
+                    const data = JSON.parse(englishData);
+                    if (data.favorite && data.favorite[favoriteKey] !== undefined) {
+                        return data.favorite[favoriteKey];
+                    }
+                }
+            } catch (e) {
+                console.error('讀取favorite失敗:', e);
+            }
+            // 向後相容：嘗試從舊格式讀取
+            return localStorage.getItem(`favorite_${favoriteKey}`);
+        }
+
+        function saveFavoriteToStorage(favoriteKey, value) {
+            try {
+                let englishData = {};
+                const stored = localStorage.getItem('english');
+                if (stored) {
+                    englishData = JSON.parse(stored);
+                }
+                if (!englishData.favorite) {
+                    englishData.favorite = {};
+                }
+                englishData.favorite[favoriteKey] = value;
+                localStorage.setItem('english', JSON.stringify(englishData));
+            } catch (e) {
+                console.error('保存favorite失敗:', e);
+            }
+        }
+
+        function deleteFavoriteFromStorage(favoriteKey) {
+            try {
+                let englishData = {};
+                const stored = localStorage.getItem('english');
+                if (stored) {
+                    englishData = JSON.parse(stored);
+                }
+                if (englishData.favorite && englishData.favorite[favoriteKey] !== undefined) {
+                    delete englishData.favorite[favoriteKey];
+                    localStorage.setItem('english', JSON.stringify(englishData));
+                }
+            } catch (e) {
+                console.error('刪除favorite失敗:', e);
+            }
+        }
+
         function getCustomWords() {
+            // 嘗試從新結構讀取
+            const englishData = localStorage.getItem('english');
+            if (englishData) {
+                try {
+                    const data = JSON.parse(englishData);
+                    if (data.customWords && Array.isArray(data.customWords)) {
+                        return data.customWords;
+                    }
+                } catch (e) {
+                    console.error('讀取新格式customWords失敗:', e);
+                }
+            }
+
+            // 如果新結構失敗，嘗試從舊格式讀取（向後相容）
             const stored = localStorage.getItem('customWords');
             return stored ? JSON.parse(stored) : [];
+        }
+
+        function saveCustomWords(words) {
+            try {
+                // 讀取現有的english數據
+                let englishData = {};
+                const stored = localStorage.getItem('english');
+                if (stored) {
+                    englishData = JSON.parse(stored);
+                }
+
+                // 直接存儲為陣列
+                englishData.customWords = words;
+
+                // 保存回localStorage
+                localStorage.setItem('english', JSON.stringify(englishData));
+            } catch (e) {
+                console.error('保存customWords失敗:', e);
+            }
         }
 
         function renderCustomWords() {
@@ -4513,24 +4749,24 @@
                 const starBtn = document.createElement('div');
                 starBtn.className = 'word-star';
                 const wordKey = `自訂/${word.tag}/${word.單字}`;
-                const isFavorited = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
                 starBtn.textContent = isFavorited ? '★' : '☆';
                 starBtn.dataset.wordKey = wordKey;
                 starBtn.onclick = (e) => {
                     e.stopPropagation();
-                    const isFav = localStorage.getItem(`favorite_${wordKey}`) === 'true';
+                    const isFav = getFavoriteFromStorage(wordKey) === 'true';
                     if (isFav) {
-                        localStorage.removeItem(`favorite_${wordKey}`);
+                        deleteFavoriteFromStorage(wordKey);
                         starBtn.textContent = '☆';
                     } else {
-                        localStorage.setItem(`favorite_${wordKey}`, 'true');
+                        saveFavoriteToStorage(wordKey, 'true');
                         starBtn.textContent = '★';
                     }
                 };
 
                 // 計算正確率
-                const historyKey = `quizHistory_自訂/${word.tag}/${word.單字}`;
-                const hasHistory = localStorage.getItem(historyKey) !== null;
+                const historyKey = `自訂/${word.tag}/${word.單字}`;
+                const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                 let accuracyDisplay = '--';
                 if (hasHistory) {
                     const correctCount = getQuizHistory(historyKey);
@@ -4673,7 +4909,7 @@
             word.翻譯 = document.getElementById('addTranslationInput').value.trim();
 
             // 保存到 localStorage
-            localStorage.setItem('customWords', JSON.stringify(customWords));
+            saveCustomWords(customWords);
 
             alert('單字已更新');
             closeAddWordModal();
@@ -4705,13 +4941,13 @@
 
             // 刪除 localStorage 中的星星和正確率
             const wordKey = `自訂/${word.tag}/${word.單字}`;
-            localStorage.removeItem(`favorite_${wordKey}`);
-            localStorage.removeItem(`quizHistory_${wordKey}`);
+            deleteFavoriteFromStorage(wordKey);
+            deleteQuizHistoryFromStorage(wordKey);
 
             // 刪除自訂單字
             const customWords = getCustomWords();
             customWords.splice(modalCurrentWordIndex, 1);
-            localStorage.setItem('customWords', JSON.stringify(customWords));
+            saveCustomWords(customWords);
 
             alert('單字已刪除');
             closeWordModal();
