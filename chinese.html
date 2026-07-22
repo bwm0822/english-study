@@ -5340,38 +5340,52 @@
             const soundAttr = enableSound && soundText ? ` onclick="pronounceChineseText('${escapedSoundText}')" style="cursor: pointer;" title="點擊發音"` : '';
             const charClass = isStory ? 'zhuyin-char-v2 zhuyin-char-story' : 'zhuyin-char-v2';
 
+            let zhuyinIndex = 0;
             for (let i = 0; i < text.length; i++) {
                 const char = text[i];
-                const zhuyin = zhuyins[i];
 
-                if (zhuyin && zhuyin.trim()) {
-                    const { zhuyin: zhuyinSymbols, tones } = separateZhuyinAndTone(zhuyin);
-                    const zhuyinArr = splitToSymbols(zhuyinSymbols);
-                    const toneArr = splitToSymbols(tones.join(''));
+                // 檢查是否是標點符號
+                const isPunctuation = /[，。！？；：、''""（）【】《》・・・]/.test(char);
 
-                    let zhuyinHtml = '';
-                    for (let symbol of zhuyinArr) {
-                        zhuyinHtml += `<span class="zhuyin-symbol">${symbol}</span>`;
+                if (!isPunctuation) {
+                    const zhuyin = zhuyins[zhuyinIndex];
+                    zhuyinIndex++;
+
+                    if (zhuyin && zhuyin.trim()) {
+                        const { zhuyin: zhuyinSymbols, tones } = separateZhuyinAndTone(zhuyin);
+                        const zhuyinArr = splitToSymbols(zhuyinSymbols);
+                        const toneArr = splitToSymbols(tones.join(''));
+
+                        let zhuyinHtml = '';
+                        for (let symbol of zhuyinArr) {
+                            zhuyinHtml += `<span class="zhuyin-symbol">${symbol}</span>`;
+                        }
+
+                        let toneHtml = '';
+                        for (let tone of toneArr) {
+                            toneHtml += `<span class="tone-symbol">${tone}</span>`;
+                        }
+
+                        html += `<div class="${charClass}"${soundAttr}>
+                            <div class="char">${char}</div>
+                            <div class="zhuyin-container">
+                                <div class="zhuyin-box">
+                                    ${zhuyinHtml}
+                                </div>
+                                ${toneHtml ? `<div class="tone-box">
+                                    ${toneHtml}
+                                </div>` : ''}
+                            </div>
+                        </div>`;
+                    } else {
+                        html += `<div class="${charClass}"${soundAttr}>
+                            <div class="char">${char}</div>
+                        </div>`;
                     }
-
-                    let toneHtml = '';
-                    for (let tone of toneArr) {
-                        toneHtml += `<span class="tone-symbol">${tone}</span>`;
-                    }
-
+                } else {
                     html += `<div class="${charClass}"${soundAttr}>
                         <div class="char">${char}</div>
-                        <div class="zhuyin-container">
-                            <div class="zhuyin-box">
-                                ${zhuyinHtml}
-                            </div>
-                            ${toneHtml ? `<div class="tone-box">
-                                ${toneHtml}
-                            </div>` : ''}
-                        </div>
                     </div>`;
-                } else {
-                    html += char;
                 }
             }
 
@@ -5561,33 +5575,35 @@
                 const container = document.getElementById('sheetGroupsContainer');
                 container.innerHTML = '';
 
-                const sheetItem = document.createElement('div');
-                sheetItem.className = 'sheet-item';
+                // 生成所有 sheet 的複選框
+                Object.entries(data).forEach(([sheetName, sheetData]) => {
+                    const sheetItem = document.createElement('div');
+                    sheetItem.className = 'sheet-item';
 
-                const sheetHeader = document.createElement('div');
-                sheetHeader.className = 'sheet-item-header';
+                    const sheetHeader = document.createElement('div');
+                    sheetHeader.className = 'sheet-item-header';
 
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.checked = true;
-                checkbox.id = 'chinese-sheet-checkbox';
-                checkbox.className = 'sheet-checkbox';
-                checkbox.dataset.sheetName = currentChineseSheet;
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = true;
+                    checkbox.className = 'sheet-checkbox';
+                    checkbox.dataset.sheetName = sheetName;
 
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = currentChineseSheet;
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = sheetName;
 
-                const countSpan = document.createElement('span');
-                countSpan.textContent = idioms.length;
-                countSpan.style.marginLeft = 'auto';
-                countSpan.style.color = '#667eea';
-                countSpan.style.fontWeight = 'bold';
+                    const countSpan = document.createElement('span');
+                    countSpan.textContent = sheetData.成語 ? sheetData.成語.length : 0;
+                    countSpan.style.marginLeft = 'auto';
+                    countSpan.style.color = '#667eea';
+                    countSpan.style.fontWeight = 'bold';
 
-                sheetHeader.appendChild(checkbox);
-                sheetHeader.appendChild(nameSpan);
-                sheetHeader.appendChild(countSpan);
-                sheetItem.appendChild(sheetHeader);
-                container.appendChild(sheetItem);
+                    sheetHeader.appendChild(checkbox);
+                    sheetHeader.appendChild(nameSpan);
+                    sheetHeader.appendChild(countSpan);
+                    sheetItem.appendChild(sheetHeader);
+                    container.appendChild(sheetItem);
+                });
 
                 // 显示单元选择容器
                 document.getElementById('tagFilterContainer').style.display = 'flex';
@@ -5596,41 +5612,86 @@
 
                 // 生成成語列表
                 let html = '';
+                let itemIndex = 0;
 
-                idioms.forEach((item, index) => {
-                    const explanation = item.解釋.replace(/'/g, "\\'");
-                    const zhuyinArray = item.注音.split(' ');
-                    const zhuyinHtml = createZhuyinHTML_V2(item.成語, zhuyinArray, true, item.成語);
+                // 遍歷所有 sheet
+                Object.entries(data).forEach(([sheetName, sheetData]) => {
+                    if (!sheetData.成語) return;
 
-                    // 計算正確率
-                    const quizKey = `${currentChineseSheet}/${item.成語}`;
-                    const quizResult = getChineseQuizResultFromStorage(quizKey);
-                    let accuracyDisplay = '--';
-                    if (quizResult !== null) {
-                        accuracyDisplay = quizResult ? '100' : '0';
-                    }
+                    sheetData.成語.forEach((item) => {
+                        itemIndex++;
+                        const explanation = item.解釋.replace(/'/g, "\\'");
+                        const zhuyinArray = item.注音.split(' ');
+                        const zhuyinHtml = createZhuyinHTML_V2(item.成語, zhuyinArray, true, item.成語);
 
-                    // 檢查收藏狀態
-                    const favoriteKey = `${currentChineseSheet}/${item.成語}`;
-                    const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+                        // 計算正確率
+                        const quizKey = `${sheetName}/${item.成語}`;
+                        const quizResult = getChineseQuizResultFromStorage(quizKey);
+                        let accuracyDisplay = '--';
+                        if (quizResult !== null) {
+                            accuracyDisplay = quizResult ? '100' : '0';
+                        }
 
-                    html += `
-                        <div class="idiom-item" data-sheet="${currentChineseSheet}">
-                            <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${index + 1}</div>
-                            <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; if (el.textContent === '★') { saveChineseFavoriteToStorage('${favoriteKey}', 'true'); } else { deleteChineseFavoriteFromStorage('${favoriteKey}'); }">${isFavorited ? '★' : '☆'}</div>
-                            <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
-                                <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%;">${currentChineseSheet}</div>
-                                <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
-                            </div>
-                            <div class="idiom-left">
-                                <div class="idiom-phonetic">${zhuyinHtml}</div>
-                            </div>
-                            <div class="idiom-middle">
-                                <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.解釋}</div>
-                                <div class="idiom-example" onclick="pronounceChineseText('${item.造句.replace(/'/g, "\\'")}')" title="點擊朗讀" style="cursor: pointer;">${highlightIdiomInSentence(item.成語, item.造句)}</div>
-                            </div>
-                        </div>
-                    `;
+                        // 檢查收藏狀態
+                        const favoriteKey = `${sheetName}/${item.成語}`;
+                        const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+
+                        // 檢查是否是特殊成語"寧為雞首，不為牛後"
+                        if (item.成語 === '寧為雞首，不為牛後') {
+                            html += `
+                                <div class="idiom-item" data-sheet="${sheetName}">
+                                    <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${itemIndex}</div>
+                                    <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; if (el.textContent === '★') { saveChineseFavoriteToStorage('${favoriteKey}', 'true'); } else { deleteChineseFavoriteFromStorage('${favoriteKey}'); }">${isFavorited ? '★' : '☆'}</div>
+                                    <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                        <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%;">${sheetName}</div>
+                                        <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
+                                    </div>
+                                    <div class="idiom-left">
+                                        <div class="idiom-phonetic" style="font-size: 0.8em;">${zhuyinHtml}</div>
+                                    </div>
+                                    <div class="idiom-middle">
+                                        <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音" style="font-size: 0.9em;">${item.解釋}</div>
+                                        <div class="idiom-example" onclick="pronounceChineseText('${item.造句.replace(/'/g, "\\'")}')" title="點擊朗讀" style="cursor: pointer; font-size: 0.9em;">${highlightIdiomInSentence(item.成語, item.造句)}</div>
+                                    </div>
+                                </div>
+                            `;
+                        } else if (item.成語 === '遇到') {
+                            html += `
+                                <div class="idiom-item" data-sheet="${sheetName}" style="flex-direction: column;">
+                                    <div style="display: flex; width: 100%; margin-bottom: 10px;">
+                                        <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${itemIndex}</div>
+                                        <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; if (el.textContent === '★') { saveChineseFavoriteToStorage('${favoriteKey}', 'true'); } else { deleteChineseFavoriteFromStorage('${favoriteKey}'); }">${isFavorited ? '★' : '☆'}</div>
+                                        <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                            <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%;">${sheetName}</div>
+                                            <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
+                                        </div>
+                                    </div>
+                                    <div class="idiom-middle" style="width: 100%; padding-left: 12px;">
+                                        <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.解釋}</div>
+                                        <div class="idiom-example" onclick="pronounceChineseText('${item.造句.replace(/'/g, "\\'")}')" title="點擊朗讀" style="cursor: pointer;">${highlightIdiomInSentence(item.成語, item.造句)}</div>
+                                    </div>
+                                </div>
+                            `;
+                        } else {
+                            html += `
+                                <div class="idiom-item" data-sheet="${sheetName}">
+                                    <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${itemIndex}</div>
+                                    <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; if (el.textContent === '★') { saveChineseFavoriteToStorage('${favoriteKey}', 'true'); } else { deleteChineseFavoriteFromStorage('${favoriteKey}'); }">${isFavorited ? '★' : '☆'}</div>
+                                    <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                        <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%;">${sheetName}</div>
+                                        <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
+                                    </div>
+                                    <div class="idiom-left">
+                                        <div class="idiom-phonetic">${zhuyinHtml}</div>
+                                    </div>
+                                    <div class="idiom-middle">
+                                        <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.解釋}</div>
+                                        <div class="idiom-example" onclick="pronounceChineseText('${item.造句.replace(/'/g, "\\'")}')" title="點擊朗讀" style="cursor: pointer;">${highlightIdiomInSentence(item.成語, item.造句)}</div>
+                                    </div>
+                                </div>
+                            `;
+                        }
+                    });
                 });
 
                 document.getElementById('chineseContent').innerHTML = html;
@@ -5638,7 +5699,14 @@
 
                 // 更新計數顯示
                 const updateCountDisplay = () => {
-                    const count = checkbox.checked ? idioms.length : 0;
+                    const checkedBoxes = document.querySelectorAll('.sheet-checkbox:checked');
+                    let count = 0;
+                    checkedBoxes.forEach(box => {
+                        const sheetName = box.dataset.sheetName;
+                        if (data[sheetName] && data[sheetName].成語) {
+                            count += data[sheetName].成語.length;
+                        }
+                    });
                     const display = document.getElementById('tagCountDisplay');
                     if (display) {
                         display.textContent = `共 ${count} 項`;
@@ -5647,14 +5715,16 @@
                 updateCountDisplay();
 
                 // 添加 sheet 複選框事件監聽
-                checkbox.addEventListener('change', () => {
-                    const sheetName = checkbox.dataset.sheetName;
-                    const items = document.querySelectorAll(`[data-sheet="${sheetName}"]`);
-                    items.forEach(item => {
-                        item.style.display = checkbox.checked ? 'flex' : 'none';
+                document.querySelectorAll('.sheet-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        const sheetName = checkbox.dataset.sheetName;
+                        const items = document.querySelectorAll(`[data-sheet="${sheetName}"]`);
+                        items.forEach(item => {
+                            item.style.display = checkbox.checked ? 'flex' : 'none';
+                        });
+                        // 更新計數顯示
+                        updateCountDisplay();
                     });
-                    // 更新計數顯示
-                    updateCountDisplay();
                 });
             });
         }
@@ -5703,14 +5773,12 @@
             document.getElementById('wordsContainer').style.display = 'none';
 
             loadChineseData().then(data => {
-                if (!data || !currentChineseSheet || !data[currentChineseSheet] || !data[currentChineseSheet].成語) {
+                if (!data) {
                     document.getElementById('chineseContent').innerHTML = '無法加載成語數據';
                     return;
                 }
 
-                const idioms = data[currentChineseSheet].成語;
-
-                // 生成單元選擇器（以 sheet 為單位）
+                // 生成單元選擇器（所有 sheet）
                 const container = document.getElementById('sheetGroupsContainer');
                 container.innerHTML = '';
 
@@ -5757,43 +5825,50 @@
 
                 // 生成成語列表
                 let html = '';
+                let itemIndex = 0;
 
-                idioms.forEach((item, index) => {
-                    const explanation = item.解釋.replace(/'/g, "\\'");
-                    const zhuyinArray = item.注音.split(' ');
-                    const zhuyinHtml = createZhuyinHTML_V2(item.成語, zhuyinArray, true, item.成語);
+                // 遍歷所有 sheet
+                Object.entries(data).forEach(([sheetName, sheetData]) => {
+                    if (!sheetData.成語) return;
 
-                    // 計算正確率
-                    const quizKey = `${currentChineseSheet}/${item.成語}`;
-                    const quizResult = getChineseQuizResultFromStorage(quizKey);
-                    let accuracyDisplay = '--';
-                    let accuracyValue = null;
-                    if (quizResult !== null) {
-                        accuracyDisplay = quizResult ? '100' : '0';
-                        accuracyValue = quizResult ? 100 : 0;
-                    }
+                    sheetData.成語.forEach((item) => {
+                        itemIndex++;
+                        const explanation = item.解釋.replace(/'/g, "\\'");
+                        const zhuyinArray = item.注音.split(' ');
+                        const zhuyinHtml = createZhuyinHTML_V2(item.成語, zhuyinArray, true, item.成語);
 
-                    // 檢查收藏狀態
-                    const favoriteKey = `${currentChineseSheet}/${item.成語}`;
-                    const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+                        // 計算正確率
+                        const quizKey = `${sheetName}/${item.成語}`;
+                        const quizResult = getChineseQuizResultFromStorage(quizKey);
+                        let accuracyDisplay = '--';
+                        let accuracyValue = null;
+                        if (quizResult !== null) {
+                            accuracyDisplay = quizResult ? '100' : '0';
+                            accuracyValue = quizResult ? 100 : 0;
+                        }
 
-                    html += `
-                        <div class="idiom-item" data-sheet="${currentChineseSheet}" data-favorite-key="${favoriteKey}" data-favorite="${isFavorited}" data-accuracy="${accuracyValue}">
-                            <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${index + 1}</div>
-                            <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" class="review-star-btn" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; const parent = el.closest('.idiom-item'); if (el.textContent === '★') { saveChineseFavoriteToStorage(parent.dataset.favoriteKey, 'true'); parent.dataset.favorite = 'true'; } else { deleteChineseFavoriteFromStorage(parent.dataset.favoriteKey); parent.dataset.favorite = 'false'; } updateChineseReviewFilter();">${isFavorited ? '★' : '☆'}</div>
-                            <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
-                                <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%;">${currentChineseSheet}</div>
-                                <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
+                        // 檢查收藏狀態
+                        const favoriteKey = `${sheetName}/${item.成語}`;
+                        const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+
+                        html += `
+                            <div class="idiom-item" data-sheet="${sheetName}" data-favorite-key="${favoriteKey}" data-favorite="${isFavorited}" data-accuracy="${accuracyValue}">
+                                <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${itemIndex}</div>
+                                <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" class="review-star-btn" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; const parent = el.closest('.idiom-item'); if (el.textContent === '★') { saveChineseFavoriteToStorage(parent.dataset.favoriteKey, 'true'); parent.dataset.favorite = 'true'; } else { deleteChineseFavoriteFromStorage(parent.dataset.favoriteKey); parent.dataset.favorite = 'false'; } updateChineseReviewFilter();">${isFavorited ? '★' : '☆'}</div>
+                                <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
+                                    <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%;">${sheetName}</div>
+                                    <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
+                                </div>
+                                <div class="idiom-left">
+                                    <div class="idiom-phonetic">${zhuyinHtml}</div>
+                                </div>
+                                <div class="idiom-middle">
+                                    <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.解釋}</div>
+                                    <div class="idiom-example" onclick="pronounceChineseText('${item.造句.replace(/'/g, "\\'")}')" title="點擊朗讀" style="cursor: pointer;">${highlightIdiomInSentence(item.成語, item.造句)}</div>
+                                </div>
                             </div>
-                            <div class="idiom-left">
-                                <div class="idiom-phonetic">${zhuyinHtml}</div>
-                            </div>
-                            <div class="idiom-middle">
-                                <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.解釋}</div>
-                                <div class="idiom-example" onclick="pronounceChineseText('${item.造句.replace(/'/g, "\\'")}')" title="點擊朗讀" style="cursor: pointer;">${highlightIdiomInSentence(item.成語, item.造句)}</div>
-                            </div>
-                        </div>
-                    `;
+                        `;
+                    });
                 });
 
                 document.getElementById('chineseContent').innerHTML = html;
@@ -5868,44 +5943,50 @@
             document.getElementById('wordsContainer').style.display = 'none';
 
             loadChineseData().then(data => {
-                if (!data || !currentChineseSheet || !data[currentChineseSheet] || !data[currentChineseSheet].故事) {
+                if (!data) {
                     document.getElementById('chineseContent').innerHTML = '無法加載故事數據';
                     return;
                 }
 
-                const stories = data[currentChineseSheet].故事;
-
-                // 生成單元選擇器（以 sheet 為單位）
+                // 生成單元選擇器（所有 sheet）
                 const container = document.getElementById('quizSheetGroupsContainer');
                 container.innerHTML = '';
 
-                const sheetItem = document.createElement('div');
-                sheetItem.className = 'sheet-item';
+                let totalStories = 0;
 
-                const sheetHeader = document.createElement('div');
-                sheetHeader.className = 'sheet-item-header';
+                // 為所有 sheet 創建複選框
+                Object.entries(data).forEach(([sheetName, sheetData]) => {
+                    if (!sheetData.故事 || sheetData.故事.length === 0) return;
 
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.checked = true;
-                checkbox.id = 'chinese-story-sheet-checkbox';
-                checkbox.className = 'sheet-checkbox';
-                checkbox.dataset.sheetName = currentChineseSheet;
+                    totalStories += sheetData.故事.length;
 
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = currentChineseSheet;
+                    const sheetItem = document.createElement('div');
+                    sheetItem.className = 'sheet-item';
 
-                const countSpan = document.createElement('span');
-                countSpan.textContent = stories.length;
-                countSpan.style.marginLeft = 'auto';
-                countSpan.style.color = '#667eea';
-                countSpan.style.fontWeight = 'bold';
+                    const sheetHeader = document.createElement('div');
+                    sheetHeader.className = 'sheet-item-header';
 
-                sheetHeader.appendChild(checkbox);
-                sheetHeader.appendChild(nameSpan);
-                sheetHeader.appendChild(countSpan);
-                sheetItem.appendChild(sheetHeader);
-                container.appendChild(sheetItem);
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = true;
+                    checkbox.className = 'sheet-checkbox';
+                    checkbox.dataset.sheetName = sheetName;
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = sheetName;
+
+                    const countSpan = document.createElement('span');
+                    countSpan.textContent = sheetData.故事.length;
+                    countSpan.style.marginLeft = 'auto';
+                    countSpan.style.color = '#667eea';
+                    countSpan.style.fontWeight = 'bold';
+
+                    sheetHeader.appendChild(checkbox);
+                    sheetHeader.appendChild(nameSpan);
+                    sheetHeader.appendChild(countSpan);
+                    sheetItem.appendChild(sheetHeader);
+                    container.appendChild(sheetItem);
+                });
 
                 // 显示单元选择容器
                 document.getElementById('tagFilterContainer').style.display = 'none';
@@ -5914,20 +5995,27 @@
 
                 // 生成故事列表
                 let html = '<div style="font-size: 1.2em; margin-bottom: 20px; color: #4CAF50; font-weight: bold;">成語故事</div>';
+                let storyIndex = 0;
 
-                stories.forEach((item, index) => {
-                    const highlightedContent = highlightIdiomsInStory(item.故事);
+                // 遍歷所有 sheet
+                Object.entries(data).forEach(([sheetName, sheetData]) => {
+                    if (!sheetData.故事) return;
 
-                    html += `
-                        <div class="story-item" data-sheet="${currentChineseSheet}">
-                            <div class="story-header">
-                                <div class="story-title">${item.標題}</div>
-                                <button class="story-read-btn" onclick="playStory(${index})">朗讀</button>
-                                <div class="story-index">${index + 1}/${stories.length}</div>
+                    sheetData.故事.forEach((item) => {
+                        storyIndex++;
+                        const highlightedContent = highlightIdiomsInStory(item.故事);
+
+                        html += `
+                            <div class="story-item" data-sheet="${sheetName}">
+                                <div class="story-header">
+                                    <div class="story-title">${item.標題}</div>
+                                    <button class="story-read-btn" onclick="playStory(${storyIndex - 1})">朗讀</button>
+                                    <div class="story-index">${storyIndex}</div>
+                                </div>
+                                <div class="story-content" onclick="toggleStoryPlayback(${storyIndex - 1}); return false;" title="點擊暫停/繼續">${highlightedContent}</div>
                             </div>
-                            <div class="story-content" onclick="toggleStoryPlayback(${index}); return false;" title="點擊暫停/繼續">${highlightedContent}</div>
-                        </div>
-                    `;
+                        `;
+                    });
                 });
 
                 document.getElementById('chineseContent').innerHTML = html;
@@ -5935,23 +6023,38 @@
 
                 // 更新計數顯示
                 const updateCountDisplay = () => {
-                    const count = checkbox.checked ? stories.length : 0;
+                    let count = 0;
+                    document.querySelectorAll('.sheet-checkbox').forEach(checkbox => {
+                        if (checkbox.checked) {
+                            const sheetName = checkbox.dataset.sheetName;
+                            if (data[sheetName] && data[sheetName].故事) {
+                                count += data[sheetName].故事.length;
+                            }
+                        }
+                    });
                     const display = document.getElementById('quizTagCountDisplay');
                     if (display) {
                         display.textContent = `共 ${count} 項`;
                     }
                 };
-                updateCountDisplay();
+
+                // 立即顯示計數（使用已計算的 totalStories）
+                const display = document.getElementById('quizTagCountDisplay');
+                if (display) {
+                    display.textContent = `共 ${totalStories} 項`;
+                }
 
                 // 添加 sheet 複選框事件監聽
-                checkbox.addEventListener('change', () => {
-                    const sheetName = checkbox.dataset.sheetName;
-                    const items = document.querySelectorAll(`[data-sheet="${sheetName}"]`);
-                    items.forEach(item => {
-                        item.style.display = checkbox.checked ? 'block' : 'none';
+                document.querySelectorAll('.sheet-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        const sheetName = checkbox.dataset.sheetName;
+                        const items = document.querySelectorAll(`[data-sheet="${sheetName}"]`);
+                        items.forEach(item => {
+                            item.style.display = checkbox.checked ? 'block' : 'none';
+                        });
+                        // 更新計數顯示
+                        updateCountDisplay();
                     });
-                    // 更新計數顯示
-                    updateCountDisplay();
                 });
             });
         }
@@ -5966,48 +6069,57 @@
             document.getElementById('wordsContainer').style.display = 'none';
 
             loadChineseData().then(data => {
-                if (!data || !currentChineseSheet || !data[currentChineseSheet] || !data[currentChineseSheet].成語) {
+                if (!data) {
                     document.getElementById('chineseContent').innerHTML = '無法加載成語數據';
                     return;
                 }
 
-                const idioms = data[currentChineseSheet].成語;
-
-                // 生成單元選擇器
+                // 生成單元選擇器（所有 sheet）
                 const container = document.getElementById('sheetGroupsContainer');
                 container.innerHTML = '';
 
-                const sheetItem = document.createElement('div');
-                sheetItem.className = 'sheet-item';
+                // 為所有 sheet 創建複選框
+                Object.entries(data).forEach(([sheetName, sheetData]) => {
+                    if (!sheetData.成語) return;
 
-                const sheetHeader = document.createElement('div');
-                sheetHeader.className = 'sheet-item-header';
+                    const sheetItem = document.createElement('div');
+                    sheetItem.className = 'sheet-item';
 
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.checked = true;
-                checkbox.id = 'chinese-quiz-sheet-checkbox';
-                checkbox.className = 'sheet-checkbox';
-                checkbox.dataset.sheetName = currentChineseSheet;
+                    const sheetHeader = document.createElement('div');
+                    sheetHeader.className = 'sheet-item-header';
 
-                const nameSpan = document.createElement('span');
-                nameSpan.textContent = currentChineseSheet;
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.checked = true;
+                    checkbox.className = 'sheet-checkbox';
+                    checkbox.dataset.sheetName = sheetName;
 
-                const countSpan = document.createElement('span');
-                countSpan.textContent = idioms.length;
-                countSpan.style.marginLeft = 'auto';
-                countSpan.style.color = '#667eea';
-                countSpan.style.fontWeight = 'bold';
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = sheetName;
 
-                sheetHeader.appendChild(checkbox);
-                sheetHeader.appendChild(nameSpan);
-                sheetHeader.appendChild(countSpan);
-                sheetItem.appendChild(sheetHeader);
-                container.appendChild(sheetItem);
+                    const countSpan = document.createElement('span');
+                    countSpan.textContent = sheetData.成語.length;
+                    countSpan.style.marginLeft = 'auto';
+                    countSpan.style.color = '#667eea';
+                    countSpan.style.fontWeight = 'bold';
+
+                    sheetHeader.appendChild(checkbox);
+                    sheetHeader.appendChild(nameSpan);
+                    sheetHeader.appendChild(countSpan);
+                    sheetItem.appendChild(sheetHeader);
+                    container.appendChild(sheetItem);
+                });
 
                 // 更新計數顯示
                 const updateCountDisplay = () => {
-                    const count = checkbox.checked ? idioms.length : 0;
+                    const checkedBoxes = document.querySelectorAll('.sheet-checkbox:checked');
+                    let count = 0;
+                    checkedBoxes.forEach(box => {
+                        const sheetName = box.dataset.sheetName;
+                        if (data[sheetName] && data[sheetName].成語) {
+                            count += data[sheetName].成語.length;
+                        }
+                    });
                     const display = document.getElementById('tagCountDisplay');
                     if (display) {
                         display.textContent = `共 ${count} 項`;
@@ -6016,9 +6128,10 @@
                 updateCountDisplay();
 
                 // 添加 sheet 複選框事件監聽
-                checkbox.addEventListener('change', () => {
-                    // 更新計數顯示
-                    updateCountDisplay();
+                document.querySelectorAll('.sheet-checkbox').forEach(checkbox => {
+                    checkbox.addEventListener('change', () => {
+                        updateCountDisplay();
+                    });
                 });
 
                 // 顯示測驗過濾容器和方式選擇
@@ -6048,19 +6161,32 @@
 
         function startChineseQuiz() {
             const quizMethod = document.getElementById('chineseQuizMethodSelect').value;
-            const checkbox = document.getElementById('chinese-quiz-sheet-checkbox');
+            const checkedBoxes = document.querySelectorAll('.sheet-checkbox:checked');
 
-            if (!checkbox.checked) {
+            if (checkedBoxes.length === 0) {
                 alert('請先勾選要測驗的單元');
                 return;
             }
 
             loadChineseData().then(data => {
-                if (!data || !currentChineseSheet || !data[currentChineseSheet].成語) {
+                if (!data) {
                     return;
                 }
 
-                chineseQuizWords = data[currentChineseSheet].成語;
+                // 收集所有被選中 sheet 的成語
+                chineseQuizWords = [];
+                checkedBoxes.forEach(box => {
+                    const sheetName = box.dataset.sheetName;
+                    if (data[sheetName] && data[sheetName].成語) {
+                        chineseQuizWords = chineseQuizWords.concat(data[sheetName].成語);
+                    }
+                });
+
+                if (chineseQuizWords.length === 0) {
+                    alert('選中的單元中沒有成語');
+                    return;
+                }
+
                 // 隨機打亂順序
                 chineseQuizWords = chineseQuizWords.sort(() => Math.random() - 0.5);
                 chineseQuizIndex = 0;
@@ -6237,13 +6363,13 @@
             // 將成語替換為輸入框
             const sentence = word.造句;
             const idiomPlaceholder = `<input type="text" id="chineseQuizInput" placeholder="填空" style="
-                width: 100px;
+                width: 200px;
                 padding: 5px;
                 border-radius: 4px;
                 border: 1px solid #ffa500;
                 text-align: center;
                 font-weight: bold;
-                font-size: 1.3em;
+                font-size: 0.9em;
                 background: #2a2a3e;
                 color: #ffa500;
             " autofocus>`;
@@ -6285,8 +6411,9 @@
                         <div id="resultContainer" style="
                             display: none;
                             margin-top: 15px;
-                            flex-direction: column;
+                            flex-direction: row;
                             align-items: center;
+                            justify-content: space-between;
                             gap: 15px;
                         ">
                             <div id="answerResult" style="
@@ -6294,19 +6421,17 @@
                                 font-weight: bold;
                                 color: white;
                             "></div>
-                            <div style="display: flex; gap: 15px; align-items: center; justify-content: center;">
-                                <button onclick="continueChineseQuiz()" style="
-                                    padding: 10px 25px;
-                                    background: #667eea;
-                                    color: white;
-                                    border: none;
-                                    border-radius: 4px;
-                                    cursor: pointer;
-                                    font-weight: bold;
-                                    font-size: 1.2em;
-                                    white-space: nowrap;
-                                ">下一個</button>
-                            </div>
+                            <button onclick="continueChineseQuiz()" style="
+                                padding: 10px 25px;
+                                background: #667eea;
+                                color: white;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                font-weight: bold;
+                                font-size: 1.2em;
+                                white-space: nowrap;
+                            ">下一個</button>
                         </div>
                     </div>
                 </div>
@@ -6327,7 +6452,8 @@
         function showChineseQuizResults() {
             // 保存測驗結果到 localStorage
             chineseQuizResults.forEach(result => {
-                const key = `${currentChineseSheet}/${result.word.成語}`;
+                const sheetName = result.word.sheet || currentChineseSheet;
+                const key = `${sheetName}/${result.word.成語}`;
                 saveChineseQuizResultToStorage(key, result.isCorrect);
             });
 
@@ -6388,7 +6514,8 @@
                 wordDiv.style.cursor = 'pointer';
 
                 // 星號
-                const favoriteKey = `${currentChineseSheet}/${result.word.成語}`;
+                const sheetName = result.word.sheet || currentChineseSheet;
+                const favoriteKey = `${sheetName}/${result.word.成語}`;
                 const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
                 const starDiv = document.createElement('div');
                 starDiv.textContent = isFavorited ? '★' : '☆';
@@ -6419,7 +6546,7 @@
                 sheetDiv.style.borderRadius = '3px';
                 sheetDiv.style.fontSize = '1em';
                 sheetDiv.style.fontWeight = '600';
-                sheetDiv.textContent = currentChineseSheet;
+                sheetDiv.textContent = sheetName;
 
                 // 正確/錯誤
                 const statusDiv = document.createElement('div');

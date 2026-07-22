@@ -8,7 +8,9 @@ const workbook = XLSX.readFile(filePath);
 
 // 要轉換的sheet列表
 const sheetsToConvert = [
-  '表現態度1'
+  '表現態度1',
+  '表現態度2',
+  
 ];
 
 // 輸出結果結構 - 動態根據sheet名稱創建
