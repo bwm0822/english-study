@@ -228,7 +228,7 @@
 
         .idiom-explanation {
             color: #b8b8b8;
-            font-size: 1em;
+            font-size: 1.15em;
             line-height: 1.6;
             cursor: pointer;
             transition: color 0.2s;
@@ -236,6 +236,30 @@
 
         .idiom-explanation:hover {
             color: #fff;
+        }
+
+        .idiom-example {
+            color: #b8b8b8;
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-top: 10px;
+            padding: 8px 0;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .idiom-example:hover {
+            color: #fff;
+        }
+
+        .idiom-example .idiom-name {
+            color: #ffa500;
+            font-weight: bold;
+        }
+
+        .idiom-example:hover .idiom-name {
+            color: #ffb84d;
         }
 
         .idiom-index {
@@ -5213,6 +5237,7 @@
                             </div>
                             <div class="idiom-middle">
                                 <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.解釋}</div>
+                                <div class="idiom-example" onclick="pronounceChineseText('${item.造句.replace(/'/g, "\\'")}')" title="點擊朗讀" style="cursor: pointer;">${highlightIdiomInSentence(item.成語, item.造句)}</div>
                             </div>
                         </div>
                     `;
@@ -5221,6 +5246,13 @@
                 document.getElementById('chineseContent').innerHTML = html;
                 document.getElementById('chineseModeSelect').value = 'idioms';
             });
+        }
+
+        // 在造句中高亮成語
+        function highlightIdiomInSentence(idiom, sentence) {
+            if (!sentence || !idiom) return sentence;
+            const regex = new RegExp(`(${idiom})`, 'g');
+            return sentence.replace(regex, `<span class="idiom-name">$1</span>`);
         }
 
         // 获取成语的注音
