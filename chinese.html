@@ -1748,19 +1748,6 @@
             <button class="start-quiz-btn" id="startQuizBtn" onclick="startQuiz()" style="display: none; margin-left: auto;">開始測驗</button>
             <button class="refresh-btn" id="addWordBtn" onclick="openAddWordModal()" style="display: none; margin-left: auto;">新增</button>
             <button class="refresh-btn" id="exportBtn" onclick="exportCustomWords()" style="display: none; margin-left: auto;">匯出</button>
-            <div class="settings-menu" id="settingsMenuContainer" style="display: none;">
-                <button class="settings-btn" onclick="toggleSettingsMenu()">⚙️</button>
-                <div class="settings-dropdown" id="settingsDropdown">
-                    <button class="settings-option" onclick="showAbout()">ℹ️ 資訊</button>
-                    <button class="settings-option" onclick="showPronunciationSettings()">🔊 發音</button>
-                    <div class="settings-option" style="display: flex; align-items: center; justify-content: flex-start; padding: 12px 16px; background: none; border: none; cursor: pointer; gap: 10px;" onclick="document.getElementById('allowRetestCheckbox').click()">
-                        <input type="checkbox" id="allowRetestCheckbox" style="width: 16px; height: 16px; cursor: pointer;" onclick="event.stopPropagation();">
-                        <span style="color: #b8b8b8; text-align: left; flex: 1;">允許重測</span>
-                    </div>
-                    <button class="settings-option" onclick="updateApp()">🔄 更新</button>
-                    <button class="settings-option" onclick="clearHistory()">清除紀錄</button>
-                </div>
-            </div>
         </div>
 
         <div class="words-container" id="wordsContainer" style="display: none;"></div>
@@ -1876,86 +1863,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- 發音設定視窗 -->
-        <div class="word-modal" id="pronunciationModal" style="display: none;">
-            <div class="word-modal-content" style="max-width: 500px;">
-                <div class="word-modal-header">
-                    <span style="font-weight: bold; font-size: 1.2em;">🔊 發音設定</span>
-                    <button class="modal-close-btn" onclick="closePronunciationModal()">關閉</button>
-                </div>
-                <div class="word-modal-body" style="gap: 20px;">
-                    <div style="text-align: left;">
-                        <label style="color: white; font-weight: bold; display: block; margin-bottom: 8px;">語言</label>
-                        <select id="pronunciationLangSelect" style="width: 100%; padding: 8px; font-size: 1em; border-radius: 4px; border: none;">
-                            <!-- 英語 -->
-                            <optgroup label="━━━ 英語 ━━━">
-                                <option value="en-US">🇺🇸 美國英語 (en-US)</option>
-                                <option value="en-GB">🇬🇧 英國英語 (en-GB)</option>
-                                <option value="en-AU">🇦🇺 澳洲英語 (en-AU)</option>
-                                <option value="en-CA">🇨🇦 加拿大英語 (en-CA)</option>
-                                <option value="en-IN">🇮🇳 印度英語 (en-IN)</option>
-                                <option value="en-IE">🇮🇪 愛爾蘭英語 (en-IE)</option>
-                                <option value="en-NZ">🇳🇿 紐西蘭英語 (en-NZ)</option>
-                            </optgroup>
-                            <!-- 中文 -->
-                            <optgroup label="━━━ 中文 ━━━">
-                                <option value="zh-CN">🇨🇳 簡體中文 (zh-CN)</option>
-                                <option value="zh-HK">🇭🇰 香港繁體 (zh-HK)</option>
-                                <option value="zh-TW">🇹🇼 台灣繁體 (zh-TW)</option>
-                            </optgroup>
-                            <!-- 亞洲語言 -->
-                            <optgroup label="━━━ 亞洲語言 ━━━">
-                                <option value="ja-JP">🇯🇵 日語 (ja-JP)</option>
-                                <option value="ko-KR">🇰🇷 韓語 (ko-KR)</option>
-                                <option value="th-TH">🇹🇭 泰語 (th-TH)</option>
-                                <option value="vi-VN">🇻🇳 越南語 (vi-VN)</option>
-                                <option value="id-ID">🇮🇩 印尼語 (id-ID)</option>
-                                <option value="ta-IN">🇮🇳 泰米爾語 (ta-IN)</option>
-                                <option value="hi-IN">🇮🇳 印地語 (hi-IN)</option>
-                            </optgroup>
-                            <!-- 歐洲語言 -->
-                            <optgroup label="━━━ 歐洲語言 ━━━">
-                                <option value="fr-FR">🇫🇷 法語 (fr-FR)</option>
-                                <option value="fr-CA">🇨🇦 加拿大法語 (fr-CA)</option>
-                                <option value="de-DE">🇩🇪 德語 (de-DE)</option>
-                                <option value="es-ES">🇪🇸 西班牙語 (es-ES)</option>
-                                <option value="es-MX">🇲🇽 墨西哥西班牙語 (es-MX)</option>
-                                <option value="it-IT">🇮🇹 義大利語 (it-IT)</option>
-                                <option value="pt-PT">🇵🇹 葡萄牙語 (pt-PT)</option>
-                                <option value="pt-BR">🇧🇷 巴西葡萄牙語 (pt-BR)</option>
-                                <option value="nl-NL">🇳🇱 荷蘭語 (nl-NL)</option>
-                                <option value="pl-PL">🇵🇱 波蘭語 (pl-PL)</option>
-                                <option value="ru-RU">🇷🇺 俄語 (ru-RU)</option>
-                                <option value="sv-SE">🇸🇪 瑞典語 (sv-SE)</option>
-                                <option value="da-DK">🇩🇰 丹麥語 (da-DK)</option>
-                                <option value="tr-TR">🇹🇷 土耳其語 (tr-TR)</option>
-                                <option value="el-GR">🇬🇷 希臘語 (el-GR)</option>
-                            </optgroup>
-                            <!-- 中東與其他 -->
-                            <optgroup label="━━━ 中東與其他 ━━━">
-                                <option value="ar-SA">🇸🇦 阿拉伯語 (ar-SA)</option>
-                                <option value="he-IL">🇮🇱 希伯來語 (he-IL)</option>
-                            </optgroup>
-                        </select>
-                    </div>
-                    <div style="text-align: left;">
-                        <label style="color: white; font-weight: bold; display: block; margin-bottom: 8px;">速度</label>
-                        <select id="pronunciationRateSelect" style="width: 100%; padding: 8px; font-size: 1em; border-radius: 4px; border: none;">
-                            <option value="0.5">🐢 極慢 (0.5x)</option>
-                            <option value="0.8">🐌 慢 (0.8x)</option>
-                            <option value="1.0" selected>📢 正常 (1.0x)</option>
-                            <option value="1.2">⚡ 快 (1.2x)</option>
-                            <option value="1.5">🚀 很快 (1.5x)</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="word-modal-footer">
-                    <button class="modal-nav-btn" onclick="savePronunciationSettings()" style="flex: 1;">保存設定</button>
-                </div>
-            </div>
-        </div>
-
 
         <!-- 單字視窗 -->
         <div class="word-modal" id="wordModal" style="display: none;">
@@ -2701,7 +2608,7 @@
                 refreshBtn.style.display = 'block';
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'block';
-                settingsMenuContainer.style.display = 'none';
+                if (settingsMenuContainer) settingsMenuContainer.style.display = 'none';
                 document.getElementById('chineseContainer').style.display = 'none';
                 // 改變標籤為「過濾單元」
                 tagFilterContainer.querySelector('label').textContent = '過濾單元：';
@@ -2726,7 +2633,7 @@
                 refreshBtn.style.display = 'none';
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'block';
-                settingsMenuContainer.style.display = 'none';
+                if (settingsMenuContainer) settingsMenuContainer.style.display = 'none';
                 document.getElementById('chineseContainer').style.display = 'none';
                 document.getElementById('quizStartPanel').style.display = 'flex';
                 document.getElementById('quizSession').style.display = 'none';
@@ -2742,7 +2649,7 @@
                 refreshBtn.style.display = 'none';
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'none';
-                settingsMenuContainer.style.display = 'none';
+                if (settingsMenuContainer) settingsMenuContainer.style.display = 'none';
                 document.getElementById('chineseContainer').style.display = 'none';
                 renderStatistics();
             } else if (mode === 'chinese') {
@@ -2755,7 +2662,7 @@
                 refreshBtn.style.display = 'none';
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'none';
-                settingsMenuContainer.style.display = 'none';
+                if (settingsMenuContainer) settingsMenuContainer.style.display = 'none';
                 document.getElementById('addWordBtn').style.display = 'none';
                 document.getElementById('exportBtn').style.display = 'none';
                 showChineseIdioms();
@@ -2770,7 +2677,7 @@
                 refreshBtn.style.display = 'none';
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'none';
-                settingsMenuContainer.style.display = 'none';
+                if (settingsMenuContainer) settingsMenuContainer.style.display = 'none';
                 document.getElementById('addWordBtn').style.display = 'block';
                 document.getElementById('exportBtn').style.display = 'block';
                 renderCustomWords();
@@ -2785,7 +2692,7 @@
                 refreshBtn.style.display = 'none';
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'block';
-                settingsMenuContainer.style.display = 'block';
+                if (settingsMenuContainer) settingsMenuContainer.style.display = 'block';
                 document.getElementById('addWordBtn').style.display = 'none';
                 document.getElementById('exportBtn').style.display = 'none';
                 // 改變標籤回「選擇單元」
@@ -4190,6 +4097,7 @@
         const settings = JSON.parse(localStorage.getItem('setting') || '{}');
         let pronunciationLang = settings.pronunciationLang || 'en-US';
         let pronunciationRate = settings.pronunciationRate || 1.0;
+        let randomQuiz = settings.randomQuiz !== false; // 預設為 true
         let allowRetest = localStorage.getItem('allowRetest') === 'true'; // 預設為 false
 
         // 獲取歷史記錄，支援舊格式（boolean陣列）和新格式（數值）
@@ -4234,36 +4142,6 @@
             return Math.round((correctCount / 5) * 100);
         }
 
-        function showPronunciationSettings() {
-            const modal = document.getElementById('pronunciationModal');
-            const langSelect = document.getElementById('pronunciationLangSelect');
-            const rateSelect = document.getElementById('pronunciationRateSelect');
-
-            langSelect.value = pronunciationLang;
-            rateSelect.value = pronunciationRate.toFixed(1);
-
-            modal.style.display = 'flex';
-        }
-
-        function closePronunciationModal() {
-            document.getElementById('pronunciationModal').style.display = 'none';
-        }
-
-        function savePronunciationSettings() {
-            const langSelect = document.getElementById('pronunciationLangSelect');
-            const rateSelect = document.getElementById('pronunciationRateSelect');
-
-            pronunciationLang = langSelect.value;
-            pronunciationRate = parseFloat(rateSelect.value);
-
-            const settings = JSON.parse(localStorage.getItem('setting') || '{}');
-            settings.pronunciationLang = pronunciationLang;
-            settings.pronunciationRate = pronunciationRate;
-            localStorage.setItem('setting', JSON.stringify(settings));
-
-            alert('發音設定已保存');
-            closePronunciationModal();
-        }
 
 
         function updateApp() {
@@ -4306,8 +4184,9 @@
         // 點擊頁面其他地方時關閉設置菜單
         document.addEventListener('click', (e) => {
             const settingsContainer = document.getElementById('settingsMenuContainer');
-            if (settingsContainer && !settingsContainer.contains(e.target)) {
-                document.getElementById('settingsDropdown').classList.remove('active');
+            const settingsDropdown = document.getElementById('settingsDropdown');
+            if (settingsContainer && !settingsContainer.contains(e.target) && settingsDropdown) {
+                settingsDropdown.classList.remove('active');
             }
         });
 
@@ -4471,21 +4350,7 @@
             }
         });
 
-        document.getElementById('pronunciationModal').addEventListener('click', (e) => {
-            if (e.target.id === 'pronunciationModal') {
-                closePronunciationModal();
-            }
-        });
 
-        // 「允許重測」checkbox 事件監聽
-        const allowRetestCheckbox = document.getElementById('allowRetestCheckbox');
-        if (allowRetestCheckbox) {
-            allowRetestCheckbox.checked = allowRetest;
-            allowRetestCheckbox.addEventListener('change', (e) => {
-                allowRetest = e.target.checked;
-                localStorage.setItem('allowRetest', allowRetest.toString());
-            });
-        }
 
         // ======== 自訂相關函數 ========
         function openAddWordModal() {
@@ -6671,8 +6536,10 @@
                     return;
                 }
 
-                // 隨機打亂順序
-                chineseQuizWords = chineseQuizWords.sort(() => Math.random() - 0.5);
+                // 根據設定進行隨機或順序排列
+                if (randomQuiz) {
+                    chineseQuizWords = chineseQuizWords.sort(() => Math.random() - 0.5);
+                }
                 chineseQuizIndex = 0;
                 chineseQuizResults = [];
 
