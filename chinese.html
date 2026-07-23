@@ -1731,7 +1731,7 @@
                         <div id="quizSheetGroupsContainer"></div>
                     </div>
                 </div>
-                <!-- <span id="quizTagCountDisplay" class="stats" style="background: rgba(255, 255, 255, 0.1); margin-left: auto;"></span> -->
+                <span id="storyTagCountDisplay" class="stats" style="background: rgba(255, 255, 255, 0.1); margin-left: auto;"></span>
             </div>
             <div style="display: none; align-items: center; gap: 20px;" id="chineseQuizModeContainer">
                 <label style="color: white; font-weight: bold;">測驗方式：</label>
@@ -2911,6 +2911,12 @@
             const idiomDisplay = document.getElementById('tagCountDisplay');
             if (idiomDisplay) {
                 idiomDisplay.textContent = `共 ${visibleCount} 項`;
+            }
+
+            // 也更新故事模式的計數顯示
+            const storyDisplay = document.getElementById('storyTagCountDisplay');
+            if (storyDisplay) {
+                storyDisplay.textContent = `共 ${visibleCount} 項`;
             }
 
         }
@@ -6331,9 +6337,8 @@
                         html += `
                             <div class="story-item idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}" data-story-index="${storyIndex}" data-local-index="${localIndex}">
                                 <div class="story-header">
-                                    <div class="story-title">${item.標題}</div>
+                                    <div class="story-title"><span class="story-number">${storyIndex + 1}. </span>${item.標題}</div>
                                     <button class="story-read-btn" onclick="playStory(${storyIndex})">朗讀</button>
-                                    <div class="story-index">${storyIndex + 1}</div>
                                 </div>
                                 <div class="story-content" onclick="toggleStoryPlayback(${storyIndex}); return false;" title="點擊暫停/繼續">${highlightedContent}</div>
                             </div>
