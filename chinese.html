@@ -1721,6 +1721,7 @@
                     </div>
                 </div>
                 <span id="tagCountDisplay" class="stats" style="background: rgba(255, 255, 255, 0.1); margin-left: auto;"></span>
+                <span id="quizTagCountDisplay" class="stats" style="background: rgba(255, 255, 255, 0.1); margin-left: auto; display: none;"></span>
             </div>
             <div class="tag-filter" id="quizTagFilterContainer" style="display: none;">
                 <label>選擇單元：</label>
@@ -1730,7 +1731,7 @@
                         <div id="quizSheetGroupsContainer"></div>
                     </div>
                 </div>
-                <span id="quizTagCountDisplay" class="stats" style="background: rgba(255, 255, 255, 0.1); margin-left: auto;"></span>
+                <!-- <span id="quizTagCountDisplay" class="stats" style="background: rgba(255, 255, 255, 0.1); margin-left: auto;"></span> -->
             </div>
             <div style="display: none; align-items: center; gap: 20px;" id="chineseQuizModeContainer">
                 <label style="color: white; font-weight: bold;">測驗方式：</label>
@@ -2912,22 +2913,6 @@
                 idiomDisplay.textContent = `共 ${visibleCount} 項`;
             }
 
-            // 測驗模式計數（沒有 idiom-item 時）
-            const quizDisplay = document.getElementById('quizTagCountDisplay');
-            if (quizDisplay && visibleCount === 0) {
-                // 計算測驗模式的成語數量（只在有 quiz sheet checkbox 時）
-                const quizSheetCheckboxes = document.querySelectorAll('#quizSheetGroupsContainer .sheet-checkbox');
-                if (quizSheetCheckboxes.length > 0) {
-                    let quizCount = 0;
-                    quizSheetCheckboxes.forEach(box => {
-                        const sheetName = box.dataset.sheetName;
-                        // 這裡無法獲取 data，所以暫時設為 0
-                    });
-                    quizDisplay.textContent = `共 0 項`;
-                }
-            } else if (quizDisplay) {
-                quizDisplay.textContent = `共 ${visibleCount} 項`;
-            }
         }
 
         function selectAllInSheet(event, sheetName) {
@@ -5670,6 +5655,10 @@
             document.getElementById('chineseContainer').style.display = 'flex';
             document.getElementById('wordsContainer').style.display = 'none';
 
+            // 恢復成語模式的計數顯示
+            document.getElementById('tagCountDisplay').style.display = 'block';
+            document.getElementById('quizTagCountDisplay').style.display = 'none';
+
             loadChineseData().then(data => {
                 if (!data || !data.成語) {
                     document.getElementById('chineseContent').innerHTML = '無法加載成語數據';
@@ -5985,6 +5974,10 @@
             document.getElementById('chineseContainer').style.display = 'flex';
             document.getElementById('wordsContainer').style.display = 'none';
 
+            // 恢復複習模式的計數顯示
+            document.getElementById('tagCountDisplay').style.display = 'block';
+            document.getElementById('quizTagCountDisplay').style.display = 'none';
+
             loadChineseData().then(data => {
                 if (!data || !data.成語) {
                     document.getElementById('chineseContent').innerHTML = '無法加載成語數據';
@@ -6159,6 +6152,10 @@
             // 显示中文容器，隐藏单词容器
             document.getElementById('chineseContainer').style.display = 'flex';
             document.getElementById('wordsContainer').style.display = 'none';
+
+            // 恢復故事模式的計數顯示
+            document.getElementById('tagCountDisplay').style.display = 'block';
+            document.getElementById('quizTagCountDisplay').style.display = 'none';
 
             loadChineseData().then(data => {
                 if (!data || !data.故事) {
@@ -6523,6 +6520,9 @@
                 document.getElementById('tagFilterContainer').style.display = 'flex';
                 document.getElementById('quizTagFilterContainer').style.display = 'none';
                 document.getElementById('chineseQuizModeContainer').style.display = 'flex';
+                // 隱藏成語計數，顯示測驗計數
+                document.getElementById('tagCountDisplay').style.display = 'none';
+                document.getElementById('quizTagCountDisplay').style.display = 'block';
 
                 // 顯示開始測驗按鈕
                 let html = `
@@ -6576,18 +6576,16 @@
                 window.calculateQuizCount = () => {
                     if (!window.quizModeData) return;
 
-                    console.log('rex---chk1')
 
                     // 1. 獲取 enabled sheets
                     const enabledSheets = new Set();
-                    document.querySelectorAll('#quizSheetGroupsContainer .sheet-checkbox:checked').forEach(box => {
-                        console.log(box.dataset.sheetName)
+                    document.querySelectorAll('#sheetGroupsContainer .sheet-checkbox:checked').forEach(box => {
                         enabledSheets.add(box.dataset.sheetName);
                     });
 
                     // 2. 獲取 enabled tags（只考慮 enabled sheets）
                     const selectedSheetTags = new Map();
-                    document.querySelectorAll('#quizSheetGroupsContainer .chinese-tag-checkbox:checked').forEach(checkbox => {
+                    document.querySelectorAll('.chinese-tag-checkbox:checked').forEach(checkbox => {
                         const sheetName = checkbox.dataset.sheet;
                         if (enabledSheets.has(sheetName)) {
                             if (!selectedSheetTags.has(sheetName)) {
@@ -6605,6 +6603,7 @@
                             const selectedTags = selectedSheetTags.get(sheetName);
                             sheetData.forEach(item => {
                                 if (selectedTags && selectedTags.has(item.tag || '')) {
+
                                     quizCount++;
                                 }
                             });
@@ -6621,12 +6620,12 @@
                 window.calculateQuizCount();
 
                 // 展開第一個 sheet 的下拉選單，方便用戶操作
-                setTimeout(() => {
-                    const firstSubmenu = document.querySelector('.sheet-submenu');
-                    if (firstSubmenu) {
-                        firstSubmenu.classList.add('expanded');
-                    }
-                }, 0);
+                // setTimeout(() => {
+                //     const firstSubmenu = document.querySelector('.sheet-submenu');
+                //     if (firstSubmenu) {
+                //         firstSubmenu.classList.add('expanded');
+                //     }
+                // }, 0);
             });
         }
 
