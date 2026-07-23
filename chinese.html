@@ -2844,29 +2844,29 @@
 
         // 全局篩選函數
         function updateChineseIdiomFilter() {
-            // 為每個 sheet 更新 selected tags
-            chineseSelectedTags.forEach((tags, sheetName) => {
-                tags.clear();
-            });
-
-            // 根據保存的狀態決定 enabled sheets（不查詢 DOM）
-            const enabledSheets = new Set();
-            // 先從 DOM 獲取最新狀態
+            // 從 DOM 獲取最新的 sheet 狀態
             document.querySelectorAll('input.sheet-checkbox').forEach(cb => {
                 chineseSheetStates[cb.dataset.sheetName] = cb.checked;
             });
-            // 再根據保存的狀態添加到 enabledSheets
+
+            // 決定哪些 sheets 被 enable
+            const enabledSheets = new Set();
             for (const sheetName in chineseSheetStates) {
                 if (chineseSheetStates[sheetName] === true) {
                     enabledSheets.add(sheetName);
                 }
             }
 
-            // 只處理 enabled sheets 的 tag checkbox
+            // 清空所有 tag 狀態
+            chineseSelectedTags.forEach((tags, sheetName) => {
+                tags.clear();
+            });
+
+            // 保存所有 checked 的 tag（不管 sheet 是否 enabled），用於恢復
             document.querySelectorAll('input.chinese-tag-checkbox').forEach(checkbox => {
                 if (checkbox.checked) {
                     const sheetName = checkbox.dataset.sheet;
-                    if (enabledSheets.has(sheetName) && chineseSelectedTags.has(sheetName)) {
+                    if (chineseSelectedTags.has(sheetName)) {
                         chineseSelectedTags.get(sheetName).add(checkbox.dataset.tag);
                     }
                 }
@@ -5648,20 +5648,23 @@
                     return;
                 }
 
-                // 生成單元選擇器（以 sheet 為單位）
+                // 清空所有容器和舊元素
                 const container = document.getElementById('sheetGroupsContainer');
                 container.innerHTML = '';
-
-                // 初始化 chineseSelectedTags
-                chineseSelectedTags.clear();
+                document.getElementById('quizSheetGroupsContainer').innerHTML = '';
+                document.querySelectorAll('.sheet-submenu').forEach(submenu => {
+                    submenu.remove();
+                });
 
                 // 生成所有 sheet 的複選框和對應的 tag 子菜單
                 Object.entries(data.成語).forEach(([sheetName, sheetData]) => {
                     // 該 sheet 的所有 tags
                     const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
 
-                    // 初始化 chineseSelectedTags 中該 sheet 的所有 tag
-                    chineseSelectedTags.set(sheetName, new Set(sheetTags));
+                    // 初始化 chineseSelectedTags 中該 sheet 的所有 tag（如果還沒有）
+                    if (!chineseSelectedTags.has(sheetName)) {
+                        chineseSelectedTags.set(sheetName, new Set(sheetTags));
+                    }
 
                     const sheetItem = document.createElement('div');
                     sheetItem.className = 'sheet-item';
@@ -5675,10 +5678,13 @@
                     checkbox.className = 'sheet-checkbox';
                     checkbox.dataset.sheetName = sheetName;
 
-                    // 預設為 true
-                    checkbox.checked = true;
+                    // 根據已保存的狀態恢復，預設為 true
+                    checkbox.checked = chineseSheetStates[sheetName] !== false;
 
-                    checkbox.onchange = updateChineseIdiomFilter;
+                    checkbox.onchange = function() {
+                        chineseSheetStates[this.dataset.sheetName] = this.checked;
+                        updateChineseIdiomFilter();
+                    };
 
                     const nameSpan = document.createElement('span');
                     nameSpan.textContent = sheetName;
@@ -5710,7 +5716,6 @@
                     const clearAllBtn = document.createElement('button');
                     clearAllBtn.textContent = '清除';
                     clearAllBtn.onclick = (e) => {
-                        console.log('rex---clear')
                         e.stopPropagation();
                         document.querySelectorAll(`input[data-sheet="${sheetName}"]`).forEach(cb => {
                             cb.checked = false;
@@ -5730,17 +5735,10 @@
                         tagCheckbox.dataset.tag = tag;
                         tagCheckbox.className = 'chinese-tag-checkbox';
 
-                        // 預設為 true
-                        tagCheckbox.checked = true;
+                        // 根據已保存的狀態恢復，預設為 true
+                        tagCheckbox.checked = chineseSelectedTags.get(sheetName)?.has(tag) ?? true;
 
-                        tagCheckbox.onchange = (e) => {
-                            // 保存狀態
-                            if (!(sheetName in chineseTagStates)) {
-                                chineseTagStates[sheetName] = {};
-                            }
-                            chineseTagStates[sheetName][tag] = tagCheckbox.checked;
-                            updateChineseIdiomFilter();
-                        };
+                        tagCheckbox.onchange = updateChineseIdiomFilter;
                         tagCheckbox.onclick = (e) => {
                             e.stopPropagation();
                         };
@@ -5948,9 +5946,13 @@
                     return;
                 }
 
-                // 生成單元選擇器（所有 sheet）
+                // 清空所有容器和舊元素
                 const container = document.getElementById('sheetGroupsContainer');
                 container.innerHTML = '';
+                document.getElementById('quizSheetGroupsContainer').innerHTML = '';
+                document.querySelectorAll('.sheet-submenu').forEach(submenu => {
+                    submenu.remove();
+                });
 
                 // 添加星號篩選
                 const starFilterItem = document.createElement('div');
@@ -6116,9 +6118,13 @@
                     return;
                 }
 
-                // 生成單元選擇器（所有 sheet）
+                // 清空所有容器和舊元素
                 const container = document.getElementById('quizSheetGroupsContainer');
                 container.innerHTML = '';
+                document.getElementById('sheetGroupsContainer').innerHTML = '';
+                document.querySelectorAll('.sheet-submenu').forEach(submenu => {
+                    submenu.remove();
+                });
 
                 let totalStories = 0;
 
@@ -6136,9 +6142,14 @@
 
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
-                    checkbox.checked = true;
                     checkbox.className = 'sheet-checkbox';
                     checkbox.dataset.sheetName = sheetName;
+                    // 根據已保存的狀態恢復，預設為 true
+                    checkbox.checked = chineseSheetStates[sheetName] !== false;
+                    checkbox.onchange = function() {
+                        chineseSheetStates[this.dataset.sheetName] = this.checked;
+                        updateChineseIdiomFilter();
+                    };
 
                     const nameSpan = document.createElement('span');
                     nameSpan.textContent = sheetName;
@@ -6240,9 +6251,13 @@
                     return;
                 }
 
-                // 生成單元選擇器（所有 sheet）
+                // 清空所有容器和舊元素
                 const container = document.getElementById('sheetGroupsContainer');
                 container.innerHTML = '';
+                document.getElementById('quizSheetGroupsContainer').innerHTML = '';
+                document.querySelectorAll('.sheet-submenu').forEach(submenu => {
+                    submenu.remove();
+                });
 
                 // 為所有 sheet 創建複選框
                 Object.entries(data.成語).forEach(([sheetName, sheetData]) => {
@@ -6254,9 +6269,14 @@
 
                     const checkbox = document.createElement('input');
                     checkbox.type = 'checkbox';
-                    checkbox.checked = true;
                     checkbox.className = 'sheet-checkbox';
                     checkbox.dataset.sheetName = sheetName;
+                    // 根據已保存的狀態恢復，預設為 true
+                    checkbox.checked = chineseSheetStates[sheetName] !== false;
+                    checkbox.onchange = function() {
+                        chineseSheetStates[this.dataset.sheetName] = this.checked;
+                        updateChineseIdiomFilter();
+                    };
 
                     const nameSpan = document.createElement('span');
                     nameSpan.textContent = sheetName;
