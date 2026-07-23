@@ -3978,8 +3978,9 @@
             document.getElementById('aboutModal').style.display = 'none';
         }
 
-        let pronunciationLang = localStorage.getItem('pronunciationLang') || 'en-US';
-        let pronunciationRate = parseFloat(localStorage.getItem('pronunciationRate')) || 1.0;
+        const settings = JSON.parse(localStorage.getItem('setting') || '{}');
+        let pronunciationLang = settings.pronunciationLang || 'en-US';
+        let pronunciationRate = settings.pronunciationRate || 1.0;
         let allowRetest = localStorage.getItem('allowRetest') === 'true'; // 預設為 false
 
         // 獲取歷史記錄，支援舊格式（boolean陣列）和新格式（數值）
@@ -4046,8 +4047,10 @@
             pronunciationLang = langSelect.value;
             pronunciationRate = parseFloat(rateSelect.value);
 
-            localStorage.setItem('pronunciationLang', pronunciationLang);
-            localStorage.setItem('pronunciationRate', pronunciationRate.toString());
+            const settings = JSON.parse(localStorage.getItem('setting') || '{}');
+            settings.pronunciationLang = pronunciationLang;
+            settings.pronunciationRate = pronunciationRate;
+            localStorage.setItem('setting', JSON.stringify(settings));
 
             alert('發音設定已保存');
             closePronunciationModal();
