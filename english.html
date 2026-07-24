@@ -2208,29 +2208,37 @@
                             sheetSubmenu.appendChild(tagItem);
                         });
 
-                        // Sheet展開/收起邏輯 - 顯示/隱藏獨立的submenu
-                        sheetHeader.onclick = (e) => {
-                            if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT') {
-                                e.stopPropagation();
+                        // Sheet或submenu hover時顯示submenu
+                        let hideTimeout;
 
-                                // 關閉其他所有的submenu
-                                document.querySelectorAll('.sheet-submenu.expanded').forEach(submenu => {
-                                    if (submenu !== sheetSubmenu) {
-                                        submenu.classList.remove('expanded');
-                                    }
-                                });
-
-                                // Toggle當前的submenu
-                                sheetSubmenu.classList.toggle('expanded');
-
-                                // 如果打開，計算位置並顯示在sheetHeader的右邊
-                                if (sheetSubmenu.classList.contains('expanded')) {
-                                    const rect = sheetHeader.getBoundingClientRect();
-                                    sheetSubmenu.style.top = rect.top + 'px';
-                                    sheetSubmenu.style.left = (rect.right + 5) + 'px';
+                        const showSubmenu = () => {
+                            clearTimeout(hideTimeout);
+                            // 關閉其他所有的submenu
+                            document.querySelectorAll('.sheet-submenu.expanded').forEach(submenu => {
+                                if (submenu !== sheetSubmenu) {
+                                    submenu.classList.remove('expanded');
                                 }
-                            }
+                            });
+
+                            // 顯示當前的submenu
+                            sheetSubmenu.classList.add('expanded');
+
+                            // 計算位置並顯示在sheetHeader的右邊
+                            const rect = sheetHeader.getBoundingClientRect();
+                            sheetSubmenu.style.top = rect.top + 'px';
+                            sheetSubmenu.style.left = (rect.right + 5) + 'px';
                         };
+
+                        const hideSubmenu = () => {
+                            hideTimeout = setTimeout(() => {
+                                sheetSubmenu.classList.remove('expanded');
+                            }, 200);
+                        };
+
+                        sheetHeader.onmouseover = showSubmenu;
+                        sheetHeader.onmouseout = hideSubmenu;
+                        sheetSubmenu.onmouseover = showSubmenu;
+                        sheetSubmenu.onmouseout = hideSubmenu;
 
                         sheetItem.appendChild(sheetHeader);
                         container.appendChild(sheetItem);
@@ -2661,7 +2669,9 @@
                     if (tagSpan && tagSpan.textContent === tag) {
                         // 快速平滑滾動
                         const container = document.getElementById('wordsContainer');
-                        const targetTop = row.offsetTop;
+                        const rect = row.getBoundingClientRect();
+                        const containerRect = container.getBoundingClientRect();
+                        const targetTop = container.scrollTop + (rect.top - containerRect.top);
                         const startTop = container.scrollTop;
                         const distance = targetTop - startTop;
                         const duration = 300; // 300ms動畫時間
