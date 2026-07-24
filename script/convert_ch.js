@@ -4,12 +4,12 @@ const path = require('path');
 
 // 讀取Excel文件
 const chengYuPath = path.join(__dirname, '..', 'docs', '成語.xlsx');
-const guShiPath = path.join(__dirname, '..', 'docs', '故事.xlsx');
+const guShiPath = path.join(__dirname, '..', 'docs', '文章.xlsx');
 const gaiCuoPath = path.join(__dirname, '..', 'docs', '改錯.xlsx');
 
 const output = {
   成語: {},
-  故事: {},
+  文章: {},
   改錯: {}
 };
 
@@ -50,7 +50,7 @@ if (fs.existsSync(chengYuPath)) {
   console.warn(`⚠ 成語.xlsx 找不到！`);
 }
 
-// 處理故事Excel文件
+// 處理文章Excel文件
 if (fs.existsSync(guShiPath)) {
   const workbook = XLSX.readFile(guShiPath);
 
@@ -67,18 +67,18 @@ if (fs.existsSync(guShiPath)) {
         sheet: sheetName,
         tag: row.tag || '',
         標題: row.標題 || '',
-        故事: row.故事 || ''
+        文章: row.文章 || ''
       }));
 
     if (sheetData.length > 0) {
-      output.故事[sheetName] = sheetData;
+      output.文章[sheetName] = sheetData;
       guShiCount += sheetData.length;
       console.log(`✓ Sheet: ${sheetName}`);
-      console.log(`  - 故事: ${sheetData.length} 條`);
+      console.log(`  - 文章: ${sheetData.length} 條`);
     }
   });
 } else {
-  console.warn(`⚠ 故事.xlsx 找不到！`);
+  console.warn(`⚠ 文章.xlsx 找不到！`);
 }
 
 // 處理改錯Excel文件
@@ -121,7 +121,7 @@ fs.writeFileSync(outputPath, JSON.stringify(output, null, 2), 'utf-8');
 console.log(`\n✓ 轉換成功！`);
 console.log(`\n統計資訊:`);
 console.log(`  - 成語: ${chengYuCount} 條`);
-console.log(`  - 故事: ${guShiCount} 條`);
+console.log(`  - 文章: ${guShiCount} 條`);
 console.log(`  - 改錯: ${gaiCuoCount} 題`);
 console.log(`  - 合計: ${chengYuCount + guShiCount + gaiCuoCount} 項`);
 console.log(`\n輸出文件: ${outputPath}`);
@@ -132,9 +132,9 @@ Object.keys(output.成語).forEach(sheetName => {
   console.log(`    "${sheetName}": [${output.成語[sheetName].length} 項]`);
 });
 console.log(`  },`);
-console.log(`  "故事": {`);
-Object.keys(output.故事).forEach(sheetName => {
-  console.log(`    "${sheetName}": [${output.故事[sheetName].length} 項]`);
+console.log(`  "文章": {`);
+Object.keys(output.文章).forEach(sheetName => {
+  console.log(`    "${sheetName}": [${output.文章[sheetName].length} 項]`);
 });
 console.log(`  },`);
 console.log(`  "改錯": {`);

@@ -1718,7 +1718,7 @@
                 <label>模式：</label>
                 <select id="chineseModeSelect" onchange="changeChineseMode(this.value)">
                     <option value="idioms">成語</option>
-                    <option value="stories">故事</option>
+                    <option value="stories">文章</option>
                     <option value="gaicuo">改錯</option>
                     <option value="review">複習</option>
                     <option value="quiz">測驗</option>
@@ -1837,7 +1837,7 @@
                             • 複習模式：根據準確率複習低分單字<br>
                             • 測驗模式：隨機測試單字拼寫<br>
                             • 統計模式：查看每個tag的熟練度統計<br>
-                            • 中文模式：學習成語和成語故事<br>
+                            • 中文模式：學習成語和成語文章<br>
                             • 自訂模式：新增、編輯、刪除自訂單字
                         </div>
                     </div>
@@ -2814,7 +2814,7 @@
                 }
 
                 if (sheetTags.has(itemTag)) {
-                    // 成語使用 flex，故事使用 block
+                    // 成語使用 flex，文章使用 block
                     item.style.display = item.classList.contains('story-item') ? 'block' : 'flex';
                     displayIndex++;
                     visibleCount++;
@@ -2829,13 +2829,13 @@
                 }
             });
 
-            // 更新計數顯示（成語或故事）
+            // 更新計數顯示（成語或文章）
             const idiomDisplay = document.getElementById('tagCountDisplay');
             if (idiomDisplay) {
                 idiomDisplay.textContent = `共 ${visibleCount} 項`;
             }
 
-            // 也更新故事模式的計數顯示
+            // 也更新文章模式的計數顯示
             const storyDisplay = document.getElementById('storyTagCountDisplay');
             if (storyDisplay) {
                 storyDisplay.textContent = `共 ${visibleCount} 項`;
@@ -5264,7 +5264,7 @@
         let chineseData = null;
         let currentStoryPlaying = -1;
         let isStoryPaused = false;
-        let currentStoryText = '';
+        let currentArticleText = '';
         let currentCharIndex = 0;
 
         // 声调符号定义
@@ -5393,12 +5393,12 @@
             const sheetName = storyItem.dataset.sheet;
             const localIndex = parseInt(storyItem.dataset.localIndex);
 
-            if (!chineseData || !chineseData.故事 || !chineseData.故事[sheetName] || !chineseData.故事[sheetName][localIndex]) {
+            if (!chineseData || !chineseData.文章 || !chineseData.文章[sheetName] || !chineseData.文章[sheetName][localIndex]) {
                 console.error('Story data not found');
                 return;
             }
 
-            const story = chineseData.故事[sheetName][localIndex];
+            const story = chineseData.文章[sheetName][localIndex];
 
             // 停止之前的播放
             speechSynthesis.cancel();
@@ -5408,10 +5408,10 @@
 
             currentStoryPlaying = index;
             isStoryPaused = false;
-            currentStoryText = story.標題 + '。' + story.故事;
+            currentArticleText = story.標題 + '。' + story.文章;
             currentCharIndex = 0;
 
-            const utterance = new SpeechSynthesisUtterance(currentStoryText);
+            const utterance = new SpeechSynthesisUtterance(currentArticleText);
             utterance.lang = 'zh-TW';
             const rate = localStorage.getItem('pronunciationRate') || '1.0';
             utterance.rate = parseFloat(rate);
@@ -5455,13 +5455,13 @@
             const sheetName = storyItem.dataset.sheet;
             const localIndex = parseInt(storyItem.dataset.localIndex);
 
-            if (!chineseData || !chineseData.故事 || !chineseData.故事[sheetName] || !chineseData.故事[sheetName][localIndex]) {
+            if (!chineseData || !chineseData.文章 || !chineseData.文章[sheetName] || !chineseData.文章[sheetName][localIndex]) {
                 return;
             }
 
-            const story = chineseData.故事[sheetName][localIndex];
-            const beforeText = currentStoryText.substring(0, currentCharIndex);
-            const afterText = currentStoryText.substring(currentCharIndex);
+            const story = chineseData.文章[sheetName][localIndex];
+            const beforeText = currentArticleText.substring(0, currentCharIndex);
+            const afterText = currentArticleText.substring(currentCharIndex);
 
             // 高亮成语
             let beforeHtml = highlightIdiomsInStory(beforeText);
@@ -5491,16 +5491,16 @@
             const contentDiv = storyItem.querySelector('.story-content');
             if (!contentDiv) return;
 
-            // 获取原始故事内容
+            // 获取原始文章内容
             const sheetName = storyItem.dataset.sheet;
             const localIndex = parseInt(storyItem.dataset.localIndex);
 
-            if (!chineseData || !chineseData.故事 || !chineseData.故事[sheetName] || !chineseData.故事[sheetName][localIndex]) {
+            if (!chineseData || !chineseData.文章 || !chineseData.文章[sheetName] || !chineseData.文章[sheetName][localIndex]) {
                 return;
             }
 
-            const story = chineseData.故事[sheetName][localIndex];
-            let displayHtml = highlightIdiomsInStory(story.故事);
+            const story = chineseData.文章[sheetName][localIndex];
+            let displayHtml = highlightIdiomsInStory(story.文章);
 
             if (currentStoryPlaying === index) {
                 const statusText = isStoryPaused ? ' ⏸ [暫停中 - 點擊繼續]' : ' ▶ [播放中 - 點擊暫停]';
@@ -5518,7 +5518,7 @@
         };
 
         function pronounceChineseText(text) {
-            // 停止當前的故事播放
+            // 停止當前的文章播放
             if (currentStoryPlaying >= 0) {
                 speechSynthesis.cancel();
                 currentStoryPlaying = -1;
@@ -6424,8 +6424,8 @@
                     typeData = data.成語;
                 } else if (typeName === '改錯') {
                     typeData = data.改錯;
-                } else if (typeName === '故事') {
-                    typeData = data.故事;
+                } else if (typeName === '文章') {
+                    typeData = data.文章;
                 }
 
                 if (!typeData || !typeData[sheetName]) {
@@ -6610,9 +6610,9 @@
                     renderChineseTypeStatistics('改錯', data.改錯, '#ff9800', container);
                 }
 
-                // 處理故事
-                if (data.故事 && Object.keys(data.故事).length > 0) {
-                    renderChineseTypeStatistics('故事', data.故事, '#4CAF50', container);
+                // 處理文章
+                if (data.文章 && Object.keys(data.文章).length > 0) {
+                    renderChineseTypeStatistics('文章', data.文章, '#4CAF50', container);
                 }
 
                 document.getElementById('chineseModeSelect').value = 'statistics';
@@ -6984,13 +6984,13 @@
             document.getElementById('chineseContainer').style.display = 'flex';
             document.getElementById('wordsContainer').style.display = 'none';
 
-            // 恢復故事模式的計數顯示
+            // 恢復文章模式的計數顯示
             document.getElementById('tagCountDisplay').style.display = 'block';
             document.getElementById('quizTagCountDisplay').style.display = 'none';
 
             loadChineseData().then(data => {
-                if (!data || !data.故事) {
-                    document.getElementById('chineseContent').innerHTML = '無法加載故事數據';
+                if (!data || !data.文章) {
+                    document.getElementById('chineseContent').innerHTML = '無法加載文章數據';
                     return;
                 }
 
@@ -7005,7 +7005,7 @@
                 let totalStories = 0;
 
                 // 為所有 sheet 創建複選框和對應的 tag 子菜單
-                Object.entries(data.故事).forEach(([sheetName, sheetData]) => {
+                Object.entries(data.文章).forEach(([sheetName, sheetData]) => {
                     if (!sheetData || sheetData.length === 0) return;
 
                     totalStories += sheetData.length;
@@ -7150,14 +7150,14 @@
                 document.getElementById('quizTagFilterContainer').style.display = 'flex';
                 document.getElementById('chineseQuizModeContainer').style.display = 'none';
 
-                // 生成故事列表
+                // 生成文章列表
                 let html = '';
                 let storyIndex = 0;
 
                 // 遍歷所有 sheet
-                Object.entries(data.故事).forEach(([sheetName, sheetData]) => {
+                Object.entries(data.文章).forEach(([sheetName, sheetData]) => {
                     sheetData.forEach((item, localIndex) => {
-                        const highlightedContent = highlightIdiomsInStory(item.故事);
+                        const highlightedContent = highlightIdiomsInStory(item.文章);
 
                         html += `
                             <div class="story-item idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}" data-story-index="${storyIndex}" data-local-index="${localIndex}">
