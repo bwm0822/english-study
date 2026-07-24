@@ -5266,7 +5266,7 @@
         let isStoryPaused = false;
         let currentArticleText = '';
         let currentCharIndex = 0;
-        let showIdiomBackground = true;
+        let idiomBackgroundStates = {};
 
         // 声调符号定义
         const TONE_MARKS = ['ˉ', 'ˊ', 'ˇ', 'ˋ', '˙'];
@@ -5554,6 +5554,9 @@
 
         function showChineseIdioms() {
             stopStoryPlayback();
+
+            // 重置成語底色狀態為預設顯示
+            idiomBackgroundStates = {};
 
             // 显示中文容器，隐藏单词容器
             document.getElementById('chineseContainer').style.display = 'flex';
@@ -5844,7 +5847,7 @@
             return null;
         }
 
-        function highlightIdiomsInStory(text) {
+        function highlightIdiomsInStory(text, showBackground = true) {
             if (!chineseData || !chineseData.成語) {
                 return text;
             }
@@ -5865,7 +5868,7 @@
             sortedIdioms.forEach(idiom => {
                 const regex = new RegExp(idiom.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
                 const escapedIdiom = idiom.replace(/'/g, "\\'");
-                const bgStyle = showIdiomBackground ? 'background: #FF8C00;' : '';
+                const bgStyle = showBackground ? 'background: #FF8C00;' : '';
                 highlightedText = highlightedText.replace(regex, `<strong style="color: #FF8C00; font-weight: bold; cursor: pointer; ${bgStyle}" onclick="pronounceChineseText('${escapedIdiom}')">${idiom}</strong>`);
             });
 
@@ -6122,6 +6125,9 @@
         }
 
         function showChineseIdiomsBySheetAndTag(sheetName, tag) {
+            // 重置成語底色狀態為預設顯示
+            idiomBackgroundStates = {};
+
             loadChineseData().then(data => {
                 if (!data || !data.文章 || !data.文章[sheetName]) {
                     document.getElementById('chineseContent').innerHTML = '無法加載數據';
@@ -6141,13 +6147,17 @@
                 let storyIndex = 0;
 
                 filteredArticles.forEach((item, localIndex) => {
-                    const highlightedContent = highlightIdiomsInStory(item.文章);
+                    const stateKey = `${sheetName}_${localIndex}`;
+                    const showBackground = idiomBackgroundStates[stateKey] !== false;
+                    const highlightedContent = highlightIdiomsInStory(item.文章, showBackground);
+                    const btnText = showBackground ? '顯示' : '隱藏';
+                    const btnColor = showBackground ? '#4CAF50' : '#FF6F00';
 
                     html += `
                         <div class="story-item idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}" data-story-index="${storyIndex}" data-local-index="${localIndex}">
                             <div class="story-header">
                                 <div class="story-title"><span class="story-number">${storyIndex + 1}. </span>${item.標題}</div>
-                                <button class="story-read-btn" id="idiom-toggle-${storyIndex}" onclick="toggleIdiomBackground(${storyIndex})" style="background: #4CAF50;">顯示</button>
+                                <button class="story-read-btn" id="idiom-toggle-${storyIndex}" onclick="toggleIdiomBackground(${storyIndex})" style="background: ${btnColor};">${btnText}</button>
                                 <button class="story-read-btn" onclick="playStory(${storyIndex})">朗讀</button>
                                 <button class="story-read-btn" style="background: #FF9800;" onclick="startArticleIdiomQuiz('${sheetName}', '${item.tag || ''}', ${localIndex})">成語測驗</button>
                             </div>
@@ -7224,13 +7234,17 @@
                 // 遍歷所有 sheet
                 Object.entries(data.文章).forEach(([sheetName, sheetData]) => {
                     sheetData.forEach((item, localIndex) => {
-                        const highlightedContent = highlightIdiomsInStory(item.文章);
+                        const stateKey = `${sheetName}_${localIndex}`;
+                        const showBackground = idiomBackgroundStates[stateKey] !== false;
+                        const highlightedContent = highlightIdiomsInStory(item.文章, showBackground);
+                        const btnText = showBackground ? '顯示' : '隱藏';
+                        const btnColor = showBackground ? '#4CAF50' : '#FF6F00';
 
                         html += `
                             <div class="story-item idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}" data-story-index="${storyIndex}" data-local-index="${localIndex}">
                                 <div class="story-header">
                                     <div class="story-title"><span class="story-number">${storyIndex + 1}. </span>${item.標題}</div>
-                                    <button class="story-read-btn" id="idiom-toggle-${storyIndex}" onclick="toggleIdiomBackground(${storyIndex})" style="background: #4CAF50;">顯示</button>
+                                    <button class="story-read-btn" id="idiom-toggle-${storyIndex}" onclick="toggleIdiomBackground(${storyIndex})" style="background: ${btnColor};">${btnText}</button>
                                     <button class="story-read-btn" onclick="playStory(${storyIndex})">朗讀</button>
                                     <button class="story-read-btn" style="background: #FF9800;" onclick="startArticleIdiomQuiz('${sheetName}', '${item.tag || ''}', ${localIndex})">成語測驗</button>
                                 </div>
@@ -8597,27 +8611,35 @@
         }
 
         function toggleIdiomBackground(storyIndex) {
-            showIdiomBackground = !showIdiomBackground;
+            const storyItem = document.querySelector(`[data-story-index="${storyIndex}"]`);
+            if (!storyItem) return;
+
+            const sheetName = storyItem.dataset.sheet;
+            const localIndex = parseInt(storyItem.dataset.localIndex);
+            const stateKey = `${sheetName}_${localIndex}`;
+
+            // 初始化狀態為true（預設有底色）
+            if (idiomBackgroundStates[stateKey] === undefined) {
+                idiomBackgroundStates[stateKey] = true;
+            }
+
+            // 切換狀態
+            idiomBackgroundStates[stateKey] = !idiomBackgroundStates[stateKey];
+            const showBackground = idiomBackgroundStates[stateKey];
 
             const btn = document.getElementById(`idiom-toggle-${storyIndex}`);
             if (btn) {
-                btn.textContent = showIdiomBackground ? '隱藏' : '顯示';
-                btn.style.background = showIdiomBackground ? '#FF6F00' : '#4CAF50';
+                btn.textContent = showBackground ? '顯示' : '隱藏';
+                btn.style.background = showBackground ? '#4CAF50' : '#FF6F00';
             }
 
             // 重新渲染故事內容
-            const storyItem = document.querySelector(`[data-story-index="${storyIndex}"]`);
-            if (storyItem) {
-                const sheetName = storyItem.dataset.sheet;
-                const localIndex = parseInt(storyItem.dataset.localIndex);
-
-                if (chineseData && chineseData.文章 && chineseData.文章[sheetName]) {
-                    const story = chineseData.文章[sheetName][localIndex];
-                    if (story) {
-                        const contentDiv = storyItem.querySelector('.story-content');
-                        const highlightedContent = highlightIdiomsInStory(story.文章);
-                        contentDiv.innerHTML = highlightedContent;
-                    }
+            if (chineseData && chineseData.文章 && chineseData.文章[sheetName]) {
+                const story = chineseData.文章[sheetName][localIndex];
+                if (story) {
+                    const contentDiv = storyItem.querySelector('.story-content');
+                    const highlightedContent = highlightIdiomsInStory(story.文章, showBackground);
+                    contentDiv.innerHTML = highlightedContent;
                 }
             }
         }
