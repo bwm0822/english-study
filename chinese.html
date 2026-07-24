@@ -7667,7 +7667,17 @@
             if (isCorrect) {
                 resultDiv.textContent = '正確';
                 resultDiv.style.color = '#4CAF50';
-                answerDisplay.style.display = 'none';
+
+                if (!isGaicuo) {
+                    // 成語模式：顯示正確答案，紅底白字
+                    answerDisplay.style.display = 'block';
+                    answerDisplay.textContent = word.成語;
+                    answerDisplay.style.background = '#f44336';
+                    answerDisplay.style.color = 'white';
+                    answerDisplay.style.padding = '6px 8px';
+                } else {
+                    answerDisplay.style.display = 'none';
+                }
             } else {
                 resultDiv.textContent = '錯誤';
                 resultDiv.style.color = '#f44336';
@@ -7685,11 +7695,14 @@
                         `<span style="color: #f44336; font-weight: bold;">${correctChar}</span>`
                     );
                     answerDisplay.innerHTML = highlightedAnswer;
-                } else {
-                    // 成語模式：顯示正確答案
-                    answerDisplay.textContent = word.成語;
                     answerDisplay.style.background = 'transparent';
                     answerDisplay.style.color = 'white';
+                } else {
+                    // 成語模式：顯示正確答案，紅底白字
+                    answerDisplay.textContent = word.成語;
+                    answerDisplay.style.background = '#f44336';
+                    answerDisplay.style.color = 'white';
+                    answerDisplay.style.padding = '6px 8px';
                 }
             }
 
