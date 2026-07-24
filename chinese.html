@@ -261,6 +261,16 @@
             font-weight: bold;
         }
 
+        .gaicuo-idiom:hover {
+            color: #ffa500 !important;
+            transition: color 0.2s;
+        }
+
+        .gaicuo-explanation:hover {
+            color: white !important;
+            transition: color 0.2s;
+        }
+
         .idiom-index {
             color: #999;
             font-size: 0.9em;
@@ -1738,8 +1748,10 @@
             <div style="display: none; align-items: center; gap: 20px;" id="chineseQuizModeContainer">
                 <label style="color: white; font-weight: bold;">測驗方式：</label>
                 <select id="chineseQuizMethodSelect" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
-                    <option value="explanation">解釋</option>
-                    <option value="sentence">造句</option>
+                    <option value="idiom-explanation">成語-解釋</option>
+                    <option value="idiom-sentence">成語-造句</option>
+                    <option value="gaicuo-hint">改錯-提示</option>
+                    <option value="gaicuo-standard">改錯-標準</option>
                 </select>
             </div>
             <div class="search-filter" id="searchFilterContainer" style="display: none;">
@@ -6077,8 +6089,8 @@
                                     <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
                                 </div>
                                 <div style="flex: 0 1 300px; font-size: 2.0em; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;">${item.題目 || ''}</div>
-                                <div style="flex: 0 0 200px; color: white; white-space: nowrap; font-size: 2.0em; overflow: hidden; text-overflow: ellipsis; text-align: center; cursor: pointer;" onclick="pronounceChineseText('${item.成語.replace(/'/g, "\\'")}')" title="點擊發音">${idiomDisplay}</div>
-                                <div style="flex: 1; color: #b8b8b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.3em; cursor: pointer;" onclick="pronounceChineseText('${item.解釋.replace(/'/g, "\\'")}')" title="點擊發音">${item.解釋 || ''}</div>
+                                <div class="gaicuo-idiom" style="flex: 0 0 200px; color: white; white-space: nowrap; font-size: 2.0em; overflow: hidden; text-overflow: ellipsis; text-align: center; cursor: pointer;" onclick="pronounceChineseText('${item.成語.replace(/'/g, "\\'")}')" title="點擊發音">${idiomDisplay}</div>
+                                <div class="gaicuo-explanation" style="flex: 1; color: #b8b8b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.3em; cursor: pointer;" onclick="pronounceChineseText('${item.解釋.replace(/'/g, "\\'")}')" title="點擊發音">${item.解釋 || ''}</div>
                             </div>
                         `;
                     });
@@ -6116,8 +6128,8 @@
             document.getElementById('quizTagCountDisplay').style.display = 'none';
 
             loadChineseData().then(data => {
-                if (!data || !data.成語) {
-                    document.getElementById('chineseContent').innerHTML = '無法加載成語數據';
+                if (!data || (!data.成語 && !data.改錯)) {
+                    document.getElementById('chineseContent').innerHTML = '無法加載數據';
                     return;
                 }
 
@@ -6165,59 +6177,164 @@
                 accuracyFilterContainer.appendChild(accuracyLabel);
                 container.appendChild(accuracyFilterContainer);
 
+                // 添加顯示類型選擇下拉選單
+                const typeFilterContainer = document.createElement('div');
+                typeFilterContainer.className = 'tag-checkbox-item';
+                typeFilterContainer.style.borderBottom = '1px solid #eee';
+                typeFilterContainer.style.paddingBottom = '10px';
+                typeFilterContainer.style.marginBottom = '10px';
+                typeFilterContainer.style.display = 'flex';
+                typeFilterContainer.style.alignItems = 'center';
+                typeFilterContainer.style.gap = '10px';
+
+                const typeLabel = document.createElement('label');
+                typeLabel.textContent = '顯示：';
+                typeLabel.style.minWidth = '50px';
+
+                const typeSelect = document.createElement('select');
+                typeSelect.id = 'chinese-review-type-filter';
+                typeSelect.style.padding = '6px';
+                typeSelect.style.borderRadius = '4px';
+                typeSelect.style.border = '1px solid #ccc';
+                typeSelect.style.cursor = 'pointer';
+
+                const option1 = document.createElement('option');
+                option1.value = 'both';
+                option1.textContent = '成語+改錯';
+
+                const option2 = document.createElement('option');
+                option2.value = 'idiom';
+                option2.textContent = '成語';
+
+                const option3 = document.createElement('option');
+                option3.value = 'gaicuo';
+                option3.textContent = '改錯';
+
+                typeSelect.appendChild(option1);
+                typeSelect.appendChild(option2);
+                typeSelect.appendChild(option3);
+
+                typeFilterContainer.appendChild(typeLabel);
+                typeFilterContainer.appendChild(typeSelect);
+                container.appendChild(typeFilterContainer);
+
                 // 显示单元选择容器
                 document.getElementById('tagFilterContainer').style.display = 'flex';
                 document.getElementById('quizTagFilterContainer').style.display = 'none';
                 document.getElementById('chineseQuizModeContainer').style.display = 'none';
 
-                // 生成成語列表
+                // 生成成語和改錯列表
                 let html = '';
-                let itemIndex = 0;
+                let idiomIndex = 0;
+                let gaicuoIndex = 0;
 
-                // 遍歷所有 sheet
-                Object.entries(data.成語).forEach(([sheetName, sheetData]) => {
-                    sheetData.forEach((item) => {
-                        itemIndex++;
-                        const explanation = item.解釋.replace(/'/g, "\\'");
-                        const zhuyinArray = item.注音.split(' ');
-                        const zhuyinHtml = createZhuyinHTML_V2(item.成語, zhuyinArray, true, item.成語);
+                // 成語部分
+                if (data.成語 && Object.keys(data.成語).length > 0) {
+                    html += '<div style="margin-bottom: 0;">';
 
-                        // 計算正確率
-                        const quizKey = `${sheetName}/${item.成語}`;
-                        const quizResult = getChineseQuizResultFromStorage(quizKey);
-                        let accuracyDisplay = '--';
-                        let accuracyValue = null;
-                        if (quizResult !== null) {
-                            accuracyDisplay = quizResult ? '100' : '0';
-                            accuracyValue = quizResult ? 100 : 0;
-                        }
+                    Object.entries(data.成語).forEach(([sheetName, sheetData]) => {
+                        sheetData.forEach((item) => {
+                            idiomIndex++;
+                            const explanation = item.解釋.replace(/'/g, "\\'");
+                            const zhuyinArray = item.注音.split(' ');
+                            const zhuyinHtml = createZhuyinHTML_V2(item.成語, zhuyinArray, true, item.成語);
 
-                        // 檢查收藏狀態
-                        const favoriteKey = `${sheetName}/${item.成語}`;
-                        const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+                            // 計算正確率
+                            const quizKey = `${sheetName}/${item.成語}`;
+                            const quizResult = getChineseQuizResultFromStorage(quizKey);
+                            let accuracyDisplay = '--';
+                            let accuracyValue = null;
+                            if (quizResult !== null) {
+                                accuracyDisplay = quizResult ? '100' : '0';
+                                accuracyValue = quizResult ? 100 : 0;
+                            }
 
-                        html += `
-                            <div class="idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}" data-favorite-key="${favoriteKey}" data-favorite="${isFavorited}" data-accuracy="${accuracyValue}">
-                                <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${itemIndex}</div>
-                                <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" class="review-star-btn" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; const parent = el.closest('.idiom-item'); if (el.textContent === '★') { saveChineseFavoriteToStorage(parent.dataset.favoriteKey, 'true'); parent.dataset.favorite = 'true'; } else { deleteChineseFavoriteFromStorage(parent.dataset.favoriteKey); parent.dataset.favorite = 'false'; } updateChineseReviewFilter();">${isFavorited ? '★' : '☆'}</div>
-                                <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 0;">
-                                    <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center;">
-                                        <div>${sheetName}</div>
-                                        <div>${item.tag || ''}</div>
+                            // 檢查收藏狀態
+                            const favoriteKey = `${sheetName}/${item.成語}`;
+                            const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+
+                            html += `
+                                <div class="idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}" data-favorite-key="${favoriteKey}" data-favorite="${isFavorited}" data-accuracy="${accuracyValue}" data-type="idiom">
+                                    <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${idiomIndex}</div>
+                                    <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" class="review-star-btn" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; const parent = el.closest('.idiom-item'); if (el.textContent === '★') { saveChineseFavoriteToStorage(parent.dataset.favoriteKey, 'true'); parent.dataset.favorite = 'true'; } else { deleteChineseFavoriteFromStorage(parent.dataset.favoriteKey); parent.dataset.favorite = 'false'; } updateChineseReviewFilter();">${isFavorited ? '★' : '☆'}</div>
+                                    <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 0;">
+                                        <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center;">
+                                            <div>${sheetName}</div>
+                                            <div>${item.tag || ''}</div>
+                                        </div>
+                                        <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
                                     </div>
-                                    <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
+                                    <div class="idiom-left">
+                                        <div class="idiom-phonetic">${zhuyinHtml}</div>
+                                    </div>
+                                    <div class="idiom-middle">
+                                        <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.解釋}</div>
+                                        <div class="idiom-example" onclick="pronounceChineseText('${item.造句.replace(/'/g, "\\'")}')" title="點擊朗讀" style="cursor: pointer;">${highlightIdiomInSentence(item.成語, item.造句)}</div>
+                                    </div>
                                 </div>
-                                <div class="idiom-left">
-                                    <div class="idiom-phonetic">${zhuyinHtml}</div>
-                                </div>
-                                <div class="idiom-middle">
-                                    <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.解釋}</div>
-                                    <div class="idiom-example" onclick="pronounceChineseText('${item.造句.replace(/'/g, "\\'")}')" title="點擊朗讀" style="cursor: pointer;">${highlightIdiomInSentence(item.成語, item.造句)}</div>
-                                </div>
-                            </div>
-                        `;
+                            `;
+                        });
                     });
-                });
+
+                    html += '</div>';
+                }
+
+                // 改錯部分
+                if (data.改錯 && Object.keys(data.改錯).length > 0) {
+                    html += '<div style="margin-bottom: 0;">';
+
+                    Object.entries(data.改錯).forEach(([sheetName, sheetData]) => {
+                        sheetData.forEach((item) => {
+                            gaicuoIndex++;
+                            const explanation = item.解釋.replace(/'/g, "\\'");
+
+                            // 計算正確率
+                            const quizKey = `${sheetName}/${item.成語}`;
+                            const quizResult = getChineseQuizResultFromStorage(quizKey);
+                            let accuracyDisplay = '--';
+                            let accuracyValue = null;
+                            if (quizResult !== null) {
+                                accuracyDisplay = quizResult ? '100' : '0';
+                                accuracyValue = quizResult ? 100 : 0;
+                            }
+
+                            // 檢查收藏狀態
+                            const favoriteKey = `${sheetName}/${item.成語}`;
+                            const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+
+                            // 在成語中高亮正確字（答案）- 紅色粗體
+                            let idiomDisplay = item.成語 || '';
+                            if (item.答案) {
+                                const correctText = item.答案;
+                                idiomDisplay = idiomDisplay.split('').map(char => {
+                                    if (correctText.includes(char)) {
+                                        return `<span style="color: #ff6b6b; font-weight: bold;">${char}</span>`;
+                                    }
+                                    return char;
+                                }).join('');
+                            }
+
+                            html += `
+                                <div class="idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}" data-favorite-key="${favoriteKey}" data-favorite="${isFavorited}" data-accuracy="${accuracyValue}" data-type="gaicuo">
+                                    <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${gaicuoIndex}</div>
+                                    <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" class="review-star-btn" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; const parent = el.closest('.idiom-item'); if (el.textContent === '★') { saveChineseFavoriteToStorage(parent.dataset.favoriteKey, 'true'); parent.dataset.favorite = 'true'; } else { deleteChineseFavoriteFromStorage(parent.dataset.favoriteKey); parent.dataset.favorite = 'false'; } updateChineseReviewFilter();">${isFavorited ? '★' : '☆'}</div>
+                                    <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 0;">
+                                        <div style="background: #ff9800; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center;">
+                                            <div>${sheetName}</div>
+                                            <div>${item.tag || ''}</div>
+                                        </div>
+                                        <div style="color: #ff9800; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
+                                    </div>
+                                    <div style="flex: 0 1 300px; font-size: 2.0em; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;">${item.題目 || ''}</div>
+                                    <div class="gaicuo-idiom" style="flex: 0 0 200px; color: white; white-space: nowrap; font-size: 2.0em; overflow: hidden; text-overflow: ellipsis; text-align: center; cursor: pointer;" onclick="pronounceChineseText('${item.成語.replace(/'/g, "\\'")}')" title="點擊發音">${idiomDisplay}</div>
+                                    <div class="gaicuo-explanation" style="flex: 1; color: #b8b8b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.3em; cursor: pointer;" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.解釋 || ''}</div>
+                                </div>
+                            `;
+                        });
+                    });
+
+                    html += '</div>';
+                }
 
                 document.getElementById('chineseContent').innerHTML = html;
                 document.getElementById('chineseModeSelect').value = 'review';
@@ -6226,6 +6343,8 @@
                 function updateChineseReviewFilter() {
                     const starCheckbox = document.getElementById('chinese-review-star-filter');
                     const accuracyCheckbox = document.getElementById('chinese-review-accuracy-filter-checkbox');
+                    const typeSelect = document.getElementById('chinese-review-type-filter');
+                    const typeValue = typeSelect ? typeSelect.value : 'both';
 
                     const items = document.querySelectorAll('.idiom-item');
                     let visibleCount = 0;
@@ -6233,8 +6352,21 @@
                     items.forEach(item => {
                         let shouldDisplay = true;
 
+                        // 類型篩選
+                        const itemType = item.dataset.type;
+                        if (typeValue === 'idiom' && itemType !== 'idiom') {
+                            shouldDisplay = false;
+                        } else if (typeValue === 'gaicuo' && itemType !== 'gaicuo') {
+                            shouldDisplay = false;
+                        }
+
+                        // 如果星號和正確率都未勾選，不顯示任何項目
+                        if (shouldDisplay && (!starCheckbox?.checked && !accuracyCheckbox?.checked)) {
+                            shouldDisplay = false;
+                        }
+
                         // 星號篩選
-                        if (starCheckbox && starCheckbox.checked) {
+                        if (shouldDisplay && starCheckbox && starCheckbox.checked) {
                             const isFav = item.dataset.favorite === 'true';
                             if (!isFav) {
                                 shouldDisplay = false;
@@ -6247,11 +6379,6 @@
                             if (itemAccuracy !== '0') {
                                 shouldDisplay = false;
                             }
-                        }
-
-                        // 如果兩個篩選器都未勾選，不顯示任何成語
-                        if (!starCheckbox?.checked && !(accuracyCheckbox?.checked)) {
-                            shouldDisplay = false;
                         }
 
                         item.style.display = shouldDisplay ? 'flex' : 'none';
@@ -6270,12 +6397,16 @@
                 // 篩選事件監聽
                 const reviewStarCheckbox = document.getElementById('chinese-review-star-filter');
                 const reviewAccuracyCheckbox = document.getElementById('chinese-review-accuracy-filter-checkbox');
+                const reviewTypeSelect = document.getElementById('chinese-review-type-filter');
 
                 if (reviewStarCheckbox) {
                     reviewStarCheckbox.addEventListener('change', updateChineseReviewFilter);
                 }
                 if (reviewAccuracyCheckbox) {
                     reviewAccuracyCheckbox.addEventListener('change', updateChineseReviewFilter);
+                }
+                if (reviewTypeSelect) {
+                    reviewTypeSelect.addEventListener('change', updateChineseReviewFilter);
                 }
 
                 // 初始調用過濾函數
@@ -6515,10 +6646,18 @@
                     submenu.remove();
                 });
 
+                // 收集所有 sheet（成語和改錯）
+                const allSheets = new Set([
+                    ...Object.keys(data.成語),
+                    ...Object.keys(data.改錯)
+                ]);
+
                 // 為所有 sheet 創建複選框和對應的 tag 子菜單
-                Object.entries(data.成語).forEach(([sheetName, sheetData]) => {
-                    // 該 sheet 的所有 tags
-                    const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
+                Array.from(allSheets).sort().forEach(sheetName => {
+                    // 該 sheet 的所有 tags（來自成語和改錯）
+                    const idiomTags = data.成語[sheetName]?.map(item => item.tag || '') || [];
+                    const gaicuoTags = data.改錯[sheetName]?.map(item => item.tag || '') || [];
+                    const sheetTags = [...new Set([...idiomTags, ...gaicuoTags].filter(t => t))].sort();
 
                     // 初始化 chineseSelectedTags 中該 sheet 的所有 tag（如果還沒有）
                     if (!chineseSelectedTags.has(sheetName)) {
@@ -6676,8 +6815,9 @@
                     </div>
                 `;
 
-                // 計算根據 sheet 和 tag 篩選後的成語數量
-                let quizCount = 0;
+                // 計算根據 sheet 和 tag 篩選後的成語和改錯數量
+                let idiomCount = 0;
+                let gaicuoCount = 0;
                 document.querySelectorAll('.sheet-checkbox:checked').forEach(box => {
                     const sheetName = box.dataset.sheetName;
                     if (data.成語[sheetName]) {
@@ -6686,11 +6826,19 @@
                             if (!selectedTags) return true;
                             return selectedTags.has(word.tag || '');
                         });
-                        quizCount += filteredWords.length;
+                        idiomCount += filteredWords.length;
+                    }
+                    if (data.改錯[sheetName]) {
+                        const selectedTags = chineseSelectedTags.get(sheetName);
+                        const filteredWords = data.改錯[sheetName].filter(word => {
+                            if (!selectedTags) return true;
+                            return selectedTags.has(word.tag || '');
+                        });
+                        gaicuoCount += filteredWords.length;
                     }
                 });
 
-                const htmlWithCount = html.replace('>開始測驗</button>', `>開始測驗 (${quizCount})</button>`);
+                const htmlWithCount = html.replace('>開始測驗</button>', `>開始測驗 (成語：${idiomCount}，改錯：${gaicuoCount})</button>`);
                 document.getElementById('chineseContent').innerHTML = html;
 
                 // 保存 data 到全局變數供計數使用
@@ -6732,7 +6880,7 @@
                     });
 
                     // 3. 計算符合條件的成語數量
-                    let quizCount = 0;
+                    let idiomCount = 0;
                     enabledSheets.forEach(sheetName => {
                         const sheetData = window.quizModeData.成語[sheetName];
                         if (sheetData) {
@@ -6740,7 +6888,22 @@
                             sheetData.forEach(item => {
                                 if (selectedTags && selectedTags.has(item.tag || '')) {
 
-                                    quizCount++;
+                                    idiomCount++;
+                                }
+                            });
+                        }
+                    });
+
+                    // 4. 計算符合條件的改錯數量
+                    let gaicuoCount = 0;
+                    enabledSheets.forEach(sheetName => {
+                        const sheetData = window.quizModeData.改錯[sheetName];
+                        if (sheetData) {
+                            const selectedTags = selectedSheetTags.get(sheetName);
+                            sheetData.forEach(item => {
+                                if (selectedTags && selectedTags.has(item.tag || '')) {
+
+                                    gaicuoCount++;
                                 }
                             });
                         }
@@ -6748,7 +6911,7 @@
 
                     const display = document.getElementById('quizTagCountDisplay');
                     if (display) {
-                        display.textContent = `共 ${quizCount} 項`;
+                        display.textContent = `成語：${idiomCount}，改錯：${gaicuoCount}`;
                     }
                 };
 
@@ -6775,19 +6938,24 @@
             }
 
             loadChineseData().then(data => {
-                if (!data || !data.成語) {
+                chineseQuizWords = [];
+
+                // 根據測驗方式決定使用哪種數據
+                const isGaicuo = quizMethod.startsWith('gaicuo');
+                const dataSource = isGaicuo ? data.改錯 : data.成語;
+
+                if (!data || !dataSource) {
+                    alert(`無法加載${isGaicuo ? '改錯' : '成語'}數據`);
                     return;
                 }
 
-                // 收集所有被選中 sheet 和 tag 的成語
-                chineseQuizWords = [];
+                // 收集所有被選中 sheet 和 tag 的詞目
                 checkedBoxes.forEach(box => {
                     const sheetName = box.dataset.sheetName;
-                    if (data.成語[sheetName]) {
-                        // 只收集該 sheet 中被選中 tag 的成語
+                    if (dataSource[sheetName]) {
                         const selectedTags = chineseSelectedTags.get(sheetName);
-                        const filteredWords = data.成語[sheetName].filter(word => {
-                            if (!selectedTags) return true; // 如果沒有 tag 篩選，選擇所有
+                        const filteredWords = dataSource[sheetName].filter(word => {
+                            if (!selectedTags) return true;
                             return selectedTags.has(word.tag || '');
                         });
                         chineseQuizWords = chineseQuizWords.concat(filteredWords);
@@ -6795,7 +6963,7 @@
                 });
 
                 if (chineseQuizWords.length === 0) {
-                    alert('選中的單元中沒有成語');
+                    alert(`選中的單元中沒有${isGaicuo ? '改錯' : '成語'}詞目`);
                     return;
                 }
 
@@ -6806,10 +6974,14 @@
                 chineseQuizIndex = 0;
                 chineseQuizResults = [];
 
-                if (quizMethod === 'explanation') {
+                if (quizMethod === 'idiom-explanation') {
                     showChineseQuizExplanation();
-                } else if (quizMethod === 'sentence') {
+                } else if (quizMethod === 'idiom-sentence') {
                     showChineseQuizSentence();
+                } else if (quizMethod === 'gaicuo-hint') {
+                    showGaicuoQuizHint();
+                } else if (quizMethod === 'gaicuo-standard') {
+                    showGaicuoQuizStandard();
                 }
             });
         }
@@ -6914,7 +7086,7 @@
         function checkChineseQuizAnswerAndShow() {
             const word = chineseQuizWords[chineseQuizIndex];
             const userInput = document.getElementById('chineseQuizInput').value.trim();
-            const isCorrect = userInput === word.成語;
+            const isCorrect = userInput === word.答案;
 
             chineseQuizResults.push({
                 word: word,
@@ -6926,6 +7098,8 @@
             const answerDisplay = document.getElementById('answerDisplay');
             const inputField = document.getElementById('chineseQuizInput');
             const resultContainer = document.getElementById('resultContainer');
+            const quizMethod = document.getElementById('chineseQuizMethodSelect').value;
+            const isGaicuo = quizMethod.startsWith('gaicuo');
 
             if (isCorrect) {
                 resultDiv.textContent = '正確';
@@ -6935,7 +7109,25 @@
                 resultDiv.textContent = '錯誤';
                 resultDiv.style.color = '#f44336';
                 answerDisplay.style.display = 'block';
-                answerDisplay.textContent = word.成語;
+                answerDisplay.style.background = 'transparent';
+                answerDisplay.style.color = 'white';
+                answerDisplay.style.padding = '6px 0';
+
+                if (isGaicuo) {
+                    // 改錯模式：顯示正確成語，答案字符用紅字
+                    const correctChar = word.答案;
+                    const correctIdiom = word.成語;
+                    const highlightedAnswer = correctIdiom.replace(
+                        correctChar,
+                        `<span style="color: #f44336; font-weight: bold;">${correctChar}</span>`
+                    );
+                    answerDisplay.innerHTML = highlightedAnswer;
+                } else {
+                    // 成語模式：顯示正確答案
+                    answerDisplay.textContent = word.成語;
+                    answerDisplay.style.background = 'transparent';
+                    answerDisplay.style.color = 'white';
+                }
             }
 
             inputField.disabled = true;
@@ -6948,10 +7140,14 @@
 
             if (chineseQuizIndex < chineseQuizWords.length) {
                 const quizMethod = document.getElementById('chineseQuizMethodSelect').value;
-                if (quizMethod === 'explanation') {
+                if (quizMethod === 'idiom-explanation') {
                     setTimeout(showChineseQuizExplanation, 300);
-                } else if (quizMethod === 'sentence') {
+                } else if (quizMethod === 'idiom-sentence') {
                     setTimeout(showChineseQuizSentence, 300);
+                } else if (quizMethod === 'gaicuo-hint') {
+                    setTimeout(showGaicuoQuizHint, 300);
+                } else if (quizMethod === 'gaicuo-standard') {
+                    setTimeout(showGaicuoQuizStandard, 300);
                 }
             } else {
                 showChineseQuizResults();
@@ -7032,6 +7228,205 @@
                         ">
                             <div id="answerResult" style="
                                 font-size: 1.4em;
+                                font-weight: bold;
+                                color: white;
+                            "></div>
+                            <button onclick="continueChineseQuiz()" style="
+                                padding: 10px 25px;
+                                background: #667eea;
+                                color: white;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                font-weight: bold;
+                                font-size: 1.2em;
+                                white-space: nowrap;
+                            ">下一個</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('chineseContent').innerHTML = html;
+            document.getElementById('tagFilterContainer').style.display = 'none';
+            document.getElementById('quizTagFilterContainer').style.display = 'none';
+            document.getElementById('chineseQuizModeContainer').style.display = 'none';
+
+            document.getElementById('chineseQuizInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkChineseQuizAnswerAndShow();
+                }
+            });
+        }
+
+        function showGaicuoQuizHint() {
+            if (chineseQuizIndex >= chineseQuizWords.length) {
+                showChineseQuizResults();
+                return;
+            }
+
+            const item = chineseQuizWords[chineseQuizIndex];
+            const progress = chineseQuizIndex + 1;
+            const total = chineseQuizWords.length;
+
+            let html = `
+                <div style="padding: 30px; max-width: 600px; margin: 0 auto;">
+                    <div class="quiz-header">
+                        <div class="quiz-progress">
+                            <span>${progress}/${total}</span>
+                        </div>
+                        <button class="cancel-btn" onclick="cancelChineseQuiz()">中斷</button>
+                    </div>
+
+                    <div style="
+                        background: #3a3a52;
+                        padding: 30px;
+                        border-radius: 8px;
+                        margin-bottom: 30px;
+                        text-align: center;
+                    ">
+                        <div style="color: #b8b8b8; margin-bottom: 10px; font-size: 0.9em;">改錯-提示（題目保留「」標記）</div>
+                        <div id="gaicuoQuestionDisplay" style="color: white; font-size: 1.5em; line-height: 1.8;">
+                            ${item.題目}
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                        <input type="text" id="chineseQuizInput" style="
+                            width: auto;
+                            min-width: 150px;
+                            max-width: 400px;
+                            padding: 10px;
+                            border-radius: 4px;
+                            border: 1px solid #ccc;
+                            font-size: 1.3em;
+                            text-align: center;
+                        " placeholder="輸入正確字並按 Enter" autofocus>
+
+                        <div id="answerDisplay" style="
+                            display: none;
+                            text-align: center;
+                            font-size: 1.2em;
+                            font-weight: bold;
+                            color: white;
+                            background: #f44336;
+                            padding: 6px 10px;
+                            border-radius: 4px;
+                            width: fit-content;
+                        "></div>
+
+                        <div id="resultContainer" style="
+                            display: none;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: space-between;
+                            gap: 15px;
+                            width: 100%;
+                            margin-top: 20px;
+                        ">
+                            <div id="answerResult" style="
+                                font-size: 1.2em;
+                                font-weight: bold;
+                                color: white;
+                            "></div>
+                            <button onclick="continueChineseQuiz()" style="
+                                padding: 10px 25px;
+                                background: #667eea;
+                                color: white;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                font-weight: bold;
+                                font-size: 1.2em;
+                                white-space: nowrap;
+                            ">下一個</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('chineseContent').innerHTML = html;
+            document.getElementById('tagFilterContainer').style.display = 'none';
+            document.getElementById('quizTagFilterContainer').style.display = 'none';
+            document.getElementById('chineseQuizModeContainer').style.display = 'none';
+
+            document.getElementById('chineseQuizInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    checkChineseQuizAnswerAndShow();
+                }
+            });
+        }
+
+        function showGaicuoQuizStandard() {
+            if (chineseQuizIndex >= chineseQuizWords.length) {
+                showChineseQuizResults();
+                return;
+            }
+
+            const item = chineseQuizWords[chineseQuizIndex];
+            const progress = chineseQuizIndex + 1;
+            const total = chineseQuizWords.length;
+
+            // 移除「」標記
+            const questionWithoutMarks = item.題目.replace(/「|」/g, '');
+
+            let html = `
+                <div style="padding: 30px; max-width: 600px; margin: 0 auto;">
+                    <div class="quiz-header">
+                        <div class="quiz-progress">
+                            <span>${progress}/${total}</span>
+                        </div>
+                        <button class="cancel-btn" onclick="cancelChineseQuiz()">中斷</button>
+                    </div>
+
+                    <div style="
+                        background: #3a3a52;
+                        padding: 30px;
+                        border-radius: 8px;
+                        margin-bottom: 30px;
+                        text-align: center;
+                    ">
+                        <div style="color: #b8b8b8; margin-bottom: 10px; font-size: 0.9em;">改錯-標準（題目移除「」標記）</div>
+                        <div id="gaicuoQuestionDisplay" style="color: white; font-size: 1.5em; line-height: 1.8;">
+                            ${questionWithoutMarks}
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                        <input type="text" id="chineseQuizInput" style="
+                            width: auto;
+                            min-width: 150px;
+                            max-width: 400px;
+                            padding: 10px;
+                            border-radius: 4px;
+                            border: 1px solid #ccc;
+                            font-size: 1.3em;
+                            text-align: center;
+                        " placeholder="輸入正確字並按 Enter" autofocus>
+
+                        <div id="answerDisplay" style="
+                            display: none;
+                            text-align: center;
+                            font-size: 1.2em;
+                            font-weight: bold;
+                            color: white;
+                            background: #f44336;
+                            padding: 6px 10px;
+                            border-radius: 4px;
+                            width: fit-content;
+                        "></div>
+
+                        <div id="resultContainer" style="
+                            display: none;
+                            flex-direction: row;
+                            align-items: center;
+                            justify-content: space-between;
+                            gap: 15px;
+                            width: 100%;
+                            margin-top: 20px;
+                        ">
+                            <div id="answerResult" style="
+                                font-size: 1.2em;
                                 font-weight: bold;
                                 color: white;
                             "></div>
