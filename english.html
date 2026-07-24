@@ -2054,7 +2054,7 @@
         initializeLocalStorage();
         cleanupStoragePrefixes();
 
-        fetch('english.json?t=' + new Date().getTime())
+        fetch('./json/english.json?t=' + new Date().getTime())
             .then(r => r.json())
             .then(data => {
                 sheetData = data;
@@ -5076,7 +5076,7 @@
         function loadChineseData() {
             if (chineseData) return Promise.resolve(chineseData);
 
-            return fetch('chinese.json?t=' + new Date().getTime())
+            return fetch('./json/chinese.json?t=' + new Date().getTime())
                 .then(r => r.json())
                 .then(data => {
                     chineseData = data;

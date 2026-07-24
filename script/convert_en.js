@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 // 讀取Excel文件
-const filePath = path.join(__dirname, 'docs', 'test.xlsx');
+const filePath = path.join(__dirname, '..', 'docs', 'test.xlsx');
 const workbook = XLSX.readFile(filePath);
 
 // 要轉換的sheet列表
@@ -66,7 +66,7 @@ sheetsToConvert.forEach(sheetName => {
 });
 
 // 輸出到文件，格式為 {sheetName: [...]}
-const outputPath = path.join(__dirname, 'output.json');
+const outputPath = path.join(__dirname, '..', 'json', 'english.json');
 fs.writeFileSync(outputPath, JSON.stringify(output, null, 2), 'utf-8');
 
 console.log(`\n✓ 轉換成功！`);

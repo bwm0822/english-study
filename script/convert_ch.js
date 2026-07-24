@@ -3,8 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 // 讀取Excel文件
-const chengYuPath = path.join(__dirname, 'docs', '成語.xlsx');
-const guShiPath = path.join(__dirname, 'docs', '故事.xlsx');
+const chengYuPath = path.join(__dirname, '..', 'docs', '成語.xlsx');
+const guShiPath = path.join(__dirname, '..', 'docs', '故事.xlsx');
 
 const output = {
   成語: {},
@@ -79,7 +79,7 @@ if (fs.existsSync(guShiPath)) {
 }
 
 // 輸出到文件
-const outputPath = path.join(__dirname, 'chinese.json');
+const outputPath = path.join(__dirname, '..', 'json', 'chinese.json');
 fs.writeFileSync(outputPath, JSON.stringify(output, null, 2), 'utf-8');
 
 console.log(`\n✓ 轉換成功！`);
