@@ -7164,6 +7164,7 @@
                                 <div class="story-header">
                                     <div class="story-title"><span class="story-number">${storyIndex + 1}. </span>${item.標題}</div>
                                     <button class="story-read-btn" onclick="playStory(${storyIndex})">朗讀</button>
+                                    <button class="story-read-btn" style="background: #FF9800;" onclick="startArticleIdiomQuiz('${sheetName}', '${item.tag || ''}')">成語測驗</button>
                                 </div>
                                 <div class="story-content" onclick="toggleStoryPlayback(${storyIndex}); return false;" title="點擊暫停/繼續">${highlightedContent}</div>
                             </div>
@@ -7649,7 +7650,10 @@
         function checkChineseQuizAnswerAndShow() {
             const word = chineseQuizWords[chineseQuizIndex];
             const userInput = document.getElementById('chineseQuizInput').value.trim();
-            const isCorrect = userInput === word.答案;
+            const quizMethod = document.getElementById('chineseQuizMethodSelect').value;
+            const isGaicuo = quizMethod.startsWith('gaicuo');
+            const correctAnswer = isGaicuo ? word.答案 : word.成語;
+            const isCorrect = userInput === correctAnswer;
 
             chineseQuizResults.push({
                 word: word,
@@ -7661,23 +7665,11 @@
             const answerDisplay = document.getElementById('answerDisplay');
             const inputField = document.getElementById('chineseQuizInput');
             const resultContainer = document.getElementById('resultContainer');
-            const quizMethod = document.getElementById('chineseQuizMethodSelect').value;
-            const isGaicuo = quizMethod.startsWith('gaicuo');
 
             if (isCorrect) {
                 resultDiv.textContent = '正確';
                 resultDiv.style.color = '#4CAF50';
-
-                if (!isGaicuo) {
-                    // 成語模式：顯示正確答案，紅底白字
-                    answerDisplay.style.display = 'block';
-                    answerDisplay.textContent = word.成語;
-                    answerDisplay.style.background = '#f44336';
-                    answerDisplay.style.color = 'white';
-                    answerDisplay.style.padding = '6px 8px';
-                } else {
-                    answerDisplay.style.display = 'none';
-                }
+                answerDisplay.style.display = 'none';
             } else {
                 resultDiv.textContent = '錯誤';
                 resultDiv.style.color = '#f44336';
@@ -8168,6 +8160,308 @@
             });
 
             container.appendChild(resultWordsDiv);
+        }
+
+        // 文章成語測驗相關變數
+        let articleQuizData = null;
+        let articleQuizResults = [];
+        let articleIdiomsWithPositions = [];
+
+        function startArticleIdiomQuiz(sheetName, tag) {
+            loadChineseData().then(data => {
+                if (!data || !data.文章 || !data.成語) {
+                    alert('無法加載數據');
+                    return;
+                }
+
+                // 獲取該sheet/tag的文章
+                const articles = data.文章[sheetName]?.filter(item => (item.tag || '') === tag) || [];
+                if (articles.length === 0) {
+                    alert('該標籤下沒有文章');
+                    return;
+                }
+
+                // 獲取該sheet/tag的所有成語
+                const idioms = data.成語[sheetName]?.filter(item => (item.tag || '') === tag) || [];
+                if (idioms.length === 0) {
+                    alert('該標籤下沒有成語');
+                    return;
+                }
+
+                // 使用第一篇文章進行測驗
+                const article = articles[0];
+                articleQuizData = { sheetName, tag, article, idioms };
+                articleQuizResults = [];
+                articleIdiomsWithPositions = [];
+
+                // 找出文章中出現的成語
+                let articleText = article.文章;
+                const idiomMap = new Map();
+                idioms.forEach(idiom => {
+                    idiomMap.set(idiom.成語, idiom);
+                });
+
+                // 掃描文章，找出所有出現的成語
+                const positions = [];
+                idiomMap.forEach((idiom, idiomText) => {
+                    let startIndex = 0;
+                    while ((startIndex = articleText.indexOf(idiomText, startIndex)) !== -1) {
+                        positions.push({
+                            start: startIndex,
+                            end: startIndex + idiomText.length,
+                            idiom: idiom,
+                            text: idiomText
+                        });
+                        startIndex += idiomText.length;
+                    }
+                });
+
+                // 按開始位置排序
+                positions.sort((a, b) => a.start - b.start);
+
+                if (positions.length === 0) {
+                    alert('文章中未找到任何成語');
+                    return;
+                }
+
+                articleIdiomsWithPositions = positions;
+                displayArticleIdiomQuiz();
+            });
+        }
+
+        function displayArticleIdiomQuiz() {
+            document.getElementById('chineseContainer').style.display = 'flex';
+            document.getElementById('chineseContent').innerHTML = '';
+
+            const container = document.getElementById('chineseContent');
+            container.style.display = 'block';
+
+            // 標題
+            const titleDiv = document.createElement('div');
+            titleDiv.style.fontSize = '1.5em';
+            titleDiv.style.fontWeight = 'bold';
+            titleDiv.style.color = '#667eea';
+            titleDiv.style.marginBottom = '20px';
+            titleDiv.textContent = `${articleQuizData.article.標題} - 成語測驗`;
+            container.appendChild(titleDiv);
+
+            // 文章內容（包含input框）
+            const contentDiv = document.createElement('div');
+            contentDiv.style.fontSize = '1.2em';
+            contentDiv.style.lineHeight = '2em';
+            contentDiv.style.marginBottom = '20px';
+            contentDiv.style.padding = '15px';
+            contentDiv.style.background = '#2a2a52';
+            contentDiv.style.borderRadius = '6px';
+            contentDiv.style.whiteSpace = 'pre-wrap';
+            contentDiv.style.wordWrap = 'break-word';
+
+            // 構建包含input框的文章HTML
+            let lastEnd = 0;
+            let html = '';
+            articleIdiomsWithPositions.forEach((pos, index) => {
+                // 添加成語前的文本
+                if (lastEnd < pos.start) {
+                    const beforeText = articleQuizData.article.文章.substring(lastEnd, pos.start);
+                    html += beforeText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                }
+
+                // 添加input框
+                html += `<input type="text" id="article-idiom-input-${index}"
+                    class="article-idiom-input"
+                    style="width: 8em; padding: 6px 8px; font-size: 1em; text-align: center;
+                        margin: 0 2px; background: #4a4a62; color: white; border: 1px solid #666;
+                        border-radius: 3px; vertical-align: middle;"
+                    data-idiom-index="${index}"
+                    placeholder="？"
+                    onkeydown="handleArticleQuizInput(event, ${index})">`;
+
+                // 添加答案顯示span
+                html += `<span id="article-idiom-answer-${index}"
+                    style="display: none; background: #f44336; color: white; padding: 4px 8px;
+                        border-radius: 3px; margin-left: 4px; font-weight: bold; font-size: 1em;">
+                </span>`;
+
+                lastEnd = pos.end;
+            });
+
+            // 添加最後的文本
+            if (lastEnd < articleQuizData.article.文章.length) {
+                const afterText = articleQuizData.article.文章.substring(lastEnd);
+                html += afterText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            }
+
+            contentDiv.innerHTML = html;
+            container.appendChild(contentDiv);
+
+            // 完成按鈕
+            const buttonDiv = document.createElement('div');
+            buttonDiv.style.display = 'flex';
+            buttonDiv.style.gap = '10px';
+            buttonDiv.style.justifyContent = 'center';
+
+            const completeBtn = document.createElement('button');
+            completeBtn.textContent = '完成';
+            completeBtn.style.padding = '12px 30px';
+            completeBtn.style.background = '#4CAF50';
+            completeBtn.style.color = 'white';
+            completeBtn.style.border = 'none';
+            completeBtn.style.borderRadius = '4px';
+            completeBtn.style.cursor = 'pointer';
+            completeBtn.style.fontWeight = 'bold';
+            completeBtn.style.fontSize = '1.1em';
+            completeBtn.onclick = showArticleQuizResults;
+
+            const backBtn = document.createElement('button');
+            backBtn.textContent = '返回';
+            backBtn.style.padding = '12px 30px';
+            backBtn.style.background = '#666';
+            backBtn.style.color = 'white';
+            backBtn.style.border = 'none';
+            backBtn.style.borderRadius = '4px';
+            backBtn.style.cursor = 'pointer';
+            backBtn.style.fontWeight = 'bold';
+            backBtn.style.fontSize = '1.1em';
+            backBtn.onclick = () => changeChineseMode('stories');
+
+            buttonDiv.appendChild(completeBtn);
+            buttonDiv.appendChild(backBtn);
+            container.appendChild(buttonDiv);
+        }
+
+        function handleArticleQuizInput(event, idiomIndex) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const input = event.target;
+                const correctAnswer = articleIdiomsWithPositions[idiomIndex].text;
+                const userInput = input.value.trim();
+
+                const answerSpan = document.getElementById(`article-idiom-answer-${idiomIndex}`);
+
+                if (userInput === correctAnswer) {
+                    input.style.background = '#4CAF50';
+                    input.style.borderColor = '#4CAF50';
+                    answerSpan.style.display = 'none';
+                } else {
+                    input.style.background = '#f44336';
+                    input.style.borderColor = '#f44336';
+
+                    // 顯示正確答案
+                    answerSpan.textContent = correctAnswer;
+                    answerSpan.style.display = 'inline-block';
+                }
+
+                // 保存結果
+                const idiomPos = articleIdiomsWithPositions[idiomIndex];
+                articleQuizResults[idiomIndex] = {
+                    idiom: idiomPos.idiom,
+                    userAnswer: userInput,
+                    isCorrect: userInput === correctAnswer
+                };
+
+                // 移動焦點到下一個input
+                const nextInput = document.getElementById(`article-idiom-input-${idiomIndex + 1}`);
+                if (nextInput) {
+                    nextInput.focus();
+                }
+            }
+        }
+
+        function showArticleQuizResults() {
+            // 計算正確率
+            const correctCount = articleQuizResults.filter(r => r && r.isCorrect).length;
+            const totalCount = articleIdiomsWithPositions.length;
+            const accuracy = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+
+            document.getElementById('chineseContent').innerHTML = '';
+
+            const container = document.getElementById('chineseContent');
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.gap = '20px';
+            container.style.padding = '20px';
+
+            // 成績
+            const scoreDiv = document.createElement('div');
+            scoreDiv.style.fontSize = '1.5em';
+            scoreDiv.style.fontWeight = 'bold';
+            scoreDiv.style.color = accuracy >= 80 ? '#4CAF50' : accuracy >= 50 ? '#FF9800' : '#f44336';
+            scoreDiv.innerHTML = `正確率: <span style="font-size: 1.3em;">${accuracy}%</span> (${correctCount}/${totalCount})`;
+            container.appendChild(scoreDiv);
+
+            // 成語列表
+            const idiomListDiv = document.createElement('div');
+            idiomListDiv.style.display = 'flex';
+            idiomListDiv.style.flexDirection = 'column';
+            idiomListDiv.style.gap = '10px';
+
+            const titleDiv = document.createElement('div');
+            titleDiv.style.fontSize = '1.2em';
+            titleDiv.style.fontWeight = 'bold';
+            titleDiv.style.color = '#667eea';
+            titleDiv.style.marginBottom = '10px';
+            titleDiv.textContent = '測驗成語列表';
+            idiomListDiv.appendChild(titleDiv);
+
+            articleQuizResults.forEach((result, index) => {
+                if (!result) return;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.style.display = 'flex';
+                itemDiv.style.alignItems = 'center';
+                itemDiv.style.gap = '15px';
+                itemDiv.style.padding = '10px';
+                itemDiv.style.background = result.isCorrect ? '#2a4a2a' : '#4a2a2a';
+                itemDiv.style.borderRadius = '4px';
+
+                const indexSpan = document.createElement('span');
+                indexSpan.style.flex = '0 0 30px';
+                indexSpan.style.color = '#999';
+                indexSpan.textContent = `${index + 1}.`;
+
+                const idiomSpan = document.createElement('span');
+                idiomSpan.style.flex = '0 0 60px';
+                idiomSpan.style.fontWeight = 'bold';
+                idiomSpan.style.fontSize = '1.1em';
+                idiomSpan.style.color = result.isCorrect ? '#4CAF50' : '#f44336';
+                idiomSpan.textContent = result.idiom.成語;
+
+                const explanationSpan = document.createElement('span');
+                explanationSpan.style.flex = '1';
+                explanationSpan.style.color = '#b8b8b8';
+                explanationSpan.textContent = result.idiom.解釋;
+
+                const statusSpan = document.createElement('span');
+                statusSpan.style.flex = '0 0 50px';
+                statusSpan.style.textAlign = 'center';
+                statusSpan.style.fontWeight = 'bold';
+                statusSpan.style.color = result.isCorrect ? '#4CAF50' : '#f44336';
+                statusSpan.textContent = result.isCorrect ? '✓' : '✗';
+
+                itemDiv.appendChild(indexSpan);
+                itemDiv.appendChild(idiomSpan);
+                itemDiv.appendChild(explanationSpan);
+                itemDiv.appendChild(statusSpan);
+
+                idiomListDiv.appendChild(itemDiv);
+            });
+
+            container.appendChild(idiomListDiv);
+
+            // 返回按鈕
+            const backBtn = document.createElement('button');
+            backBtn.textContent = '返回';
+            backBtn.style.padding = '12px 30px';
+            backBtn.style.background = '#667eea';
+            backBtn.style.color = 'white';
+            backBtn.style.border = 'none';
+            backBtn.style.borderRadius = '4px';
+            backBtn.style.cursor = 'pointer';
+            backBtn.style.fontWeight = 'bold';
+            backBtn.style.fontSize = '1.1em';
+            backBtn.style.margin = '20px auto 0';
+            backBtn.onclick = () => changeChineseMode('stories');
+            container.appendChild(backBtn);
         }
 
         // 在页面加载完成后自动进入中文模式
