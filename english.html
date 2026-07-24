@@ -2180,25 +2180,10 @@
                         sheetHeader.className = 'sheet-item-header';
                         sheetHeader.dataset.sheetName = sheetName;
 
-                        const toggleSpan = document.createElement('span');
-                        toggleSpan.className = 'sheet-toggle';
-                        toggleSpan.textContent = '▶';
-
-                        const sheetCheckbox = document.createElement('input');
-                        sheetCheckbox.type = 'checkbox';
-                        sheetCheckbox.checked = true;
-                        sheetCheckbox.dataset.sheetName = sheetName;
-                        sheetCheckbox.className = 'normal-sheet-checkbox';
-                        sheetCheckbox.onchange = updateFilter;
-                        sheetCheckbox.onclick = (e) => {
-                            e.stopPropagation();
-                        };
-
                         const nameSpan = document.createElement('span');
                         nameSpan.className = 'sheet-name';
                         nameSpan.textContent = sheetName;
 
-                        sheetHeader.appendChild(sheetCheckbox);
                         sheetHeader.appendChild(nameSpan);
 
                         // 創建獨立的第二選單
@@ -2207,55 +2192,20 @@
                         sheetSubmenu.dataset.sheetName = sheetName;
                         document.body.appendChild(sheetSubmenu);
 
-                        // 按鈕行
-                        const buttonsRow = document.createElement('div');
-                        buttonsRow.className = 'sheet-group-header';
-
-                        const selectBtn = document.createElement('button');
-                        selectBtn.textContent = '全選';
-                        selectBtn.onclick = function(e) {
-                            e.stopPropagation();
-                            selectAllInSheet(e, sheetName);
-                        };
-
-                        const clearBtn = document.createElement('button');
-                        clearBtn.textContent = '清除';
-                        clearBtn.onclick = function(e) {
-                            e.stopPropagation();
-                            clearAllInSheet(e, sheetName);
-                        };
-
-                        buttonsRow.appendChild(selectBtn);
-                        buttonsRow.appendChild(clearBtn);
-                        sheetSubmenu.appendChild(buttonsRow);
-
                         // 該sheet的所有tag
                         sheetTags.forEach(tag => {
-                            const checkbox = document.createElement('input');
-                            checkbox.type = 'checkbox';
-                            checkbox.value = tag;
-                            checkbox.checked = true;
-                            checkbox.dataset.sheet = sheetName;
-                            checkbox.className = 'normal-tag-checkbox';
-                            checkbox.onchange = updateFilter;
-                            checkbox.onclick = (e) => {
+                            const tagItem = document.createElement('div');
+                            tagItem.className = 'tag-checkbox-item';
+                            tagItem.textContent = tag;
+                            tagItem.onclick = (e) => {
                                 e.stopPropagation();
+                                // 滑到該tag的第一個字
+                                scrollToTag(sheetName, tag);
+                                // 關閉submenu
+                                sheetSubmenu.classList.remove('expanded');
                             };
 
-                            const label = document.createElement('div');
-                            label.className = 'tag-checkbox-item';
-                            label.appendChild(checkbox);
-                            const span = document.createElement('span');
-                            span.textContent = tag;
-                            label.appendChild(span);
-
-                            label.onclick = (e) => {
-                                e.stopPropagation();
-                                checkbox.checked = !checkbox.checked;
-                                updateFilter();
-                            };
-
-                            sheetSubmenu.appendChild(label);
+                            sheetSubmenu.appendChild(tagItem);
                         });
 
                         // Sheet展開/收起邏輯 - 顯示/隱藏獨立的submenu
@@ -2313,10 +2263,6 @@
                     const sheetHeader = document.createElement('div');
                     sheetHeader.className = 'sheet-item-header';
                     sheetHeader.dataset.sheetName = '自訂';
-
-                    const toggleSpan = document.createElement('span');
-                    toggleSpan.className = 'sheet-toggle';
-                    toggleSpan.textContent = '▶';
 
                     const sheetCheckbox = document.createElement('input');
                     sheetCheckbox.type = 'checkbox';
@@ -2412,6 +2358,43 @@
                     sheetItem.appendChild(sheetHeader);
                     container.appendChild(sheetItem);
                 }
+
+                // 為一般模式創建隱藏的checkbox（用於過濾）
+                let hiddenCheckboxContainer = document.getElementById('hiddenCheckboxContainer');
+                if (!hiddenCheckboxContainer) {
+                    hiddenCheckboxContainer = document.createElement('div');
+                    hiddenCheckboxContainer.style.display = 'none';
+                    hiddenCheckboxContainer.id = 'hiddenCheckboxContainer';
+                    document.body.appendChild(hiddenCheckboxContainer);
+                }
+
+                // 清空舊的checkbox
+                hiddenCheckboxContainer.innerHTML = '';
+
+                // 為每個sheet和tag創建checkbox
+                Object.entries(sheetData).forEach(([sheetName, words]) => {
+                    if (Array.isArray(words)) {
+                        const sheetCheckbox = document.createElement('input');
+                        sheetCheckbox.type = 'checkbox';
+                        sheetCheckbox.checked = true;
+                        sheetCheckbox.dataset.sheetName = sheetName;
+                        sheetCheckbox.className = 'normal-sheet-checkbox';
+                        sheetCheckbox.onchange = updateFilter;
+                        hiddenCheckboxContainer.appendChild(sheetCheckbox);
+
+                        const sheetTags = [...new Set(words.map(w => w.tag))];
+                        sheetTags.forEach(tag => {
+                            const tagCheckbox = document.createElement('input');
+                            tagCheckbox.type = 'checkbox';
+                            tagCheckbox.value = tag;
+                            tagCheckbox.checked = true;
+                            tagCheckbox.dataset.sheet = sheetName;
+                            tagCheckbox.className = 'normal-tag-checkbox';
+                            tagCheckbox.onchange = updateFilter;
+                            hiddenCheckboxContainer.appendChild(tagCheckbox);
+                        });
+                    }
+                });
 
                 renderWords();
 
@@ -2644,6 +2627,62 @@
         function toggleDropdown() {
             const menu = document.getElementById('tagDropdownMenu');
             menu.classList.toggle('active');
+        }
+
+        function scrollToTag(sheetName, tag) {
+            // 確保該sheet的checkbox被勾選
+            document.querySelectorAll('input.normal-sheet-checkbox').forEach(checkbox => {
+                if (checkbox.dataset.sheetName === sheetName) {
+                    checkbox.checked = true;
+                }
+            });
+
+            // 確保該tag的checkbox被勾選
+            document.querySelectorAll('input.normal-tag-checkbox').forEach(checkbox => {
+                if (checkbox.dataset.sheet === sheetName && checkbox.value === tag) {
+                    checkbox.checked = true;
+                }
+            });
+
+            // 更新過濾
+            updateFilter();
+
+            // 關閉下拉菜單
+            const menu = document.getElementById('tagDropdownMenu');
+            if (menu) menu.classList.remove('active');
+
+            // 跳到該tag的第一行
+            const wordRows = document.querySelectorAll('.word-row');
+            let found = false;
+            wordRows.forEach(row => {
+                if (!found) {
+                    // 查找word-tag元素
+                    const tagSpan = row.querySelector('.word-tag-tag');
+                    if (tagSpan && tagSpan.textContent === tag) {
+                        // 快速平滑滾動
+                        const container = document.getElementById('wordsContainer');
+                        const targetTop = row.offsetTop;
+                        const startTop = container.scrollTop;
+                        const distance = targetTop - startTop;
+                        const duration = 300; // 300ms動畫時間
+                        const startTime = Date.now();
+
+                        const animate = () => {
+                            const elapsed = Date.now() - startTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            // 使用easeOut緩動函數
+                            const easeProgress = 1 - Math.pow(1 - progress, 3);
+                            container.scrollTop = startTop + distance * easeProgress;
+
+                            if (progress < 1) {
+                                requestAnimationFrame(animate);
+                            }
+                        };
+                        animate();
+                        found = true;
+                    }
+                }
+            });
         }
 
         function toggleQuizDropdown() {
