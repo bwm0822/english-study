@@ -1696,6 +1696,7 @@
             .stats-tag-info {
                 gap: 8px;
             }
+
         }
     </style>
 </head>
@@ -1708,6 +1709,7 @@
                 <select id="chineseModeSelect" onchange="changeChineseMode(this.value)">
                     <option value="idioms">成語</option>
                     <option value="stories">故事</option>
+                    <option value="gaicuo">改錯</option>
                     <option value="review">複習</option>
                     <option value="quiz">測驗</option>
                 </select>
@@ -5495,6 +5497,13 @@
             contentDiv.innerHTML = displayHtml;
         }
 
+        // 特殊發音對照表 - 針對特定成語的非常用讀法
+        const specialIdiomPronunciationTable = {
+            '學富五車': '學富五居',      // 車讀ㄐㄩ
+            '倨傲鮮腆': '倨傲顯腆',      // 鮮讀ㄒㄧㄢˇ
+            // 新增特殊成語請在此添加
+        };
+
         function pronounceChineseText(text) {
             // 停止當前的故事播放
             if (currentStoryPlaying >= 0) {
@@ -5503,7 +5512,10 @@
                 isStoryPaused = false;
             }
 
-            const utterance = new SpeechSynthesisUtterance(text);
+            // 檢查特殊成語對照表
+            let pronounceText = specialIdiomPronunciationTable[text] || text;
+
+            const utterance = new SpeechSynthesisUtterance(pronounceText);
             utterance.lang = 'zh-TW';
             const rate = localStorage.getItem('pronunciationRate') || '1.0';
             utterance.rate = parseFloat(rate);
@@ -5513,10 +5525,12 @@
         function changeChineseMode(mode) {
             if (mode === 'idioms') {
                 showChineseIdioms();
-            } else if (mode === 'review') {
-                showChineseReview();
             } else if (mode === 'stories') {
                 showChineseStories();
+            } else if (mode === 'gaicuo') {
+                showChineseGaicuo();
+            } else if (mode === 'review') {
+                showChineseReview();
             } else if (mode === 'quiz') {
                 showChineseQuizSetup();
             }
@@ -5839,6 +5853,255 @@
             });
 
             return highlightedText;
+        }
+
+        function showChineseGaicuo() {
+            stopStoryPlayback();
+
+            // 显示中文容器，隐藏单词容器
+            document.getElementById('chineseContainer').style.display = 'flex';
+            document.getElementById('wordsContainer').style.display = 'none';
+
+            // 恢復改錯模式的計數顯示
+            document.getElementById('tagCountDisplay').style.display = 'block';
+            document.getElementById('quizTagCountDisplay').style.display = 'none';
+
+            loadChineseData().then(data => {
+                if (!data || !data.改錯) {
+                    document.getElementById('chineseContent').innerHTML = '無法加載改錯數據';
+                    return;
+                }
+
+                // 清空所有容器和舊元素
+                const container = document.getElementById('sheetGroupsContainer');
+                container.innerHTML = '';
+                document.getElementById('quizSheetGroupsContainer').innerHTML = '';
+                document.querySelectorAll('.sheet-submenu').forEach(submenu => {
+                    submenu.remove();
+                });
+
+                // 生成所有 sheet 的複選框和對應的 tag 子菜單
+                Object.entries(data.改錯).forEach(([sheetName, sheetData]) => {
+                    // 該 sheet 的所有 tags
+                    const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
+
+                    // 初始化 chineseSelectedTags 中該 sheet 的所有 tag（如果還沒有）
+                    if (!chineseSelectedTags.has(sheetName)) {
+                        chineseSelectedTags.set(sheetName, new Set(sheetTags));
+                    }
+
+                    // 初始化 chineseSheetStates（預設為 true）
+                    if (chineseSheetStates[sheetName] === undefined) {
+                        chineseSheetStates[sheetName] = true;
+                    }
+
+                    const sheetItem = document.createElement('div');
+                    sheetItem.className = 'sheet-item';
+
+                    const sheetHeader = document.createElement('div');
+                    sheetHeader.className = 'sheet-item-header';
+                    sheetHeader.dataset.sheetName = sheetName;
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.className = 'sheet-checkbox';
+                    checkbox.dataset.sheetName = sheetName;
+
+                    // 根據已保存的狀態恢復，預設為 true
+                    checkbox.checked = chineseSheetStates[sheetName] !== false;
+
+                    checkbox.onchange = function() {
+                        chineseSheetStates[this.dataset.sheetName] = this.checked;
+                        updateChineseGaicuoFilter();
+                    };
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.textContent = sheetName;
+                    nameSpan.className = 'sheet-name';
+
+                    sheetHeader.appendChild(checkbox);
+                    sheetHeader.appendChild(nameSpan);
+
+                    // 創建獨立的 tag 子菜單
+                    const sheetSubmenu = document.createElement('div');
+                    sheetSubmenu.className = 'sheet-submenu';
+                    sheetSubmenu.dataset.sheetName = sheetName;
+                    document.body.appendChild(sheetSubmenu);
+
+                    // 按鈕行（全選/清除）
+                    const buttonsRow = document.createElement('div');
+                    buttonsRow.className = 'sheet-group-header';
+                    const selectAllBtn = document.createElement('button');
+                    selectAllBtn.textContent = '全選';
+                    selectAllBtn.onclick = () => {
+                        sheetTags.forEach(tag => {
+                            chineseSelectedTags.get(sheetName).add(tag);
+                        });
+                        updateChineseGaicuoFilter();
+                    };
+
+                    const clearBtn = document.createElement('button');
+                    clearBtn.textContent = '清除';
+                    clearBtn.onclick = () => {
+                        sheetTags.forEach(tag => {
+                            chineseSelectedTags.get(sheetName).delete(tag);
+                        });
+                        updateChineseGaicuoFilter();
+                    };
+
+                    buttonsRow.appendChild(selectAllBtn);
+                    buttonsRow.appendChild(clearBtn);
+                    sheetSubmenu.appendChild(buttonsRow);
+
+                    // 生成 tag 複選框
+                    sheetTags.forEach(tag => {
+                        const tagLabel = document.createElement('label');
+                        tagLabel.className = 'tag-checkbox-item';
+
+                        const tagCheckbox = document.createElement('input');
+                        tagCheckbox.type = 'checkbox';
+                        tagCheckbox.value = tag;
+                        tagCheckbox.checked = chineseSelectedTags.get(sheetName).has(tag);
+
+                        tagCheckbox.onchange = function() {
+                            if (this.checked) {
+                                chineseSelectedTags.get(sheetName).add(this.value);
+                            } else {
+                                chineseSelectedTags.get(sheetName).delete(this.value);
+                            }
+                            updateChineseGaicuoFilter();
+                        };
+
+                        const tagSpan = document.createElement('span');
+                        tagSpan.textContent = tag || '（無標籤）';
+
+                        tagLabel.appendChild(tagCheckbox);
+                        tagLabel.appendChild(tagSpan);
+                        sheetSubmenu.appendChild(tagLabel);
+                    });
+
+                    container.appendChild(sheetItem);
+                    sheetHeader.onclick = (e) => {
+                        if (!e.target.closest('input')) {
+                            e.stopPropagation();
+
+                            // 關閉其他所有的 submenu
+                            document.querySelectorAll('.sheet-submenu.expanded').forEach(submenu => {
+                                if (submenu !== sheetSubmenu) {
+                                    submenu.classList.remove('expanded');
+                                }
+                            });
+
+                            // Toggle 當前的 submenu
+                            sheetSubmenu.classList.toggle('expanded');
+
+                            // 如果打開，計算位置並顯示在 sheetHeader 的右邊
+                            if (sheetSubmenu.classList.contains('expanded')) {
+                                const rect = sheetHeader.getBoundingClientRect();
+                                sheetSubmenu.style.top = rect.top + 'px';
+                                sheetSubmenu.style.left = (rect.right + 5) + 'px';
+                            }
+                        }
+                    };
+
+                    sheetItem.appendChild(sheetHeader);
+                });
+
+                updateChineseGaicuoFilter();
+            });
+        }
+
+        function updateChineseGaicuoFilter() {
+            loadChineseData().then(data => {
+                if (!data || !data.改錯) {
+                    document.getElementById('chineseContent').innerHTML = '無法加載改錯數據';
+                    return;
+                }
+
+                let html = '';
+                let totalCount = 0;
+                let selectedSheetCount = 0;
+                let selectedTagCount = 0;
+
+                // 統計勾選的 sheet 和 tag
+                Object.entries(data.改錯).forEach(([sheetName, sheetData]) => {
+                    if (chineseSheetStates[sheetName]) {
+                        selectedSheetCount++;
+                        const selectedTags = chineseSelectedTags.get(sheetName) || new Set();
+                        selectedTagCount += selectedTags.size;
+                    }
+                });
+
+                // 生成改錯列表
+                Object.entries(data.改錯).forEach(([sheetName, sheetData]) => {
+                    if (!chineseSheetStates[sheetName]) return;
+
+                    const filteredItems = sheetData.filter(item => {
+                        const selectedTags = chineseSelectedTags.get(sheetName) || new Set();
+                        return selectedTags.has(item.tag || '');
+                    });
+
+                    filteredItems.forEach((item, index) => {
+                        totalCount++;
+                        const quizKey = `${sheetName}/${item.成語}`;
+                        const quizResult = getChineseQuizResultFromStorage(quizKey);
+                        let accuracyDisplay = '--';
+                        if (quizResult !== null) {
+                            accuracyDisplay = quizResult ? '100' : '0';
+                        }
+
+                        // 在成語中高亮正確字（答案）- 紅色粗體
+                        let idiomDisplay = item.成語 || '';
+                        if (item.答案) {
+                            const correctText = item.答案;
+                            // 創建正則表達式來替換所有出現的答案
+                            const regex = new RegExp(correctText.split('').join('|'), 'g');
+                            // 替換每個答案字為紅色粗體
+                            idiomDisplay = idiomDisplay.split('').map(char => {
+                                if (correctText.includes(char)) {
+                                    return `<span style="color: #ff6b6b; font-weight: bold;">${char}</span>`;
+                                }
+                                return char;
+                            }).join('');
+                        }
+
+                        html += `
+                            <div class="idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}">
+                                <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${totalCount}</div>
+                                <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500';">☆</div>
+                                <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 0;">
+                                    <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center;">
+                                        <div>${sheetName}</div>
+                                        <div>${item.tag || ''}</div>
+                                    </div>
+                                    <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
+                                </div>
+                                <div style="flex: 0 1 300px; font-size: 2.0em; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;">${item.題目 || ''}</div>
+                                <div style="flex: 0 0 200px; color: white; white-space: nowrap; font-size: 2.0em; overflow: hidden; text-overflow: ellipsis; text-align: center; cursor: pointer;" onclick="pronounceChineseText('${item.成語.replace(/'/g, "\\'")}')" title="點擊發音">${idiomDisplay}</div>
+                                <div style="flex: 1; color: #b8b8b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.3em; cursor: pointer;" onclick="pronounceChineseText('${item.解釋.replace(/'/g, "\\'")}')" title="點擊發音">${item.解釋 || ''}</div>
+                            </div>
+                        `;
+                    });
+                });
+
+                if (totalCount === 0) {
+                    html = '<div style="text-align: center; color: #999; padding: 20px;">沒有符合條件的改錯題目</div>';
+                }
+
+                const contentContainer = document.getElementById('chineseContent');
+                contentContainer.innerHTML = html;
+                contentContainer.style.display = 'flex';
+                contentContainer.style.flexDirection = 'column';
+                contentContainer.style.gap = '0';
+                contentContainer.style.minWidth = '0';
+                contentContainer.style.overflow = 'auto';
+
+                // 更新計數顯示
+                const display = document.getElementById('tagCountDisplay');
+                if (display) {
+                    display.textContent = `共 ${totalCount} 項`;
+                }
+            });
         }
 
         function showChineseReview() {
