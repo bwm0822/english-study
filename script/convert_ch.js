@@ -5,14 +5,17 @@ const path = require('path');
 // 讀取Excel文件
 const chengYuPath = path.join(__dirname, '..', 'docs', '成語.xlsx');
 const guShiPath = path.join(__dirname, '..', 'docs', '故事.xlsx');
+const gaiCuoPath = path.join(__dirname, '..', 'docs', '改錯.xlsx');
 
 const output = {
   成語: {},
-  故事: {}
+  故事: {},
+  改錯: {}
 };
 
 let chengYuCount = 0;
 let guShiCount = 0;
+let gaiCuoCount = 0;
 
 // 處理成語Excel文件
 if (fs.existsSync(chengYuPath)) {
@@ -78,6 +81,39 @@ if (fs.existsSync(guShiPath)) {
   console.warn(`⚠ 故事.xlsx 找不到！`);
 }
 
+// 處理改錯Excel文件
+if (fs.existsSync(gaiCuoPath)) {
+  const workbook = XLSX.readFile(gaiCuoPath);
+
+  workbook.SheetNames.forEach(sheetName => {
+    const worksheet = workbook.Sheets[sheetName];
+
+    // 讀取資料
+    const data = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+    // 轉換資料格式 - 使用陣列存儲
+    const sheetData = data
+      .filter(row => row.題目 || Object.values(row).some(v => v))
+      .map(row => ({
+        sheet: sheetName,
+        tag: row.tag || '',
+        題目: row.題目 || '',
+        答案: row.答案 || '',
+        成語: row.成語 || '',
+        解釋: row.解釋 || ''
+      }));
+
+    if (sheetData.length > 0) {
+      output.改錯[sheetName] = sheetData;
+      gaiCuoCount += sheetData.length;
+      console.log(`✓ Sheet: ${sheetName}`);
+      console.log(`  - 改錯: ${sheetData.length} 題`);
+    }
+  });
+} else {
+  console.warn(`⚠ 改錯.xlsx 找不到！`);
+}
+
 // 輸出到文件
 const outputPath = path.join(__dirname, '..', 'json', 'chinese.json');
 fs.writeFileSync(outputPath, JSON.stringify(output, null, 2), 'utf-8');
@@ -86,7 +122,8 @@ console.log(`\n✓ 轉換成功！`);
 console.log(`\n統計資訊:`);
 console.log(`  - 成語: ${chengYuCount} 條`);
 console.log(`  - 故事: ${guShiCount} 條`);
-console.log(`  - 合計: ${chengYuCount + guShiCount} 條`);
+console.log(`  - 改錯: ${gaiCuoCount} 題`);
+console.log(`  - 合計: ${chengYuCount + guShiCount + gaiCuoCount} 項`);
 console.log(`\n輸出文件: ${outputPath}`);
 console.log(`\n輸出結構:`);
 console.log(`{`);
@@ -98,6 +135,11 @@ console.log(`  },`);
 console.log(`  "故事": {`);
 Object.keys(output.故事).forEach(sheetName => {
   console.log(`    "${sheetName}": [${output.故事[sheetName].length} 項]`);
+});
+console.log(`  },`);
+console.log(`  "改錯": {`);
+Object.keys(output.改錯).forEach(sheetName => {
+  console.log(`    "${sheetName}": [${output.改錯[sheetName].length} 題]`);
 });
 console.log(`  }`);
 console.log(`}`);
