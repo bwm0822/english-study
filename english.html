@@ -4145,7 +4145,167 @@
                 alert('此單元沒有單字');
                 return;
             }
-            openWordModal(0, tagWords);
+
+            // 創建全屏容器
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: #2a2a3e;
+                color: #e0e0e0;
+                display: flex;
+                flex-direction: column;
+                z-index: 10000;
+            `;
+
+            // 創建頂部欄
+            const topBar = document.createElement('div');
+            topBar.style.cssText = `
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 15px 20px;
+                background: #3a3a52;
+                border-bottom: 1px solid #4a4a62;
+                flex-shrink: 0;
+            `;
+
+            const title = document.createElement('h2');
+            title.textContent = `${sheetName} - ${tag}`;
+            title.style.cssText = 'margin: 0; color: white; font-size: 1.2em;';
+
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '離開';
+            closeBtn.style.cssText = `
+                padding: 8px 16px;
+                background: #667eea;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-weight: bold;
+            `;
+            closeBtn.onclick = () => modal.remove();
+
+            topBar.appendChild(title);
+            topBar.appendChild(closeBtn);
+
+            // 創建列表容器
+            const listContainer = document.createElement('div');
+            listContainer.style.cssText = `
+                flex: 1;
+                overflow-y: auto;
+                padding: 10px;
+            `;
+
+            // 生成列表內容（複製renderWords的格式）
+            tagWords.forEach((word, index) => {
+                const row = document.createElement('div');
+                row.className = 'word-row';
+
+                // 星號按鈕
+                const starBtn = document.createElement('div');
+                starBtn.className = 'word-star';
+                const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
+                starBtn.textContent = isFavorited ? '★' : '☆';
+                starBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const isFav = getFavoriteFromStorage(wordKey) === 'true';
+                    if (isFav) {
+                        deleteFavoriteFromStorage(wordKey);
+                        starBtn.textContent = '☆';
+                    } else {
+                        saveFavoriteToStorage(wordKey, 'true');
+                        starBtn.textContent = '★';
+                    }
+                };
+
+                // 計算正確率
+                const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
+                let accuracyDisplay = '--';
+                if (hasHistory) {
+                    const correctCount = getQuizHistory(historyKey);
+                    const accuracy = calculateAccuracy(correctCount);
+                    accuracyDisplay = `${accuracy}%`;
+                }
+
+                // 左側內容
+                const wordLeft = document.createElement('div');
+                wordLeft.className = 'word-left';
+                const formatPhonetic = (phonetic) => {
+                    if (!phonetic) return '--';
+                    return phonetic.replace(/^\[/, '[ ').replace(/\]$/, ' ]');
+                };
+                wordLeft.innerHTML = `
+                    ${word.sheet || word.tag ? `<span class="word-tag"><div class="word-tag-sheet">${word.sheet || ''}</div><div class="word-tag-tag">${word.tag || ''}</div></span>` : ''}
+                    <span class="word-accuracy">${accuracyDisplay}</span>
+                    <span class="word-word">${word.單字}</span>
+                    <span class="word-phonetic">${formatPhonetic(word.音標)}</span>
+                    <span class="word-pos">${word.詞性}</span>
+                    <span class="word-chinese">${word.中文}</span>
+                `;
+
+                // 發音事件
+                const wordWordSpan = wordLeft.querySelector('.word-word');
+                const wordPhoneticSpan = wordLeft.querySelector('.word-phonetic');
+                const handlePronunciation = (e) => {
+                    e.stopPropagation();
+                    playPronunciation(word.單字);
+                };
+                if (wordWordSpan) {
+                    wordWordSpan.style.cursor = 'pointer';
+                    wordWordSpan.onclick = handlePronunciation;
+                }
+                if (wordPhoneticSpan) {
+                    wordPhoneticSpan.style.cursor = 'pointer';
+                    wordPhoneticSpan.onclick = handlePronunciation;
+                }
+
+                // 例句按鈕（最右邊）
+                const sentenceBtn = document.createElement('button');
+                sentenceBtn.className = 'sentence-btn';
+                sentenceBtn.textContent = 'ⓘ';
+                sentenceBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    modal.remove();
+                    openWordModal(index, tagWords);
+                };
+
+                // 右側內容
+                const wordRight = document.createElement('div');
+                wordRight.className = 'word-right';
+                wordRight.innerHTML = `
+                    <div class="content-half">
+                        <div class="content-text">${word.例句}</div>
+                    </div>
+                    <div class="content-half">
+                        <div class="content-text">${word.翻譯}</div>
+                    </div>
+                `;
+
+                // 序號
+                const indexDiv = document.createElement('div');
+                indexDiv.className = 'word-index';
+                indexDiv.textContent = index + 1;
+
+                row.dataset.wordKey = wordKey;
+                row.appendChild(indexDiv);
+                row.appendChild(starBtn);
+                row.appendChild(wordLeft);
+                row.appendChild(wordRight);
+                row.appendChild(sentenceBtn);
+
+                listContainer.appendChild(row);
+            });
+
+            modal.appendChild(topBar);
+            modal.appendChild(listContainer);
+            document.body.appendChild(modal);
         }
 
         // 點擊視窗外部時關閉
