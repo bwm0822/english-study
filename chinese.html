@@ -6476,6 +6476,10 @@
         function viewChineseTagItems(typeName, sheetName, tag) {
             // 文章模式：進入文章模式並應用tag過濾
             if (typeName === '文章') {
+                // 先設定全局變量
+                chineseSheetStates[sheetName] = true;
+                chineseSelectedTags.set(sheetName, new Set([tag]));
+
                 changeChineseMode('stories');
                 // 設置過濾條件
                 setTimeout(() => {
