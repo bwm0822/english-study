@@ -1722,6 +1722,7 @@
                     <option value="gaicuo">改錯</option>
                     <option value="review">複習</option>
                     <option value="quiz">測驗</option>
+                    <option value="statistics">統計</option>
                 </select>
             </div>
             <div class="tag-filter" id="tagFilterContainer" style="display: none;">
@@ -5545,6 +5546,8 @@
                 showChineseReview();
             } else if (mode === 'quiz') {
                 showChineseQuizSetup();
+            } else if (mode === 'statistics') {
+                showChineseStatistics();
             }
         }
 
@@ -6412,6 +6415,566 @@
                 // 初始調用過濾函數
                 updateChineseReviewFilter();
             });
+        }
+
+        function viewChineseTagItems(typeName, sheetName, tag) {
+            loadChineseData().then(data => {
+                let typeData;
+                if (typeName === '成語') {
+                    typeData = data.成語;
+                } else if (typeName === '改錯') {
+                    typeData = data.改錯;
+                } else if (typeName === '故事') {
+                    typeData = data.故事;
+                }
+
+                if (!typeData || !typeData[sheetName]) {
+                    alert('無法加載數據');
+                    return;
+                }
+
+                const items = typeData[sheetName].filter(item => (item.tag || '') === tag);
+
+                if (items.length === 0) {
+                    alert('此分類中沒有項目');
+                    return;
+                }
+
+                // 切換到中文容器
+                document.getElementById('chineseContainer').style.display = 'flex';
+                document.getElementById('wordsContainer').style.display = 'none';
+                document.getElementById('tagCountDisplay').style.display = 'block';
+
+                // 隱藏其他容器
+                document.getElementById('quizTagCountDisplay').style.display = 'none';
+                document.getElementById('tagFilterContainer').style.display = 'none';
+
+                let html = `
+                    <div style="display: flex; flex-direction: column; height: 100%; width: 100%;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px; background: #3a3a52; border-bottom: 1px solid #4a4a62; flex-shrink: 0;">
+                            <h2 style="margin: 0; color: white; font-size: 1.3em;">${typeName} - ${sheetName} - ${tag || '(無)'}</h2>
+                            <button onclick="changeChineseMode('statistics')" style="
+                                padding: 10px 20px;
+                                background: #667eea;
+                                color: white;
+                                border: none;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                font-weight: bold;
+                                font-size: 1em;
+                            ">離開</button>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 0; overflow-y: auto; flex: 1;">
+                `;
+
+                items.forEach((item, itemIndex) => {
+                    if (typeName === '成語') {
+                        const explanation = item.解釋.replace(/'/g, "\\'");
+                        const zhuyinArray = item.注音.split(' ');
+                        const zhuyinHtml = createZhuyinHTML_V2(item.成語, zhuyinArray, true, item.成語);
+
+                        // 計算正確率
+                        const quizKey = `${sheetName}/${item.成語}`;
+                        const quizResult = getChineseQuizResultFromStorage(quizKey);
+                        let accuracyDisplay = '--';
+                        if (quizResult !== null) {
+                            accuracyDisplay = quizResult ? '100' : '0';
+                        }
+
+                        html += `
+                            <div class="idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}">
+                                <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${itemIndex + 1}</div>
+                                <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;">☆</div>
+                                <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 0;">
+                                    <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center;">
+                                        <div>${sheetName}</div>
+                                        <div>${item.tag || ''}</div>
+                                    </div>
+                                    <div style="color: #667eea; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
+                                </div>
+                                <div class="idiom-left">
+                                    <div class="idiom-phonetic">${zhuyinHtml}</div>
+                                </div>
+                                <div class="idiom-middle">
+                                    <div class="idiom-explanation" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.解釋}</div>
+                                    <div class="idiom-example" onclick="pronounceChineseText('${item.造句.replace(/'/g, "\\'")}')" title="點擊朗讀" style="cursor: pointer;">${highlightIdiomInSentence(item.成語, item.造句)}</div>
+                                </div>
+                            </div>
+                        `;
+                    } else if (typeName === '改錯') {
+                        const explanation = item.解釋.replace(/'/g, "\\'");
+
+                        // 計算正確率
+                        const quizKey = `${sheetName}/${item.成語}`;
+                        const quizResult = getChineseQuizResultFromStorage(quizKey);
+                        let accuracyDisplay = '--';
+                        if (quizResult !== null) {
+                            accuracyDisplay = quizResult ? '100' : '0';
+                        }
+
+                        // 在成語中高亮答案
+                        let idiomDisplay = item.成語 || '';
+                        if (item.答案) {
+                            const correctText = item.答案;
+                            idiomDisplay = idiomDisplay.split('').map(char => {
+                                if (correctText.includes(char)) {
+                                    return `<span style="color: #ff6b6b; font-weight: bold;">${char}</span>`;
+                                }
+                                return char;
+                            }).join('');
+                        }
+
+                        html += `
+                            <div class="idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}">
+                                <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${itemIndex + 1}</div>
+                                <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;">☆</div>
+                                <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 0;">
+                                    <div style="background: #ff9800; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center;">
+                                        <div>${sheetName}</div>
+                                        <div>${item.tag || ''}</div>
+                                    </div>
+                                    <div style="color: #ff9800; font-size: 1.25em; font-weight: bold;">${accuracyDisplay}</div>
+                                </div>
+                                <div style="flex: 0 1 300px; font-size: 2.0em; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-align: center;">${item.題目 || ''}</div>
+                                <div class="gaicuo-idiom" style="flex: 0 0 200px; color: white; white-space: nowrap; font-size: 2.0em; overflow: hidden; text-overflow: ellipsis; text-align: center; cursor: pointer;" onclick="pronounceChineseText('${item.成語.replace(/'/g, "\\'")}')" title="點擊發音">${idiomDisplay}</div>
+                                <div class="gaicuo-explanation" style="flex: 1; color: #b8b8b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.3em; cursor: pointer;" onclick="pronounceChineseText('${explanation}')" title="點擊發音">${item.解釋 || ''}</div>
+                            </div>
+                        `;
+                    }
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+                document.getElementById('chineseContent').innerHTML = html;
+
+                // 更新計數顯示
+                const display = document.getElementById('tagCountDisplay');
+                if (display) {
+                    display.textContent = `${tag || '(無)'} - 共 ${items.length} 項`;
+                }
+            });
+        }
+
+        function startChineseIdiomQuizFromStats(sheetName, tag, quizMethod) {
+            // 設置測驗方式
+            const quizMethodSelect = document.getElementById('chineseQuizMethodSelect');
+            if (quizMethodSelect) {
+                quizMethodSelect.value = quizMethod;
+            }
+
+            // 設置選擇的sheet和tag
+            chineseSheetStates = {};
+            chineseSheetStates[sheetName] = true;
+            chineseSelectedTags.clear();
+            chineseSelectedTags.set(sheetName, new Set([tag]));
+
+            // 切換到測驗模式
+            document.getElementById('chineseModeSelect').value = 'quiz';
+            changeChineseMode('quiz');
+
+            // 啟動測驗
+            setTimeout(() => {
+                startChineseQuiz();
+            }, 300);
+        }
+
+        function showChineseStatistics() {
+            stopStoryPlayback();
+
+            document.getElementById('chineseContainer').style.display = 'flex';
+            document.getElementById('wordsContainer').style.display = 'none';
+            document.getElementById('tagCountDisplay').style.display = 'none';
+            document.getElementById('quizTagCountDisplay').style.display = 'none';
+
+            loadChineseData().then(data => {
+                if (!data) {
+                    document.getElementById('chineseContent').innerHTML = '無法加載數據';
+                    return;
+                }
+
+                const container = document.getElementById('chineseContent');
+                container.innerHTML = '';
+                container.style.display = 'flex';
+                container.style.flexDirection = 'column';
+                container.style.gap = '15px';
+
+                // 處理成語
+                if (data.成語 && Object.keys(data.成語).length > 0) {
+                    renderChineseTypeStatistics('成語', data.成語, '#667eea', container);
+                }
+
+                // 處理改錯
+                if (data.改錯 && Object.keys(data.改錯).length > 0) {
+                    renderChineseTypeStatistics('改錯', data.改錯, '#ff9800', container);
+                }
+
+                // 處理故事
+                if (data.故事 && Object.keys(data.故事).length > 0) {
+                    renderChineseTypeStatistics('故事', data.故事, '#4CAF50', container);
+                }
+
+                document.getElementById('chineseModeSelect').value = 'statistics';
+            });
+        }
+
+        function renderChineseTypeStatistics(typeName, typeData, color, container) {
+            const typeDiv = document.createElement('div');
+            typeDiv.style.marginBottom = '30px';
+
+            // 類型標題（可點擊）
+            const typeHeader = document.createElement('div');
+            typeHeader.style.fontSize = '1.3em';
+            typeHeader.style.fontWeight = 'bold';
+            typeHeader.style.color = color;
+            typeHeader.style.paddingBottom = '10px';
+            typeHeader.style.borderBottom = `2px solid ${color}`;
+            typeHeader.style.cursor = 'pointer';
+            typeHeader.style.userSelect = 'none';
+            typeHeader.style.display = 'flex';
+            typeHeader.style.alignItems = 'center';
+            typeHeader.style.gap = '10px';
+            typeHeader.style.transition = 'opacity 0.2s';
+
+            typeHeader.addEventListener('mouseenter', () => {
+                typeHeader.style.opacity = '0.8';
+            });
+            typeHeader.addEventListener('mouseleave', () => {
+                typeHeader.style.opacity = '1';
+            });
+
+            const typeToggleIcon = document.createElement('span');
+            typeToggleIcon.textContent = '▶';
+            typeToggleIcon.style.minWidth = '15px';
+            typeToggleIcon.style.transition = 'transform 0.3s';
+
+            const typeTitle = document.createElement('span');
+            typeTitle.textContent = typeName;
+
+            typeHeader.appendChild(typeToggleIcon);
+            typeHeader.appendChild(typeTitle);
+            typeDiv.appendChild(typeHeader);
+
+            // Sheet容器（初始隱藏）
+            const sheetsDiv = document.createElement('div');
+            sheetsDiv.style.display = 'none';
+            sheetsDiv.style.marginTop = '15px';
+
+            // Sheet統計
+            Object.entries(typeData).forEach(([sheetName, sheetData]) => {
+                const sheetContainer = document.createElement('div');
+                sheetContainer.style.marginBottom = '20px';
+                sheetContainer.style.paddingLeft = '20px';
+                sheetsDiv.appendChild(sheetContainer);
+
+                // 計算Sheet統計
+                const tags = [...new Set(sheetData.map(item => item.tag || ''))];
+                let sheetTotalCount = 0;
+                let sheetTestedCount = 0;
+                let sheetAccuracySum = 0;
+
+                const tagStats = {};
+                tags.forEach(tag => {
+                    const tagItems = sheetData.filter(item => (item.tag || '') === tag);
+                    let tagCount = tagItems.length;
+                    let tagTestedCount = 0;
+                    let tagAccuracy = 0;
+
+                    tagItems.forEach(item => {
+                        sheetTotalCount++;
+                        const quizKey = `${sheetName}/${typeName === '成語' ? item.成語 : typeName === '改錯' ? item.成語 : item.標題}`;
+                        const quizResult = getChineseQuizResultFromStorage(quizKey);
+                        if (quizResult !== null) {
+                            sheetTestedCount++;
+                            tagTestedCount++;
+                            const accuracy = quizResult ? 100 : 0;
+                            tagAccuracy += accuracy;
+                            sheetAccuracySum += accuracy;
+                        }
+                    });
+
+                    tagStats[tag] = {
+                        count: tagCount,
+                        testedCount: tagTestedCount,
+                        accuracy: tagTestedCount > 0 ? Math.round(tagAccuracy / tagCount) : '--'
+                    };
+                });
+
+                const sheetAccuracy = sheetTestedCount > 0 ? Math.round(sheetAccuracySum / sheetTotalCount) : '--';
+
+                // Sheet標題與統計（可點擊）
+                const sheetHeader = document.createElement('div');
+                sheetHeader.style.background = '#3a3a52';
+                sheetHeader.style.padding = '12px 15px';
+                sheetHeader.style.borderRadius = '6px';
+                sheetHeader.style.marginBottom = '12px';
+                sheetHeader.style.color = 'white';
+                sheetHeader.style.display = 'flex';
+                sheetHeader.style.alignItems = 'center';
+                sheetHeader.style.gap = '15px';
+                sheetHeader.style.cursor = 'pointer';
+                sheetHeader.style.userSelect = 'none';
+                sheetHeader.style.transition = 'background 0.2s';
+
+                sheetHeader.addEventListener('mouseenter', () => {
+                    sheetHeader.style.background = '#4a4a62';
+                });
+                sheetHeader.addEventListener('mouseleave', () => {
+                    sheetHeader.style.background = '#3a3a52';
+                });
+
+                const sheetHeaderContent = document.createElement('div');
+                sheetHeaderContent.style.display = 'flex';
+                sheetHeaderContent.style.alignItems = 'center';
+                sheetHeaderContent.style.gap = '10px';
+
+                const toggleIcon = document.createElement('span');
+                toggleIcon.textContent = '▶';
+                toggleIcon.style.fontSize = '0.9em';
+                toggleIcon.style.minWidth = '15px';
+                toggleIcon.style.transition = 'transform 0.3s';
+                toggleIcon.style.color = color;
+
+                const sheetName_div = document.createElement('div');
+                sheetName_div.textContent = sheetName;
+                sheetName_div.style.fontWeight = 'bold';
+                sheetName_div.style.minWidth = '150px';
+
+                sheetHeaderContent.appendChild(toggleIcon);
+                sheetHeaderContent.appendChild(sheetName_div);
+
+                const statsDiv = document.createElement('div');
+                statsDiv.style.display = 'flex';
+                statsDiv.style.gap = '15px';
+                statsDiv.style.fontSize = '0.9em';
+                statsDiv.innerHTML = `
+                    <span>📚 ${Object.keys(tagStats).length} 個單元</span>
+                    <span>📝 ${sheetTotalCount} 個項目</span>
+                    <span>✅ ${sheetTestedCount} 已測項目</span>
+                    <span>📊 整體: <span style="color: ${color};">${sheetAccuracy === '--' ? '--' : sheetAccuracy + '%'}</span></span>
+                `;
+
+                sheetHeader.appendChild(sheetHeaderContent);
+                sheetHeader.appendChild(statsDiv);
+                sheetContainer.appendChild(sheetHeader);
+
+                // Tag統計容器（初始隱藏）
+                const tagsContainer = document.createElement('div');
+                tagsContainer.style.display = 'none';
+                tagsContainer.style.flexWrap = 'wrap';
+                tagsContainer.style.gap = '12px';
+                tagsContainer.style.marginTop = '12px';
+
+                Object.entries(tagStats).forEach(([tag, data]) => {
+                    const tagCard = document.createElement('div');
+                    tagCard.style.background = '#2a2a52';
+                    tagCard.style.borderRadius = '6px';
+                    tagCard.style.padding = '8px 10px';
+                    tagCard.style.borderLeft = `4px solid ${color}`;
+                    tagCard.style.display = 'flex';
+                    tagCard.style.alignItems = 'center';
+                    tagCard.style.gap = '8px';
+                    tagCard.style.minHeight = '38px';
+                    tagCard.style.overflow = 'hidden';
+                    tagCard.style.flex = '1 1 calc(50% - 6px)';
+                    tagCard.style.transition = 'transform 0.2s, background 0.2s';
+                    tagCard.style.cursor = 'pointer';
+
+                    tagCard.addEventListener('mouseenter', () => {
+                        tagCard.style.transform = 'translateY(-2px)';
+                        tagCard.style.background = '#323260';
+                    });
+                    tagCard.addEventListener('mouseleave', () => {
+                        tagCard.style.transform = 'translateY(0)';
+                        tagCard.style.background = '#2a2a52';
+                    });
+
+                    // Tag名稱
+                    const tagName = document.createElement('div');
+                    tagName.textContent = tag || '(無)';
+                    tagName.style.fontSize = '0.95em';
+                    tagName.style.fontWeight = '600';
+                    tagName.style.color = '#b8b8b8';
+                    tagName.style.minWidth = '60px';
+                    tagName.style.maxWidth = '80px';
+                    tagName.style.whiteSpace = 'nowrap';
+                    tagName.style.flexShrink = '0';
+                    tagName.style.overflow = 'hidden';
+                    tagName.style.textOverflow = 'ellipsis';
+
+                    // 已測試數量
+                    const testedItem = document.createElement('div');
+                    testedItem.style.display = 'flex';
+                    testedItem.style.alignItems = 'center';
+                    testedItem.style.gap = '2px';
+                    testedItem.style.color = '#999';
+                    testedItem.style.whiteSpace = 'nowrap';
+                    testedItem.style.flex = '0 0 60px';
+                    testedItem.style.fontSize = '0.95em';
+                    testedItem.innerHTML = `<span>📝</span><span>${data.testedCount}/${data.count}</span>`;
+
+                    // 準確率百分比
+                    let accuracyColor = '#f44336'; // low
+                    if (data.accuracy !== '--') {
+                        if (data.accuracy >= 80) accuracyColor = '#4CAF50'; // high
+                        else if (data.accuracy >= 50) accuracyColor = '#FF9800'; // medium
+                    }
+
+                    const accuracyDiv = document.createElement('div');
+                    accuracyDiv.style.flex = '0 0 50px';
+                    accuracyDiv.style.fontSize = '1.2em';
+                    accuracyDiv.style.fontWeight = '600';
+                    accuracyDiv.style.color = accuracyColor;
+                    accuracyDiv.style.display = 'flex';
+                    accuracyDiv.style.alignItems = 'center';
+                    accuracyDiv.style.justifyContent = 'center';
+                    accuracyDiv.textContent = data.accuracy === '--' ? '--' : data.accuracy + '%';
+
+                    // 準確率條形圖
+                    const accuracyBar = document.createElement('div');
+                    accuracyBar.style.flex = '1';
+                    accuracyBar.style.height = '8px';
+                    accuracyBar.style.background = '#4a4a60';
+                    accuracyBar.style.borderRadius = '4px';
+                    accuracyBar.style.overflow = 'hidden';
+                    accuracyBar.style.minWidth = '40px';
+
+                    const accuracyFill = document.createElement('div');
+                    accuracyFill.style.height = '100%';
+                    accuracyFill.style.background = accuracyColor;
+                    accuracyFill.style.width = (data.accuracy !== '--' ? data.accuracy : 0) + '%';
+                    accuracyFill.style.transition = 'width 0.3s';
+
+                    accuracyBar.appendChild(accuracyFill);
+
+                    tagCard.appendChild(tagName);
+                    tagCard.appendChild(testedItem);
+                    tagCard.appendChild(accuracyDiv);
+                    tagCard.appendChild(accuracyBar);
+
+                    // 成語和改錯模式添加檢視和測驗按鈕
+                    if (typeName === '成語' || typeName === '改錯') {
+                        const buttonGroup = document.createElement('div');
+                        buttonGroup.style.display = 'flex';
+                        buttonGroup.style.gap = '4px';
+                        buttonGroup.style.marginLeft = 'auto';
+                        buttonGroup.style.flexShrink = '0';
+
+                        // [檢視] 按鈕
+                        const viewBtn = document.createElement('button');
+                        viewBtn.textContent = '檢視';
+                        viewBtn.style.padding = '4px 8px';
+                        viewBtn.style.background = '#666';
+                        viewBtn.style.color = 'white';
+                        viewBtn.style.border = 'none';
+                        viewBtn.style.borderRadius = '3px';
+                        viewBtn.style.cursor = 'pointer';
+                        viewBtn.style.fontSize = '0.85em';
+                        viewBtn.style.fontWeight = '600';
+                        viewBtn.style.whiteSpace = 'nowrap';
+                        viewBtn.onclick = (e) => {
+                            e.stopPropagation();
+                            viewChineseTagItems(typeName, sheetName, tag);
+                        };
+                        viewBtn.onmouseover = () => {
+                            viewBtn.style.background = '#555';
+                        };
+                        viewBtn.onmouseout = () => {
+                            viewBtn.style.background = '#666';
+                        };
+
+                        buttonGroup.appendChild(viewBtn);
+
+                        let method1, method2, btn1Color, btn2Color;
+
+                        if (typeName === '成語') {
+                            method1 = 'idiom-explanation';
+                            method2 = 'idiom-sentence';
+                            btn1Color = '#667eea';
+                            btn2Color = '#4CAF50';
+                        } else {
+                            method1 = 'gaicuo-hint';
+                            method2 = 'gaicuo-standard';
+                            btn1Color = '#ff9800';
+                            btn2Color = '#FF6F00';
+                        }
+
+                        const testBtn1 = document.createElement('button');
+                        testBtn1.textContent = '測1';
+                        testBtn1.style.padding = '4px 8px';
+                        testBtn1.style.background = btn1Color;
+                        testBtn1.style.color = 'white';
+                        testBtn1.style.border = 'none';
+                        testBtn1.style.borderRadius = '3px';
+                        testBtn1.style.cursor = 'pointer';
+                        testBtn1.style.fontSize = '0.85em';
+                        testBtn1.style.fontWeight = '600';
+                        testBtn1.style.whiteSpace = 'nowrap';
+                        testBtn1.onclick = (e) => {
+                            e.stopPropagation();
+                            startChineseIdiomQuizFromStats(sheetName, tag, method1);
+                        };
+                        const btn1HoverColor = typeName === '成語' ? '#5568d3' : '#f58700';
+                        testBtn1.onmouseover = () => {
+                            testBtn1.style.background = btn1HoverColor;
+                        };
+                        testBtn1.onmouseout = () => {
+                            testBtn1.style.background = btn1Color;
+                        };
+
+                        const testBtn2 = document.createElement('button');
+                        testBtn2.textContent = '測2';
+                        testBtn2.style.padding = '4px 8px';
+                        testBtn2.style.background = btn2Color;
+                        testBtn2.style.color = 'white';
+                        testBtn2.style.border = 'none';
+                        testBtn2.style.borderRadius = '3px';
+                        testBtn2.style.cursor = 'pointer';
+                        testBtn2.style.fontSize = '0.85em';
+                        testBtn2.style.fontWeight = '600';
+                        testBtn2.style.whiteSpace = 'nowrap';
+                        testBtn2.onclick = (e) => {
+                            e.stopPropagation();
+                            startChineseIdiomQuizFromStats(sheetName, tag, method2);
+                        };
+                        const btn2HoverColor = typeName === '成語' ? '#45a049' : '#E65100';
+                        testBtn2.onmouseover = () => {
+                            testBtn2.style.background = btn2HoverColor;
+                        };
+                        testBtn2.onmouseout = () => {
+                            testBtn2.style.background = btn2Color;
+                        };
+
+                        buttonGroup.appendChild(testBtn1);
+                        buttonGroup.appendChild(testBtn2);
+                        tagCard.appendChild(buttonGroup);
+                    }
+
+                    tagsContainer.appendChild(tagCard);
+                });
+
+                // 點擊展開/折疊
+                sheetHeader.addEventListener('click', () => {
+                    const isHidden = tagsContainer.style.display === 'none';
+                    tagsContainer.style.display = isHidden ? 'flex' : 'none';
+                    toggleIcon.style.transform = isHidden ? 'rotate(90deg)' : 'rotate(0deg)';
+                });
+
+                sheetContainer.appendChild(tagsContainer);
+            });
+
+            // 添加sheetsDiv到typeDiv
+            typeDiv.appendChild(sheetsDiv);
+
+            // 類型標題點擊事件
+            typeHeader.addEventListener('click', () => {
+                const isHidden = sheetsDiv.style.display === 'none';
+                sheetsDiv.style.display = isHidden ? 'block' : 'none';
+                typeToggleIcon.style.transform = isHidden ? 'rotate(90deg)' : 'rotate(0deg)';
+            });
+
+            container.appendChild(typeDiv);
         }
 
         function showChineseStories() {
