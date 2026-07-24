@@ -2659,40 +2659,34 @@
             const menu = document.getElementById('tagDropdownMenu');
             if (menu) menu.classList.remove('active');
 
-            // 跳到該tag的第一行
-            const wordRows = document.querySelectorAll('.word-row');
-            let found = false;
-            wordRows.forEach(row => {
-                if (!found) {
-                    // 查找word-tag元素
-                    const tagSpan = row.querySelector('.word-tag-tag');
-                    if (tagSpan && tagSpan.textContent === tag) {
-                        // 快速平滑滾動
-                        const container = document.getElementById('wordsContainer');
-                        const rect = row.getBoundingClientRect();
-                        const containerRect = container.getBoundingClientRect();
-                        const targetTop = container.scrollTop + (rect.top - containerRect.top);
-                        const startTop = container.scrollTop;
-                        const distance = targetTop - startTop;
-                        const duration = 300; // 300ms動畫時間
-                        const startTime = Date.now();
+            // 跳到該tag的標題行
+            const container = document.getElementById('wordsContainer');
+            const groupKey = `${sheetName}|${tag}`;
+            const headerRow = container.querySelector(`[data-group-tag="${groupKey}"]`);
 
-                        const animate = () => {
-                            const elapsed = Date.now() - startTime;
-                            const progress = Math.min(elapsed / duration, 1);
-                            // 使用easeOut緩動函數
-                            const easeProgress = 1 - Math.pow(1 - progress, 3);
-                            container.scrollTop = startTop + distance * easeProgress;
+            if (headerRow) {
+                // 快速平滑滾動到標題行
+                const rect = headerRow.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                const targetTop = container.scrollTop + (rect.top - containerRect.top);
+                const startTop = container.scrollTop;
+                const distance = targetTop - startTop;
+                const duration = 300; // 300ms動畫時間
+                const startTime = Date.now();
 
-                            if (progress < 1) {
-                                requestAnimationFrame(animate);
-                            }
-                        };
-                        animate();
-                        found = true;
+                const animate = () => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // 使用easeOut緩動函數
+                    const easeProgress = 1 - Math.pow(1 - progress, 3);
+                    container.scrollTop = startTop + distance * easeProgress;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
                     }
-                }
-            });
+                };
+                animate();
+            }
         }
 
         function toggleQuizDropdown() {
@@ -2925,7 +2919,29 @@
 
             document.getElementById('stats').textContent = `共 ${filteredWords.length} 項`;
 
+            let lastSheet = null;
+            let lastTag = null;
+
             filteredWords.forEach((word, index) => {
+                // 如果sheet或tag變化，插入標題行
+                if (word.sheet !== lastSheet || word.tag !== lastTag) {
+                    const headerRow = document.createElement('div');
+                    headerRow.style.cssText = `
+                        padding: 10px 15px;
+                        background-color: #FF9800;
+                        color: #333333;
+                        font-weight: bold;
+                        font-size: 1.1em;
+                        margin-top: ${index === 0 ? '0' : '10px'};
+                    `;
+                    headerRow.textContent = `${word.sheet} - ${word.tag || '(無)'}`;
+                    headerRow.dataset.groupTag = `${word.sheet}|${word.tag}`;
+                    container.appendChild(headerRow);
+
+                    lastSheet = word.sheet;
+                    lastTag = word.tag;
+                }
+
                 const row = document.createElement('div');
                 row.className = 'word-row';
 
