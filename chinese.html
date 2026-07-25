@@ -5596,7 +5596,7 @@
                 // 生成所有 sheet 的複選框和對應的 tag 子菜單
                 Object.entries(data.成語).forEach(([sheetName, sheetData]) => {
                     // 該 sheet 的所有 tags
-                    const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
+                    const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))];
 
                     // 從成語模式的保存狀態恢復，或初始化為全部勾選
                     let tagSet = new Set();
@@ -5943,7 +5943,7 @@
                 // 生成所有 sheet 的複選框和對應的 tag 子菜單
                 Object.entries(data.改錯).forEach(([sheetName, sheetData]) => {
                     // 該 sheet 的所有 tags
-                    const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
+                    const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))];
 
                     // 從改錯模式的保存狀態恢復，或初始化為全部勾選
                     let tagSet = new Set();
@@ -6259,7 +6259,7 @@
                 // 初始化 chineseSelectedTags - 為成語和改錯分別恢復各自的狀態
                 if (data.成語) {
                     Object.entries(data.成語).forEach(([sheetName, sheetData]) => {
-                        const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
+                        const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))];
                         let tagSet = new Set();
                         if (idiomModeTagStates[sheetName]) {
                             sheetTags.forEach(tag => {
@@ -6276,7 +6276,7 @@
 
                 if (data.改錯) {
                     Object.entries(data.改錯).forEach(([sheetName, sheetData]) => {
-                        const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
+                        const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))];
                         let tagSet = new Set();
                         if (gaicuoModeTagStates[sheetName]) {
                             sheetTags.forEach(tag => {
@@ -7207,7 +7207,7 @@
                     totalStories += sheetData.length;
 
                     // 該 sheet 的所有 tags
-                    const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
+                    const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))];
 
                     // 初始化 chineseSelectedTags 中該 sheet 的所有 tag（如果還沒有）
                     if (!chineseSelectedTags.has(sheetName)) {
@@ -7431,7 +7431,7 @@
                     // 該 sheet 的所有 tags（來自成語和改錯）
                     const idiomTags = data.成語[sheetName]?.map(item => item.tag || '') || [];
                     const gaicuoTags = data.改錯[sheetName]?.map(item => item.tag || '') || [];
-                    const sheetTags = [...new Set([...idiomTags, ...gaicuoTags].filter(t => t))].sort();
+                    const sheetTags = [...new Set([...idiomTags, ...gaicuoTags].filter(t => t))];
 
                     // 初始化 chineseSelectedTags 中該 sheet 的所有 tag（如果還沒有）
                     if (!chineseSelectedTags.has(sheetName)) {
