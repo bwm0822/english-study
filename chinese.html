@@ -2032,6 +2032,10 @@
         let quizModeCheckStates = {}; // 保存 quiz 模式 sheet 的狀態 {sheetName: checked}
         let quizModeTagStates = {}; // 保存 quiz 模式 tag 的狀態 {sheetName: {tagName: checked}}
         let quizModeFilterStates = {}; // 保存 quiz 模式的過濾狀態 {starFilter, accuracyFilter, accuracyThreshold}
+        let gaicuoModeCheckStates = {}; // 保存改錯模式 sheet 的狀態 {sheetName: checked}
+        let gaicuoModeTagStates = {}; // 保存改錯模式 tag 的狀態 {sheetName: {tagName: checked}}
+        let idiomModeCheckStates = {}; // 保存成語模式 sheet 的狀態 {sheetName: checked}
+        let idiomModeTagStates = {}; // 保存成語模式 tag 的狀態 {sheetName: {tagName: checked}}
 
         // 測驗相關變數
         let quizWords = [];
@@ -5594,9 +5598,20 @@
                     // 該 sheet 的所有 tags
                     const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
 
-                    // 初始化 chineseSelectedTags 中該 sheet 的所有 tag（如果還沒有）
+                    // 初始化或恢復 chineseSelectedTags
                     if (!chineseSelectedTags.has(sheetName)) {
                         chineseSelectedTags.set(sheetName, new Set(sheetTags));
+                    }
+
+                    // 從成語模式的保存狀態恢復
+                    if (idiomModeTagStates[sheetName]) {
+                        const tagSet = new Set();
+                        sheetTags.forEach(tag => {
+                            if (idiomModeTagStates[sheetName][tag]) {
+                                tagSet.add(tag);
+                            }
+                        });
+                        chineseSelectedTags.set(sheetName, tagSet);
                     }
 
                     const sheetItem = document.createElement('div');
@@ -5611,11 +5626,16 @@
                     checkbox.className = 'sheet-checkbox';
                     checkbox.dataset.sheetName = sheetName;
 
-                    // 根據已保存的狀態恢復，預設為 true
-                    checkbox.checked = chineseSheetStates[sheetName] !== false;
+                    // 從成語模式的保存狀態恢復，或使用 chineseSheetStates
+                    if (idiomModeCheckStates[sheetName] !== undefined) {
+                        checkbox.checked = idiomModeCheckStates[sheetName];
+                    } else {
+                        checkbox.checked = chineseSheetStates[sheetName] !== false;
+                    }
 
                     checkbox.onchange = function() {
                         chineseSheetStates[this.dataset.sheetName] = this.checked;
+                        idiomModeCheckStates[this.dataset.sheetName] = this.checked;
                         updateChineseIdiomFilter();
                         if (window.calculateQuizCount) {
                             window.calculateQuizCount();
@@ -5671,10 +5691,19 @@
                         tagCheckbox.dataset.tag = tag;
                         tagCheckbox.className = 'chinese-tag-checkbox';
 
-                        // 根據已保存的狀態恢復，預設為 true
-                        tagCheckbox.checked = chineseSelectedTags.get(sheetName)?.has(tag) ?? true;
+                        // 從成語模式的保存狀態恢復，或使用 chineseSelectedTags
+                        if (idiomModeTagStates[sheetName] && idiomModeTagStates[sheetName][tag] !== undefined) {
+                            tagCheckbox.checked = idiomModeTagStates[sheetName][tag];
+                        } else {
+                            tagCheckbox.checked = chineseSelectedTags.get(sheetName)?.has(tag) ?? true;
+                        }
 
                         tagCheckbox.onchange = function() {
+                            // 保存狀態
+                            if (!idiomModeTagStates[sheetName]) {
+                                idiomModeTagStates[sheetName] = {};
+                            }
+                            idiomModeTagStates[sheetName][tag] = this.checked;
                             updateChineseIdiomFilter();
                             if (window.calculateQuizCount) {
                                 window.calculateQuizCount();
@@ -5909,14 +5938,30 @@
                     submenu.remove();
                 });
 
+                // 显示单元选择容器
+                document.getElementById('tagFilterContainer').style.display = 'flex';
+                document.getElementById('quizTagFilterContainer').style.display = 'none';
+                document.getElementById('chineseQuizModeContainer').style.display = 'none';
+
                 // 生成所有 sheet 的複選框和對應的 tag 子菜單
                 Object.entries(data.改錯).forEach(([sheetName, sheetData]) => {
                     // 該 sheet 的所有 tags
                     const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
 
-                    // 初始化 chineseSelectedTags 中該 sheet 的所有 tag（如果還沒有）
+                    // 初始化或恢復 chineseSelectedTags
                     if (!chineseSelectedTags.has(sheetName)) {
                         chineseSelectedTags.set(sheetName, new Set(sheetTags));
+                    }
+
+                    // 從改錯模式的保存狀態恢復
+                    if (gaicuoModeTagStates[sheetName]) {
+                        const tagSet = new Set();
+                        sheetTags.forEach(tag => {
+                            if (gaicuoModeTagStates[sheetName][tag]) {
+                                tagSet.add(tag);
+                            }
+                        });
+                        chineseSelectedTags.set(sheetName, tagSet);
                     }
 
                     // 初始化 chineseSheetStates（預設為 true）
@@ -5936,11 +5981,16 @@
                     checkbox.className = 'sheet-checkbox';
                     checkbox.dataset.sheetName = sheetName;
 
-                    // 根據已保存的狀態恢復，預設為 true
-                    checkbox.checked = chineseSheetStates[sheetName] !== false;
+                    // 從改錯模式的保存狀態恢復，或使用 chineseSheetStates
+                    if (gaicuoModeCheckStates[sheetName] !== undefined) {
+                        checkbox.checked = gaicuoModeCheckStates[sheetName];
+                    } else {
+                        checkbox.checked = chineseSheetStates[sheetName] !== false;
+                    }
 
                     checkbox.onchange = function() {
                         chineseSheetStates[this.dataset.sheetName] = this.checked;
+                        gaicuoModeCheckStates[this.dataset.sheetName] = this.checked;
                         updateChineseGaicuoFilter();
                     };
 
@@ -5990,7 +6040,13 @@
                         const tagCheckbox = document.createElement('input');
                         tagCheckbox.type = 'checkbox';
                         tagCheckbox.value = tag;
-                        tagCheckbox.checked = chineseSelectedTags.get(sheetName).has(tag);
+
+                        // 從保存的狀態恢復，或使用 chineseSelectedTags
+                        if (gaicuoModeTagStates[sheetName] && gaicuoModeTagStates[sheetName][tag] !== undefined) {
+                            tagCheckbox.checked = gaicuoModeTagStates[sheetName][tag];
+                        } else {
+                            tagCheckbox.checked = chineseSelectedTags.get(sheetName).has(tag);
+                        }
 
                         tagCheckbox.onchange = function() {
                             if (this.checked) {
@@ -5998,6 +6054,11 @@
                             } else {
                                 chineseSelectedTags.get(sheetName).delete(this.value);
                             }
+                            // 保存狀態
+                            if (!gaicuoModeTagStates[sheetName]) {
+                                gaicuoModeTagStates[sheetName] = {};
+                            }
+                            gaicuoModeTagStates[sheetName][this.value] = this.checked;
                             updateChineseGaicuoFilter();
                         };
 
@@ -7178,10 +7239,19 @@
                         tagCheckbox.dataset.tag = tag;
                         tagCheckbox.className = 'chinese-tag-checkbox';
 
-                        // 根據已保存的狀態恢復，預設為 true
-                        tagCheckbox.checked = chineseSelectedTags.get(sheetName)?.has(tag) ?? true;
+                        // 從成語模式的保存狀態恢復，或使用 chineseSelectedTags
+                        if (idiomModeTagStates[sheetName] && idiomModeTagStates[sheetName][tag] !== undefined) {
+                            tagCheckbox.checked = idiomModeTagStates[sheetName][tag];
+                        } else {
+                            tagCheckbox.checked = chineseSelectedTags.get(sheetName)?.has(tag) ?? true;
+                        }
 
                         tagCheckbox.onchange = function() {
+                            // 保存狀態
+                            if (!idiomModeTagStates[sheetName]) {
+                                idiomModeTagStates[sheetName] = {};
+                            }
+                            idiomModeTagStates[sheetName][tag] = this.checked;
                             updateChineseIdiomFilter();
                             if (window.calculateQuizCount) {
                                 window.calculateQuizCount();
@@ -7393,10 +7463,19 @@
                         tagCheckbox.dataset.tag = tag;
                         tagCheckbox.className = 'chinese-tag-checkbox';
 
-                        // 根據已保存的狀態恢復，預設為 true
-                        tagCheckbox.checked = chineseSelectedTags.get(sheetName)?.has(tag) ?? true;
+                        // 從成語模式的保存狀態恢復，或使用 chineseSelectedTags
+                        if (idiomModeTagStates[sheetName] && idiomModeTagStates[sheetName][tag] !== undefined) {
+                            tagCheckbox.checked = idiomModeTagStates[sheetName][tag];
+                        } else {
+                            tagCheckbox.checked = chineseSelectedTags.get(sheetName)?.has(tag) ?? true;
+                        }
 
                         tagCheckbox.onchange = function() {
+                            // 保存狀態
+                            if (!idiomModeTagStates[sheetName]) {
+                                idiomModeTagStates[sheetName] = {};
+                            }
+                            idiomModeTagStates[sheetName][tag] = this.checked;
                             updateChineseIdiomFilter();
                             if (window.calculateQuizCount) {
                                 window.calculateQuizCount();
