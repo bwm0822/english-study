@@ -5598,21 +5598,18 @@
                     // 該 sheet 的所有 tags
                     const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
 
-                    // 初始化或恢復 chineseSelectedTags
-                    if (!chineseSelectedTags.has(sheetName)) {
-                        chineseSelectedTags.set(sheetName, new Set(sheetTags));
-                    }
-
-                    // 從成語模式的保存狀態恢復
+                    // 從成語模式的保存狀態恢復，或初始化為全部勾選
+                    let tagSet = new Set();
                     if (idiomModeTagStates[sheetName]) {
-                        const tagSet = new Set();
                         sheetTags.forEach(tag => {
                             if (idiomModeTagStates[sheetName][tag]) {
                                 tagSet.add(tag);
                             }
                         });
-                        chineseSelectedTags.set(sheetName, tagSet);
+                    } else {
+                        tagSet = new Set(sheetTags);
                     }
+                    chineseSelectedTags.set(sheetName, tagSet);
 
                     const sheetItem = document.createElement('div');
                     sheetItem.className = 'sheet-item';
@@ -5948,21 +5945,18 @@
                     // 該 sheet 的所有 tags
                     const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
 
-                    // 初始化或恢復 chineseSelectedTags
-                    if (!chineseSelectedTags.has(sheetName)) {
-                        chineseSelectedTags.set(sheetName, new Set(sheetTags));
-                    }
-
-                    // 從改錯模式的保存狀態恢復
+                    // 從改錯模式的保存狀態恢復，或初始化為全部勾選
+                    let tagSet = new Set();
                     if (gaicuoModeTagStates[sheetName]) {
-                        const tagSet = new Set();
                         sheetTags.forEach(tag => {
                             if (gaicuoModeTagStates[sheetName][tag]) {
                                 tagSet.add(tag);
                             }
                         });
-                        chineseSelectedTags.set(sheetName, tagSet);
+                    } else {
+                        tagSet = new Set(sheetTags);
                     }
+                    chineseSelectedTags.set(sheetName, tagSet);
 
                     // 初始化 chineseSheetStates（預設為 true）
                     if (chineseSheetStates[sheetName] === undefined) {
@@ -6260,6 +6254,41 @@
                 if (!data || (!data.成語 && !data.改錯)) {
                     document.getElementById('chineseContent').innerHTML = '無法加載數據';
                     return;
+                }
+
+                // 初始化 chineseSelectedTags - 為成語和改錯分別恢復各自的狀態
+                if (data.成語) {
+                    Object.entries(data.成語).forEach(([sheetName, sheetData]) => {
+                        const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
+                        let tagSet = new Set();
+                        if (idiomModeTagStates[sheetName]) {
+                            sheetTags.forEach(tag => {
+                                if (idiomModeTagStates[sheetName][tag]) {
+                                    tagSet.add(tag);
+                                }
+                            });
+                        } else {
+                            tagSet = new Set(sheetTags);
+                        }
+                        chineseSelectedTags.set(sheetName, tagSet);
+                    });
+                }
+
+                if (data.改錯) {
+                    Object.entries(data.改錯).forEach(([sheetName, sheetData]) => {
+                        const sheetTags = [...new Set(sheetData.map(item => item.tag || '').filter(t => t))].sort();
+                        let tagSet = new Set();
+                        if (gaicuoModeTagStates[sheetName]) {
+                            sheetTags.forEach(tag => {
+                                if (gaicuoModeTagStates[sheetName][tag]) {
+                                    tagSet.add(tag);
+                                }
+                            });
+                        } else {
+                            tagSet = new Set(sheetTags);
+                        }
+                        chineseSelectedTags.set(sheetName, tagSet);
+                    });
                 }
 
                 // 清空所有容器和舊元素
