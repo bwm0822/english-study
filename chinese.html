@@ -6818,6 +6818,7 @@
             // 類型標題（可點擊）
             const typeHeader = document.createElement('div');
             typeHeader.style.fontSize = '1.3em';
+            typeHeader.style.paddingBottom = '10px';
             typeHeader.style.fontWeight = 'bold';
             typeHeader.style.color = color;
             typeHeader.style.paddingBottom = '10px';
@@ -6931,6 +6932,7 @@
                 const sheetName_div = document.createElement('div');
                 sheetName_div.textContent = sheetName;
                 sheetName_div.style.fontWeight = 'bold';
+                sheetName_div.style.fontSize = '1.3em';
                 sheetName_div.style.minWidth = '150px';
 
                 sheetHeaderContent.appendChild(toggleIcon);
@@ -6939,7 +6941,7 @@
                 const statsDiv = document.createElement('div');
                 statsDiv.style.display = 'flex';
                 statsDiv.style.gap = '15px';
-                statsDiv.style.fontSize = '0.9em';
+                statsDiv.style.fontSize = '0.95em';
                 statsDiv.innerHTML = `
                     <span>📚 ${Object.keys(tagStats).length} 個單元</span>
                     <span>📝 ${sheetTotalCount} 個項目</span>
@@ -6985,7 +6987,7 @@
                     // Tag名稱
                     const tagName = document.createElement('div');
                     tagName.textContent = tag || '(無)';
-                    tagName.style.fontSize = '0.95em';
+                    tagName.style.fontSize = '1em';
                     tagName.style.fontWeight = '600';
                     tagName.style.color = '#b8b8b8';
                     tagName.style.minWidth = '60px';
@@ -7003,7 +7005,7 @@
                     testedItem.style.color = '#999';
                     testedItem.style.whiteSpace = 'nowrap';
                     testedItem.style.flex = '0 0 60px';
-                    testedItem.style.fontSize = '0.95em';
+                    testedItem.style.fontSize = '1em';
                     testedItem.innerHTML = `<span>📝</span><span>${data.testedCount}/${data.count}</span>`;
 
                     // 準確率百分比
@@ -7015,7 +7017,7 @@
 
                     const accuracyDiv = document.createElement('div');
                     accuracyDiv.style.flex = '0 0 50px';
-                    accuracyDiv.style.fontSize = '1.2em';
+                    accuracyDiv.style.fontSize = '1.3em';
                     accuracyDiv.style.fontWeight = '600';
                     accuracyDiv.style.color = accuracyColor;
                     accuracyDiv.style.display = 'flex';
@@ -7055,13 +7057,13 @@
                     // [檢視] 按鈕
                     const viewBtn = document.createElement('button');
                     viewBtn.textContent = '檢視';
-                    viewBtn.style.padding = '4px 8px';
+                    viewBtn.style.padding = '6px 14px';
                     viewBtn.style.background = '#666';
                     viewBtn.style.color = 'white';
                     viewBtn.style.border = 'none';
                     viewBtn.style.borderRadius = '3px';
                     viewBtn.style.cursor = 'pointer';
-                    viewBtn.style.fontSize = '0.85em';
+                    viewBtn.style.fontSize = '0.95em';
                     viewBtn.style.fontWeight = '600';
                     viewBtn.style.whiteSpace = 'nowrap';
                     viewBtn.onclick = (e) => {
@@ -7095,13 +7097,13 @@
 
                         const testBtn1 = document.createElement('button');
                         testBtn1.textContent = '測1';
-                        testBtn1.style.padding = '4px 8px';
+                        testBtn1.style.padding = '6px 14px';
                         testBtn1.style.background = btn1Color;
                         testBtn1.style.color = 'white';
                         testBtn1.style.border = 'none';
                         testBtn1.style.borderRadius = '3px';
                         testBtn1.style.cursor = 'pointer';
-                        testBtn1.style.fontSize = '0.85em';
+                        testBtn1.style.fontSize = '0.95em';
                         testBtn1.style.fontWeight = '600';
                         testBtn1.style.whiteSpace = 'nowrap';
                         testBtn1.onclick = (e) => {
@@ -7118,13 +7120,13 @@
 
                         const testBtn2 = document.createElement('button');
                         testBtn2.textContent = '測2';
-                        testBtn2.style.padding = '4px 8px';
+                        testBtn2.style.padding = '6px 14px';
                         testBtn2.style.background = btn2Color;
                         testBtn2.style.color = 'white';
                         testBtn2.style.border = 'none';
                         testBtn2.style.borderRadius = '3px';
                         testBtn2.style.cursor = 'pointer';
-                        testBtn2.style.fontSize = '0.85em';
+                        testBtn2.style.fontSize = '0.95em';
                         testBtn2.style.fontWeight = '600';
                         testBtn2.style.whiteSpace = 'nowrap';
                         testBtn2.onclick = (e) => {
