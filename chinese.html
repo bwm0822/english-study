@@ -6315,6 +6315,13 @@
 
                 starFilterItem.appendChild(starCheckbox);
                 starFilterItem.appendChild(starLabel);
+                starFilterItem.style.cursor = 'pointer';
+                starFilterItem.onclick = (e) => {
+                    if (!e.target.closest('input')) {
+                        starCheckbox.checked = !starCheckbox.checked;
+                        starCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                };
                 container.appendChild(starFilterItem);
 
                 // 添加正確率篩選
@@ -6333,6 +6340,13 @@
 
                 accuracyFilterContainer.appendChild(accuracyCheckbox);
                 accuracyFilterContainer.appendChild(accuracyLabel);
+                accuracyFilterContainer.style.cursor = 'pointer';
+                accuracyFilterContainer.onclick = (e) => {
+                    if (!e.target.closest('input')) {
+                        accuracyCheckbox.checked = !accuracyCheckbox.checked;
+                        accuracyCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                };
                 container.appendChild(accuracyFilterContainer);
 
                 // 添加顯示類型選擇下拉選單
