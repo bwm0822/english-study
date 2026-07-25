@@ -2839,7 +2839,7 @@
 
                         // 如果勾選星號過濾，檢查是否有星號
                         if (filterByStar) {
-                            if (getFavoriteFromStorage(wordKey) !== 'true') {
+                            if (getFavoriteFromStorage(wordKey) !== true) {
                                 return false;
                             }
                         }
@@ -2890,7 +2890,7 @@
                     // 如果勾選星號過濾，只顯示有星號的
                     if (filterByStar) {
                         const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                        if (getFavoriteFromStorage(wordKey) !== 'true') {
+                        if (getFavoriteFromStorage(wordKey) !== true) {
                             return false;
                         }
                     }
@@ -2949,17 +2949,17 @@
                 const starBtn = document.createElement('div');
                 starBtn.className = 'word-star';
                 const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === true;
                 starBtn.textContent = isFavorited ? '★' : '☆';
                 starBtn.dataset.wordKey = wordKey;
                 starBtn.onclick = (e) => {
                     e.stopPropagation();
-                    const isFav = getFavoriteFromStorage(wordKey) === 'true';
+                    const isFav = getFavoriteFromStorage(wordKey) === true;
                     if (isFav) {
                         deleteFavoriteFromStorage(wordKey);
                         starBtn.textContent = '☆';
                     } else {
-                        saveFavoriteToStorage(wordKey, 'true');
+                        saveFavoriteToStorage(wordKey, true);
                         starBtn.textContent = '★';
                     }
                 };
@@ -3598,7 +3598,7 @@
                     // 如果勾選星號篩選，只包含有星號的單字
                     if (filterByStar) {
                         const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                        if (getFavoriteFromStorage(wordKey) !== 'true') {
+                        if (getFavoriteFromStorage(wordKey) !== true) {
                             return false;
                         }
                     }
@@ -3739,7 +3739,7 @@
                 // 如果勾選星號篩選，只包含有星號的單字
                 if (filterByStar) {
                     const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                    if (getFavoriteFromStorage(wordKey) !== 'true') {
+                    if (getFavoriteFromStorage(wordKey) !== true) {
                         return false;
                     }
                 }
@@ -3895,7 +3895,7 @@
 
                 const word = result.word;
                 const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === true;
 
                 // 星號
                 const starSpan = document.createElement('div');
@@ -3904,12 +3904,12 @@
                 starSpan.onclick = (e) => {
                     e.stopPropagation();
                     // 重新檢查當前狀態
-                    const currentIsFav = getFavoriteFromStorage(wordKey) === 'true';
+                    const currentIsFav = getFavoriteFromStorage(wordKey) === true;
                     if (currentIsFav) {
                         deleteFavoriteFromStorage(wordKey);
                         starSpan.textContent = '☆';
                     } else {
-                        saveFavoriteToStorage(wordKey, 'true');
+                        saveFavoriteToStorage(wordKey, true);
                         starSpan.textContent = '★';
                     }
                 };
@@ -4122,16 +4122,16 @@
             document.getElementById('modalWordIndex').textContent = wordIndex + 1;
 
             const starSpan = document.getElementById('modalWordStar');
-            const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
+            const isFavorited = getFavoriteFromStorage(wordKey) === true;
             starSpan.textContent = isFavorited ? '★' : '☆';
             starSpan.onclick = (e) => {
                 e.stopPropagation();
-                const currentIsFav = getFavoriteFromStorage(wordKey) === 'true';
+                const currentIsFav = getFavoriteFromStorage(wordKey) === true;
                 if (currentIsFav) {
                     deleteFavoriteFromStorage(wordKey);
                     starSpan.textContent = '☆';
                 } else {
-                    saveFavoriteToStorage(wordKey, 'true');
+                    saveFavoriteToStorage(wordKey, true);
                     starSpan.textContent = '★';
                 }
             };
@@ -4275,16 +4275,16 @@
                 const starBtn = document.createElement('div');
                 starBtn.className = 'word-star';
                 const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === true;
                 starBtn.textContent = isFavorited ? '★' : '☆';
                 starBtn.onclick = (e) => {
                     e.stopPropagation();
-                    const isFav = getFavoriteFromStorage(wordKey) === 'true';
+                    const isFav = getFavoriteFromStorage(wordKey) === true;
                     if (isFav) {
                         deleteFavoriteFromStorage(wordKey);
                         starBtn.textContent = '☆';
                     } else {
-                        saveFavoriteToStorage(wordKey, 'true');
+                        saveFavoriteToStorage(wordKey, true);
                         starBtn.textContent = '★';
                     }
                 };
@@ -4771,14 +4771,19 @@
                 if (englishData) {
                     const data = JSON.parse(englishData);
                     if (data.favorite && data.favorite[favoriteKey] !== undefined) {
-                        return data.favorite[favoriteKey];
+                        const value = data.favorite[favoriteKey];
+                        if (typeof value === 'string') {
+                            return value === 'true';
+                        }
+                        return value;
                     }
                 }
             } catch (e) {
                 console.error('讀取favorite失敗:', e);
             }
-            // 向後相容：嘗試從舊格式讀取
-            return localStorage.getItem(`favorite_${favoriteKey}`);
+            // 向後相容：嘗試從舊格式讀取並轉換為boolean
+            const oldValue = localStorage.getItem(`favorite_${favoriteKey}`);
+            return oldValue === 'true' ? true : false;
         }
 
         function saveFavoriteToStorage(favoriteKey, value) {
@@ -4875,17 +4880,17 @@
                 const starBtn = document.createElement('div');
                 starBtn.className = 'word-star';
                 const wordKey = `自訂/${word.tag}/${word.單字}`;
-                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === true;
                 starBtn.textContent = isFavorited ? '★' : '☆';
                 starBtn.dataset.wordKey = wordKey;
                 starBtn.onclick = (e) => {
                     e.stopPropagation();
-                    const isFav = getFavoriteFromStorage(wordKey) === 'true';
+                    const isFav = getFavoriteFromStorage(wordKey) === true;
                     if (isFav) {
                         deleteFavoriteFromStorage(wordKey);
                         starBtn.textContent = '☆';
                     } else {
-                        saveFavoriteToStorage(wordKey, 'true');
+                        saveFavoriteToStorage(wordKey, true);
                         starBtn.textContent = '★';
                     }
                 };

@@ -2988,7 +2988,7 @@
 
                         // 如果勾選星號過濾，檢查是否有星號
                         if (filterByStar) {
-                            if (getFavoriteFromStorage(wordKey) !== 'true') {
+                            if (getFavoriteFromStorage(wordKey) !== true) {
                                 return false;
                             }
                         }
@@ -3039,7 +3039,7 @@
                     // 如果勾選星號過濾，只顯示有星號的
                     if (filterByStar) {
                         const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                        if (getFavoriteFromStorage(wordKey) !== 'true') {
+                        if (getFavoriteFromStorage(wordKey) !== true) {
                             return false;
                         }
                     }
@@ -3076,17 +3076,17 @@
                 const starBtn = document.createElement('div');
                 starBtn.className = 'word-star';
                 const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === true;
                 starBtn.textContent = isFavorited ? '★' : '☆';
                 starBtn.dataset.wordKey = wordKey;
                 starBtn.onclick = (e) => {
                     e.stopPropagation();
-                    const isFav = getFavoriteFromStorage(wordKey) === 'true';
+                    const isFav = getFavoriteFromStorage(wordKey) === true;
                     if (isFav) {
                         deleteFavoriteFromStorage(wordKey);
                         starBtn.textContent = '☆';
                     } else {
-                        saveFavoriteToStorage(wordKey, 'true');
+                        saveFavoriteToStorage(wordKey, true);
                         starBtn.textContent = '★';
                     }
                 };
@@ -3725,7 +3725,7 @@
                     // 如果勾選星號篩選，只包含有星號的單字
                     if (filterByStar) {
                         const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                        if (getFavoriteFromStorage(wordKey) !== 'true') {
+                        if (getFavoriteFromStorage(wordKey) !== true) {
                             return false;
                         }
                     }
@@ -3866,7 +3866,7 @@
                 // 如果勾選星號篩選，只包含有星號的單字
                 if (filterByStar) {
                     const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                    if (getFavoriteFromStorage(wordKey) !== 'true') {
+                    if (getFavoriteFromStorage(wordKey) !== true) {
                         return false;
                     }
                 }
@@ -4020,7 +4020,7 @@
 
                 const word = result.word;
                 const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === true;
 
                 // 星號
                 const starSpan = document.createElement('div');
@@ -4029,12 +4029,12 @@
                 starSpan.onclick = (e) => {
                     e.stopPropagation();
                     // 重新檢查當前狀態
-                    const currentIsFav = getFavoriteFromStorage(wordKey) === 'true';
+                    const currentIsFav = getFavoriteFromStorage(wordKey) === true;
                     if (currentIsFav) {
                         deleteFavoriteFromStorage(wordKey);
                         starSpan.textContent = '☆';
                     } else {
-                        saveFavoriteToStorage(wordKey, 'true');
+                        saveFavoriteToStorage(wordKey, true);
                         starSpan.textContent = '★';
                     }
                 };
@@ -4261,16 +4261,16 @@
             document.getElementById('modalWordIndex').textContent = wordIndex + 1;
 
             const starSpan = document.getElementById('modalWordStar');
-            const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
+            const isFavorited = getFavoriteFromStorage(wordKey) === true;
             starSpan.textContent = isFavorited ? '★' : '☆';
             starSpan.onclick = (e) => {
                 e.stopPropagation();
-                const currentIsFav = getFavoriteFromStorage(wordKey) === 'true';
+                const currentIsFav = getFavoriteFromStorage(wordKey) === true;
                 if (currentIsFav) {
                     deleteFavoriteFromStorage(wordKey);
                     starSpan.textContent = '☆';
                 } else {
-                    saveFavoriteToStorage(wordKey, 'true');
+                    saveFavoriteToStorage(wordKey, true);
                     starSpan.textContent = '★';
                 }
             };
@@ -4784,13 +4784,17 @@
                 if (chineseData) {
                     const data = JSON.parse(chineseData);
                     if (data.favorite && data.favorite[favoriteKey] !== undefined) {
-                        return data.favorite[favoriteKey];
+                        const value = data.favorite[favoriteKey];
+                        if (typeof value === 'string') {
+                            return value === 'true';
+                        }
+                        return value;
                     }
                 }
             } catch (e) {
                 console.error('讀取中文favorite失敗:', e);
             }
-            return null;
+            return false;
         }
 
         function saveChineseFavoriteToStorage(favoriteKey, value) {
@@ -4832,14 +4836,19 @@
                 if (englishData) {
                     const data = JSON.parse(englishData);
                     if (data.favorite && data.favorite[favoriteKey] !== undefined) {
-                        return data.favorite[favoriteKey];
+                        const value = data.favorite[favoriteKey];
+                        if (typeof value === 'string') {
+                            return value === 'true';
+                        }
+                        return value;
                     }
                 }
             } catch (e) {
                 console.error('讀取favorite失敗:', e);
             }
-            // 向後相容：嘗試從舊格式讀取
-            return localStorage.getItem(`favorite_${favoriteKey}`);
+            // 向後相容：嘗試從舊格式讀取並轉換為boolean
+            const oldValue = localStorage.getItem(`favorite_${favoriteKey}`);
+            return oldValue === 'true' ? true : false;
         }
 
         function saveFavoriteToStorage(favoriteKey, value) {
@@ -4903,17 +4912,17 @@
                 const starBtn = document.createElement('div');
                 starBtn.className = 'word-star';
                 const wordKey = `自訂/${word.tag}/${word.單字}`;
-                const isFavorited = getFavoriteFromStorage(wordKey) === 'true';
+                const isFavorited = getFavoriteFromStorage(wordKey) === true;
                 starBtn.textContent = isFavorited ? '★' : '☆';
                 starBtn.dataset.wordKey = wordKey;
                 starBtn.onclick = (e) => {
                     e.stopPropagation();
-                    const isFav = getFavoriteFromStorage(wordKey) === 'true';
+                    const isFav = getFavoriteFromStorage(wordKey) === true;
                     if (isFav) {
                         deleteFavoriteFromStorage(wordKey);
                         starBtn.textContent = '☆';
                     } else {
-                        saveFavoriteToStorage(wordKey, 'true');
+                        saveFavoriteToStorage(wordKey, true);
                         starBtn.textContent = '★';
                     }
                 };
@@ -5747,14 +5756,14 @@
 
                         // 檢查收藏狀態
                         const favoriteKey = `${sheetName}/${item.成語}`;
-                        const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+                        const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === true;
 
                         // 檢查是否是特殊成語"寧為雞首，不為牛後"
                         if (item.成語 === '寧為雞首，不為牛後') {
                             html += `
                                 <div class="idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}">
                                     <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${itemIndex}</div>
-                                    <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; if (el.textContent === '★') { saveChineseFavoriteToStorage('${favoriteKey}', 'true'); } else { deleteChineseFavoriteFromStorage('${favoriteKey}'); }">${isFavorited ? '★' : '☆'}</div>
+                                    <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; if (el.textContent === '★') { saveChineseFavoriteToStorage('${favoriteKey}', true); } else { deleteChineseFavoriteFromStorage('${favoriteKey}'); }">${isFavorited ? '★' : '☆'}</div>
                                     <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 0;">
                                         <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center;">
                                             <div>${sheetName}</div>
@@ -5776,7 +5785,7 @@
                                 <div class="idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}" style="flex-direction: column;">
                                     <div style="display: flex; width: 100%; margin-bottom: 10px;">
                                         <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${itemIndex}</div>
-                                        <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; if (el.textContent === '★') { saveChineseFavoriteToStorage('${favoriteKey}', 'true'); } else { deleteChineseFavoriteFromStorage('${favoriteKey}'); }">${isFavorited ? '★' : '☆'}</div>
+                                        <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; if (el.textContent === '★') { saveChineseFavoriteToStorage('${favoriteKey}', true); } else { deleteChineseFavoriteFromStorage('${favoriteKey}'); }">${isFavorited ? '★' : '☆'}</div>
                                         <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 0;">
                                             <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center;">
                                             <div>${sheetName}</div>
@@ -5795,7 +5804,7 @@
                             html += `
                                 <div class="idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}">
                                     <div style="flex: 0 0 40px; text-align: center; font-size: 1.5em; color: #999; padding: 12px 8px; user-select: none; font-weight: 500;">${itemIndex}</div>
-                                    <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; if (el.textContent === '★') { saveChineseFavoriteToStorage('${favoriteKey}', 'true'); } else { deleteChineseFavoriteFromStorage('${favoriteKey}'); }">${isFavorited ? '★' : '☆'}</div>
+                                    <div style="flex: 0 0 30px; text-align: center; font-size: 1.5em; cursor: pointer; color: #ffa500;" onclick="event.stopPropagation(); const el = this; el.textContent = el.textContent === '☆' ? '★' : '☆'; el.style.color = '#ffa500'; if (el.textContent === '★') { saveChineseFavoriteToStorage('${favoriteKey}', true); } else { deleteChineseFavoriteFromStorage('${favoriteKey}'); }">${isFavorited ? '★' : '☆'}</div>
                                     <div style="flex: 0 0 100px; display: flex; flex-direction: column; align-items: center; gap: 0;">
                                         <div style="background: #667eea; color: white; padding: 6px 10px; border-radius: 3px; font-size: 0.85em; font-weight: 600; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center;">
                                             <div>${sheetName}</div>
@@ -6310,7 +6319,7 @@
 
                             // 檢查收藏狀態
                             const favoriteKey = `${sheetName}/${item.成語}`;
-                            const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+                            const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === true;
 
                             html += `
                                 <div class="idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}" data-favorite-key="${favoriteKey}" data-favorite="${isFavorited}" data-accuracy="${accuracyValue}" data-type="idiom">
@@ -6359,7 +6368,7 @@
 
                             // 檢查收藏狀態
                             const favoriteKey = `${sheetName}/${item.成語}`;
-                            const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+                            const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === true;
 
                             // 在成語中高亮正確字（答案）- 紅色粗體
                             let idiomDisplay = item.成語 || '';
@@ -8179,7 +8188,7 @@
                 // 星號
                 const sheetName = result.word.sheet || currentChineseSheet;
                 const favoriteKey = `${sheetName}/${result.word.成語}`;
-                const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+                const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === true;
                 const starDiv = document.createElement('div');
                 starDiv.textContent = isFavorited ? '★' : '☆';
                 starDiv.style.flex = '0 0 40px';
@@ -8189,7 +8198,7 @@
                 starDiv.style.color = '#ffa500';
                 starDiv.onclick = (e) => {
                     e.stopPropagation();
-                    const currentIsFav = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+                    const currentIsFav = getChineseFavoriteFromStorage(favoriteKey) === true;
                     if (currentIsFav) {
                         deleteChineseFavoriteFromStorage(favoriteKey);
                         starDiv.textContent = '☆';
@@ -8527,11 +8536,11 @@
                 starDiv.style.cursor = 'pointer';
                 starDiv.style.color = '#ffa500';
                 const favoriteKey = `${articleQuizData.sheetName}/${result.idiom.成語}`;
-                const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+                const isFavorited = getChineseFavoriteFromStorage(favoriteKey) === true;
                 starDiv.textContent = isFavorited ? '★' : '☆';
                 starDiv.onclick = (e) => {
                     e.stopPropagation();
-                    const currentIsFav = getChineseFavoriteFromStorage(favoriteKey) === 'true';
+                    const currentIsFav = getChineseFavoriteFromStorage(favoriteKey) === true;
                     if (currentIsFav) {
                         deleteChineseFavoriteFromStorage(favoriteKey);
                         starDiv.textContent = '☆';
