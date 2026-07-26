@@ -2760,9 +2760,14 @@
         }
 
         function scrollToChineseIdiom(sheetName, tag) {
-            // 關閉下拉菜單
+            // 關閉下拉菜單和 sheet submenu
             const menu = document.getElementById('tagDropdownMenu');
             if (menu) menu.classList.remove('active');
+
+            // 隱藏所有 sheet submenu
+            document.querySelectorAll('.sheet-submenu.expanded').forEach(submenu => {
+                submenu.classList.remove('expanded');
+            });
 
             // 跳到該標題行
             const container = document.getElementById('chineseContent');
@@ -5766,6 +5771,36 @@
                         }
                     };
 
+                    // Hover 時顯示 tag
+                    // Hover 時顯示 tag (參考 english 一般模式)
+                    let hideTimeout;
+
+                    const showSubmenu = () => {
+                        clearTimeout(hideTimeout);
+                        // 關閉其他所有的 submenu
+                        document.querySelectorAll('.sheet-submenu.expanded').forEach(submenu => {
+                            if (submenu !== sheetSubmenu) {
+                                submenu.classList.remove('expanded');
+                            }
+                        });
+
+                        sheetSubmenu.classList.add('expanded');
+                        const rect = sheetHeader.getBoundingClientRect();
+                        sheetSubmenu.style.top = rect.top + 'px';
+                        sheetSubmenu.style.left = (rect.right + 5) + 'px';
+                    };
+
+                    const hideSubmenu = () => {
+                        hideTimeout = setTimeout(() => {
+                            sheetSubmenu.classList.remove('expanded');
+                        }, 200);
+                    };
+
+                    sheetHeader.onmouseover = showSubmenu;
+                    sheetHeader.onmouseout = hideSubmenu;
+                    sheetSubmenu.onmouseover = showSubmenu;
+                    sheetSubmenu.onmouseout = hideSubmenu;
+
                     sheetItem.appendChild(sheetHeader);
                     container.appendChild(sheetItem);
                 });
@@ -6112,6 +6147,35 @@
                             }
                         }
                     };
+
+                    // Hover 時顯示 tag (參考 english 一般模式)
+                    let hideTimeout;
+
+                    const showSubmenu = () => {
+                        clearTimeout(hideTimeout);
+                        // 關閉其他所有的 submenu
+                        document.querySelectorAll('.sheet-submenu.expanded').forEach(submenu => {
+                            if (submenu !== sheetSubmenu) {
+                                submenu.classList.remove('expanded');
+                            }
+                        });
+
+                        sheetSubmenu.classList.add('expanded');
+                        const rect = sheetHeader.getBoundingClientRect();
+                        sheetSubmenu.style.top = rect.top + 'px';
+                        sheetSubmenu.style.left = (rect.right + 5) + 'px';
+                    };
+
+                    const hideSubmenu = () => {
+                        hideTimeout = setTimeout(() => {
+                            sheetSubmenu.classList.remove('expanded');
+                        }, 200);
+                    };
+
+                    sheetHeader.onmouseover = showSubmenu;
+                    sheetHeader.onmouseout = hideSubmenu;
+                    sheetSubmenu.onmouseover = showSubmenu;
+                    sheetSubmenu.onmouseout = hideSubmenu;
 
                     sheetItem.appendChild(sheetHeader);
                 });
