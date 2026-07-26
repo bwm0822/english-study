@@ -5464,10 +5464,20 @@
 
             currentStoryPlaying = index;
             isStoryPaused = false;
-            currentArticleText = story.標題 + '。' + story.文章;
+            // 記錄標題用於位置轉換
+            const titlePrefix = story.標題 + '。';
+            currentArticleText = titlePrefix + story.文章;
             currentCharIndex = 0;
 
-            const utterance = new SpeechSynthesisUtterance(currentArticleText);
+            // 朗讀文本進行特殊字檢查（但顯示仍保持原字）
+            let pronounceText = currentArticleText;
+            for (const [idiom, pronunciation] of Object.entries(specialIdiomPronunciationTable)) {
+                if (pronounceText.includes(idiom)) {
+                    pronounceText = pronounceText.replace(idiom, pronunciation);
+                }
+            }
+
+            const utterance = new SpeechSynthesisUtterance(pronounceText);
             utterance.lang = 'zh-TW';
             const rate = localStorage.getItem('pronunciationRate') || '1.0';
             utterance.rate = parseFloat(rate);
@@ -5516,14 +5526,25 @@
             }
 
             const story = chineseData.文章[sheetName][localIndex];
-            const beforeText = currentArticleText.substring(0, currentCharIndex);
-            const afterText = currentArticleText.substring(currentCharIndex);
+            const titlePrefix = story.標題 + '。';
+            const titleLength = titlePrefix.length;
+
+            // 計算在文章內容中的位置（去除標題後）
+            let displayBeforeText = '';
+            let displayAfterText = story.文章;
+
+            if (currentCharIndex > titleLength) {
+                // charIndex 已經超過標題部分
+                displayBeforeText = currentArticleText.substring(titleLength, currentCharIndex);
+                displayAfterText = currentArticleText.substring(currentCharIndex);
+            }
+            // 如果 currentCharIndex <= titleLength，顯示整個文章內容
 
             // 高亮成语，保持使用者設定的顯示狀態
             const stateKey = `${sheetName}_${localIndex}`;
             const showBackground = idiomBackgroundStates[stateKey] !== false;
-            let beforeHtml = highlightIdiomsInStory(beforeText, showBackground);
-            let afterHtml = highlightIdiomsInStory(afterText, showBackground);
+            let beforeHtml = highlightIdiomsInStory(displayBeforeText, showBackground);
+            let afterHtml = highlightIdiomsInStory(displayAfterText, showBackground);
 
             // 创建反白效果 - 已读部分灰色背景，当前位置无背景
             const statusText = currentStoryPlaying === index ? (isStoryPaused ? ' ⏸ [暫停中 - 點擊繼續]' : ' ▶ [播放中 - 點擊暫停]') : '';
