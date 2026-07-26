@@ -3282,7 +3282,7 @@
                 }
 
                 // 沒勾選星號且沒勾選正確率 => 無顯示
-                if (!reviewFilterByStar && reviewFilterByAccuracy === null) {
+                if (!reviewFilterByStar && reviewFilterByAccuracy === null && !reviewShowAll && !reviewShowUntested) {
                     filteredWords = [];
                 } else {
                     // 只在 review mode 容器中查詢 sheet checkbox
