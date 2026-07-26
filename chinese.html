@@ -7503,26 +7503,49 @@
                 document.getElementById('quizTagFilterContainer').style.display = 'flex';
                 document.getElementById('chineseQuizModeContainer').style.display = 'none';
 
-                // 生成文章列表
+                // 生成文章列表 - 按 sheet 和 tag 分組
                 let html = '';
                 let storyIndex = 0;
 
-                // 遍歷所有 sheet
+                // 先按 sheet 和 tag 分組文章
+                const groupedStories = new Map(); // {JSON.stringify({sheet, tag}): [{item, localIndex, sheetName}, ...]}
                 Object.entries(data.文章).forEach(([sheetName, sheetData]) => {
                     sheetData.forEach((item, localIndex) => {
-                        const stateKey = `${sheetName}_${localIndex}`;
+                        const tag = item.tag || '';
+                        const groupKey = JSON.stringify({ sheet: sheetName, tag });
+                        if (!groupedStories.has(groupKey)) {
+                            groupedStories.set(groupKey, []);
+                        }
+                        groupedStories.get(groupKey).push({ item, localIndex, sheetName });
+                    });
+                });
+
+                // 遍歷分組後的文章，每個分組前添加標題
+                groupedStories.forEach((stories, groupKey) => {
+                    const { sheet: sheetName, tag } = JSON.parse(groupKey);
+
+                    // 添加標題列
+                    html += `
+                        <div class="title-row" data-sheet="${sheetName}" data-tag="${tag}" style="background-color: #FF9800; color: black; font-weight: bold; padding: 10px 15px; border-radius: 0; display: flex; align-items: center; justify-content: flex-start;">
+                            ${sheetName} - ${tag || '(無)'}
+                        </div>
+                    `;
+
+                    // 遍歷該分組中的所有文章
+                    stories.forEach(({ item, localIndex, sheetName: sn }) => {
+                        const stateKey = `${sn}_${localIndex}`;
                         const showBackground = idiomBackgroundStates[stateKey] !== false;
                         const highlightedContent = highlightIdiomsInStory(item.文章, showBackground);
                         const btnText = showBackground ? '顯示' : '隱藏';
                         const btnColor = showBackground ? '#4CAF50' : '#FF6F00';
 
                         html += `
-                            <div class="story-item idiom-item" data-sheet="${sheetName}" data-tag="${item.tag || ''}" data-story-index="${storyIndex}" data-local-index="${localIndex}">
+                            <div class="story-item idiom-item" data-sheet="${sn}" data-tag="${item.tag || ''}" data-story-index="${storyIndex}" data-local-index="${localIndex}">
                                 <div class="story-header">
                                     <div class="story-title"><span class="story-number">${storyIndex + 1}. </span>${item.標題}</div>
                                     <button class="story-read-btn" id="idiom-toggle-${storyIndex}" onclick="toggleIdiomBackground(${storyIndex})" style="background: ${btnColor};">${btnText}</button>
                                     <button class="story-read-btn" onclick="playStory(${storyIndex})">朗讀</button>
-                                    <button class="story-read-btn" style="background: #FF9800;" onclick="startArticleIdiomQuiz('${sheetName}', '${item.tag || ''}', ${localIndex})">成語測驗</button>
+                                    <button class="story-read-btn" style="background: #FF9800;" onclick="startArticleIdiomQuiz('${sn}', '${item.tag || ''}', ${localIndex})">成語測驗</button>
                                 </div>
                                 <div class="story-content" onclick="toggleStoryPlayback(${storyIndex}); return false;" title="點擊暫停/繼續">${highlightedContent}</div>
                             </div>
