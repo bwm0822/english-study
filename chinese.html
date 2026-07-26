@@ -5763,11 +5763,30 @@
                 // 生成成語列表
                 let html = '';
                 let itemIndex = 0;
+                let lastSheet = null;
+                let lastTag = null;
 
                 // 遍歷所有 sheet
                 Object.entries(data.成語).forEach(([sheetName, sheetData]) => {
                     sheetData.forEach((item) => {
                         itemIndex++;
+
+                        // 如果 sheet 或 tag 變化，插入標題行
+                        if (sheetName !== lastSheet || item.tag !== lastTag) {
+                            html += `
+                                <div style="
+                                    padding: 10px 15px;
+                                    background-color: #FF9800;
+                                    color: #333333;
+                                    font-weight: bold;
+                                    font-size: 1.1em;
+                                    margin-top: ${itemIndex === 1 ? '0' : '10px'};
+                                ">${sheetName} - ${item.tag || '(無)'}</div>
+                            `;
+                            lastSheet = sheetName;
+                            lastTag = item.tag;
+                        }
+
                         const explanation = item.解釋.replace(/'/g, "\\'");
                         const zhuyinArray = item.注音.split(' ');
                         const zhuyinHtml = createZhuyinHTML_V2(item.成語, zhuyinArray, true, item.成語);
