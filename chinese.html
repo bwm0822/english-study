@@ -5716,8 +5716,11 @@
                                 window.calculateQuizCount();
                             }
                         };
+
+                        // 阻止點擊checkbox時改變狀態（checkbox被隱藏了，所以不應該被點擊改變）
                         tagCheckbox.onclick = (e) => {
                             e.stopPropagation();
+                            e.preventDefault();
                         };
 
                         const tagLabel = document.createElement('div');
@@ -5732,7 +5735,7 @@
 
                         tagLabel.onclick = (e) => {
                             e.stopPropagation();
-                            // 點擊 tag 時滑動到標題列
+                            // 點擊 tag 時滑動到標題列（不改變勾選狀態）
                             scrollToChineseIdiom(sheetName, tag);
                         };
 
@@ -6005,6 +6008,7 @@
                     checkbox.type = 'checkbox';
                     checkbox.className = 'sheet-checkbox';
                     checkbox.dataset.sheetName = sheetName;
+                    checkbox.style.display = 'none'; // 隱藏下拉菜單中的 checkbox
 
                     // 從改錯模式的保存狀態恢復，或使用 chineseSheetStates
                     if (gaicuoModeCheckStates[sheetName] !== undefined) {
@@ -6032,31 +6036,6 @@
                     sheetSubmenu.dataset.sheetName = sheetName;
                     document.body.appendChild(sheetSubmenu);
 
-                    // 按鈕行（全選/清除）
-                    const buttonsRow = document.createElement('div');
-                    buttonsRow.className = 'sheet-group-header';
-                    const selectAllBtn = document.createElement('button');
-                    selectAllBtn.textContent = '全選';
-                    selectAllBtn.onclick = () => {
-                        sheetTags.forEach(tag => {
-                            chineseSelectedTags.get(sheetName).add(tag);
-                        });
-                        updateChineseGaicuoFilter();
-                    };
-
-                    const clearBtn = document.createElement('button');
-                    clearBtn.textContent = '清除';
-                    clearBtn.onclick = () => {
-                        sheetTags.forEach(tag => {
-                            chineseSelectedTags.get(sheetName).delete(tag);
-                        });
-                        updateChineseGaicuoFilter();
-                    };
-
-                    buttonsRow.appendChild(selectAllBtn);
-                    buttonsRow.appendChild(clearBtn);
-                    sheetSubmenu.appendChild(buttonsRow);
-
                     // 生成 tag 複選框
                     sheetTags.forEach(tag => {
                         const tagLabel = document.createElement('label');
@@ -6065,6 +6044,7 @@
                         const tagCheckbox = document.createElement('input');
                         tagCheckbox.type = 'checkbox';
                         tagCheckbox.value = tag;
+                        tagCheckbox.style.display = 'none'; // 隱藏下拉菜單中的 checkbox
 
                         // 從保存的狀態恢復，或使用 chineseSelectedTags
                         if (gaicuoModeTagStates[sheetName] && gaicuoModeTagStates[sheetName][tag] !== undefined) {
@@ -6087,11 +6067,25 @@
                             updateChineseGaicuoFilter();
                         };
 
+                        // 阻止點擊checkbox時改變狀態（checkbox被隱藏了，所以不應該被點擊改變）
+                        tagCheckbox.onclick = (e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                        };
+
                         const tagSpan = document.createElement('span');
                         tagSpan.textContent = tag || '（無標籤）';
+                        tagSpan.style.cursor = 'pointer';
 
                         tagLabel.appendChild(tagCheckbox);
                         tagLabel.appendChild(tagSpan);
+
+                        // 點擊 tag 時滑動到標題列（不改變勾選狀態）
+                        tagLabel.onclick = (e) => {
+                            e.stopPropagation();
+                            scrollToChineseIdiom(sheetName, tag);
+                        };
+
                         sheetSubmenu.appendChild(tagLabel);
                     });
 
@@ -6148,6 +6142,10 @@
                 });
 
                 // 生成改錯列表
+                let lastSheet = null;
+                let lastTag = null;
+                let itemIndex = 0;
+
                 Object.entries(data.改錯).forEach(([sheetName, sheetData]) => {
                     if (!chineseSheetStates[sheetName]) return;
 
@@ -6157,7 +6155,25 @@
                     });
 
                     filteredItems.forEach((item, index) => {
+                        itemIndex++;
                         totalCount++;
+
+                        // 如果 sheet 或 tag 變化，插入標題行
+                        if (sheetName !== lastSheet || item.tag !== lastTag) {
+                            html += `
+                                <div data-sheet="${sheetName}" data-tag="${item.tag || ''}" style="
+                                    padding: 10px 15px;
+                                    background-color: #FF9800;
+                                    color: #333333;
+                                    font-weight: bold;
+                                    font-size: 1.1em;
+                                    margin-top: ${itemIndex === 1 ? '0' : '10px'};
+                                ">${sheetName} - ${item.tag || '(無)'}</div>
+                            `;
+                            lastSheet = sheetName;
+                            lastTag = item.tag;
+                        }
+
                         const quizKey = `${sheetName}/${item.成語}`;
                         const quizResult = getChineseQuizResultFromStorage(quizKey);
                         let accuracyDisplay = '--';
