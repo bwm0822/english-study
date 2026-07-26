@@ -1933,6 +1933,7 @@
         let normalModeTagStates = {}; // 保存 normal 模式 tag 的狀態 {sheetName: {tagName: checked}}
         let reviewModeCheckStates = {}; // 保存 review 模式 sheet 的狀態 {sheetName: checked}
         let reviewModeTagStates = {}; // 保存 review 模式 tag 的狀態 {sheetName: {tagName: checked}}
+        let reviewModeFilterStates = {}; // 保存 review 模式的過濾狀態 {starFilter, accuracyFilter, accuracyThreshold}
         let quizModeCheckStates = {}; // 保存 quiz 模式 sheet 的狀態 {sheetName: checked}
         let quizModeTagStates = {}; // 保存 quiz 模式 tag 的狀態 {sheetName: {tagName: checked}}
         let quizModeFilterStates = {}; // 保存 quiz 模式的過濾狀態 {starFilter, accuracyFilter, accuracyThreshold}
@@ -2456,20 +2457,34 @@
                 });
             }
 
-            // 離開 review 模式時，保存 checkbox 狀態
+            // 離開 review 模式時，保存 checkbox 狀態和過濾器狀態
             if (currentMode === 'review') {
                 reviewModeCheckStates = {};
                 reviewModeTagStates = {};
-                document.querySelectorAll('input.normal-sheet-checkbox').forEach(checkbox => {
+                reviewModeFilterStates = {};
+                document.querySelectorAll('input.review-sheet-checkbox').forEach(checkbox => {
                     reviewModeCheckStates[checkbox.dataset.sheetName] = checkbox.checked;
                 });
-                document.querySelectorAll('input.normal-tag-checkbox').forEach(checkbox => {
+                document.querySelectorAll('input.review-tag-checkbox').forEach(checkbox => {
                     const sheetName = checkbox.dataset.sheet;
                     if (!(sheetName in reviewModeTagStates)) {
                         reviewModeTagStates[sheetName] = {};
                     }
                     reviewModeTagStates[sheetName][checkbox.value] = checkbox.checked;
                 });
+                // 保存過濾器狀態
+                const reviewStarCheckbox = document.getElementById('review-star-filter');
+                const reviewAccuracyCheckbox = document.getElementById('review-accuracy-filter-checkbox');
+                const reviewAccuracySelect = document.getElementById('review-accuracy-filter-select');
+                if (reviewStarCheckbox) {
+                    reviewModeFilterStates.starFilter = reviewStarCheckbox.checked;
+                }
+                if (reviewAccuracyCheckbox) {
+                    reviewModeFilterStates.accuracyFilter = reviewAccuracyCheckbox.checked;
+                }
+                if (reviewAccuracySelect) {
+                    reviewModeFilterStates.accuracyThreshold = reviewAccuracySelect.value;
+                }
             }
 
             // 離開 quiz 模式時，保存 checkbox 狀態和過濾器狀態
@@ -3159,6 +3174,38 @@
                     container.appendChild(sheetItem);
                 }
             });
+
+            // 恢復 review 模式的 sheet 和 tag 狀態
+            document.querySelectorAll('input.review-sheet-checkbox').forEach(checkbox => {
+                const sheetName = checkbox.dataset.sheetName;
+                if (sheetName in reviewModeCheckStates) {
+                    checkbox.checked = reviewModeCheckStates[sheetName];
+                }
+            });
+            document.querySelectorAll('input.review-tag-checkbox').forEach(checkbox => {
+                const sheetName = checkbox.dataset.sheet;
+                const tagName = checkbox.value;
+                if (sheetName in reviewModeTagStates && tagName in reviewModeTagStates[sheetName]) {
+                    checkbox.checked = reviewModeTagStates[sheetName][tagName];
+                }
+            });
+
+            // 恢復過濾器狀態
+            if (Object.keys(reviewModeFilterStates).length > 0) {
+                const reviewStarCheckbox = document.getElementById('review-star-filter');
+                const reviewAccuracyCheckbox = document.getElementById('review-accuracy-filter-checkbox');
+                const reviewAccuracySelect = document.getElementById('review-accuracy-filter-select');
+
+                if (reviewStarCheckbox && 'starFilter' in reviewModeFilterStates) {
+                    reviewStarCheckbox.checked = reviewModeFilterStates.starFilter;
+                }
+                if (reviewAccuracyCheckbox && 'accuracyFilter' in reviewModeFilterStates) {
+                    reviewAccuracyCheckbox.checked = reviewModeFilterStates.accuracyFilter;
+                }
+                if (reviewAccuracySelect && 'accuracyThreshold' in reviewModeFilterStates) {
+                    reviewAccuracySelect.value = reviewModeFilterStates.accuracyThreshold;
+                }
+            }
         }
 
         function selectAllSheets(event) {
@@ -4303,11 +4350,13 @@
                     }
                 });
 
-                // 清除星號和正確率篩選
+                // 清除星號篩選，預設勾選正確率-全部
                 const starCheckbox = document.getElementById('quiz-star-filter');
                 const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
+                const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
                 if (starCheckbox) starCheckbox.checked = false;
-                if (accuracyCheckbox) accuracyCheckbox.checked = false;
+                if (accuracyCheckbox) accuracyCheckbox.checked = true;
+                if (accuracySelect) accuracySelect.value = '全部';
 
                 // 更新下拉按鈕顯示
                 updateQuizDropdownButton();
