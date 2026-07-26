@@ -2813,13 +2813,22 @@
             const reviewAccuracyCheckbox = document.getElementById('review-accuracy-filter-checkbox');
             const reviewAccuracySelect = document.getElementById('review-accuracy-filter-select');
             let reviewFilterByAccuracy = null;
+            let reviewShowAll = false;
+            let reviewShowUntested = false;
+
             if (reviewAccuracyCheckbox && reviewAccuracyCheckbox.checked && reviewAccuracySelect) {
-                const threshold = reviewAccuracySelect.value.replace(/[<=%]/g, '');
-                reviewFilterByAccuracy = parseInt(threshold);
+                if (reviewAccuracySelect.value === '全部') {
+                    reviewShowAll = true;
+                } else if (reviewAccuracySelect.value === '--') {
+                    reviewShowUntested = true;
+                } else {
+                    const threshold = reviewAccuracySelect.value.replace(/[<=%]/g, '');
+                    reviewFilterByAccuracy = parseInt(threshold);
+                }
             }
 
             // 沒勾選星號且沒勾選正確率 => 無顯示
-            if (!reviewFilterByStar && reviewFilterByAccuracy === null) {
+            if (!reviewFilterByStar && reviewFilterByAccuracy === null && !reviewShowAll && !reviewShowUntested) {
                 btn.innerHTML = '清除 <span>▼</span>';
                 return;
             }
@@ -2860,7 +2869,7 @@
                     const hasStar = getFavoriteFromStorage(wordKey) === true;
 
                     // 勾選星號且沒勾選正確率 => 顯示有星號的
-                    if (reviewFilterByStar && reviewFilterByAccuracy === null) {
+                    if (reviewFilterByStar && reviewFilterByAccuracy === null && !reviewShowAll && !reviewShowUntested) {
                         return hasStar;
                     }
 
@@ -2889,6 +2898,31 @@
                         const correctCount = getQuizHistory(historyKey);
                         const accuracy = calculateAccuracy(correctCount);
                         return accuracy <= reviewFilterByAccuracy;
+                    }
+
+                    // 勾選星號且「全部」=> 顯示有星號的（所有）
+                    if (reviewFilterByStar && reviewShowAll) {
+                        return hasStar;
+                    }
+
+                    // 勾選星號且「--」=> 顯示有星號且沒測過的
+                    if (reviewFilterByStar && reviewShowUntested) {
+                        if (!hasStar) {
+                            return false;
+                        }
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        return getQuizHistoryFromStorage(historyKey) === null;
+                    }
+
+                    // 沒勾選星號且「全部」=> 顯示所有
+                    if (!reviewFilterByStar && reviewShowAll) {
+                        return true;
+                    }
+
+                    // 沒勾選星號且「--」=> 顯示沒測過的
+                    if (!reviewFilterByStar && reviewShowUntested) {
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        return getQuizHistoryFromStorage(historyKey) === null;
                     }
 
                     return false;
@@ -2956,7 +2990,7 @@
             accuracySelect.style.cursor = 'pointer';
             accuracySelect.style.marginLeft = '5px';
 
-            ['<=100%', '<=80%', '<=60%', '<=40%', '<=20%', '=0%'].forEach(threshold => {
+            ['全部', '--', '<=100%', '<=80%', '<=60%', '<=40%', '<=20%', '<=0%'].forEach(threshold => {
                 const option = document.createElement('option');
                 option.value = threshold;
                 option.textContent = threshold;
@@ -3119,12 +3153,8 @@
 
         function selectAllSheets(event) {
             event.stopPropagation();
-            // 全選所有 sheet checkbox
+            // 只全選所有 sheet checkbox
             document.querySelectorAll('input.review-sheet-checkbox').forEach(checkbox => {
-                checkbox.checked = true;
-            });
-            // 全選所有 tag checkbox
-            document.querySelectorAll('input.review-tag-checkbox').forEach(checkbox => {
                 checkbox.checked = true;
             });
             updateFilter();
@@ -3132,12 +3162,8 @@
 
         function clearAllSheets(event) {
             event.stopPropagation();
-            // 清除所有 sheet checkbox
+            // 只清除所有 sheet checkbox
             document.querySelectorAll('input.review-sheet-checkbox').forEach(checkbox => {
-                checkbox.checked = false;
-            });
-            // 清除所有 tag checkbox
-            document.querySelectorAll('input.review-tag-checkbox').forEach(checkbox => {
                 checkbox.checked = false;
             });
             updateFilter();
@@ -3240,10 +3266,19 @@
                 const reviewAccuracyCheckbox = document.getElementById('review-accuracy-filter-checkbox');
                 const reviewAccuracySelect = document.getElementById('review-accuracy-filter-select');
                 let reviewFilterByAccuracy = null;
+                let reviewShowUntested = false; // 「--」只顯示沒測過的
+                let reviewShowAll = false; // 「全部」顯示所有
+
                 if (reviewAccuracyCheckbox && reviewAccuracyCheckbox.checked && reviewAccuracySelect) {
-                    // 移除 < 和 % 符號後解析
-                    const threshold = reviewAccuracySelect.value.replace(/[<=%]/g, '');
-                    reviewFilterByAccuracy = parseInt(threshold);
+                    if (reviewAccuracySelect.value === '全部') {
+                        reviewShowAll = true;
+                    } else if (reviewAccuracySelect.value === '--') {
+                        reviewShowUntested = true;
+                    } else {
+                        // 移除 < 和 % 符號後解析
+                        const threshold = reviewAccuracySelect.value.replace(/[<=%]/g, '');
+                        reviewFilterByAccuracy = parseInt(threshold);
+                    }
                 }
 
                 // 沒勾選星號且沒勾選正確率 => 無顯示
@@ -3284,7 +3319,7 @@
                         const hasStar = getFavoriteFromStorage(wordKey) === true;
 
                         // 勾選星號且沒勾選正確率 => 顯示有星號的
-                        if (reviewFilterByStar && reviewFilterByAccuracy === null) {
+                        if (reviewFilterByStar && reviewFilterByAccuracy === null && !reviewShowAll && !reviewShowUntested) {
                             return hasStar;
                         }
 
@@ -3313,6 +3348,31 @@
                             const correctCount = getQuizHistory(historyKey);
                             const accuracy = calculateAccuracy(correctCount);
                             return accuracy <= reviewFilterByAccuracy;
+                        }
+
+                        // 勾選星號且「全部」=> 顯示有星號的（所有）
+                        if (reviewFilterByStar && reviewShowAll) {
+                            return hasStar;
+                        }
+
+                        // 勾選星號且「--」=> 顯示有星號且沒測過的
+                        if (reviewFilterByStar && reviewShowUntested) {
+                            if (!hasStar) {
+                                return false;
+                            }
+                            const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                            return getQuizHistoryFromStorage(historyKey) === null;
+                        }
+
+                        // 沒勾選星號且「全部」=> 顯示所有
+                        if (!reviewFilterByStar && reviewShowAll) {
+                            return true;
+                        }
+
+                        // 沒勾選星號且「--」=> 顯示沒測過的
+                        if (!reviewFilterByStar && reviewShowUntested) {
+                            const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                            return getQuizHistoryFromStorage(historyKey) === null;
                         }
 
                         return false;
@@ -3803,7 +3863,7 @@
             accuracySelect.style.cursor = 'pointer';
             accuracySelect.style.marginLeft = '5px';
 
-            ['<=100%', '<=80%', '<=60%', '<=40%', '<=20%', '=0%'].forEach(threshold => {
+            ['全部', '--', '<=100%', '<=80%', '<=60%', '<=40%', '<=20%', '<=0%'].forEach(threshold => {
                 const option = document.createElement('option');
                 option.value = threshold;
                 option.textContent = threshold;
@@ -3825,6 +3885,31 @@
             };
 
             container.appendChild(accuracyFilterContainer);
+
+            // 添加 sheet 全選/清除 按鈕
+            const quizSheetButtonsRow = document.createElement('div');
+            quizSheetButtonsRow.className = 'sheet-group-header';
+            quizSheetButtonsRow.style.borderBottom = '1px solid #eee';
+            quizSheetButtonsRow.style.paddingBottom = '10px';
+            quizSheetButtonsRow.style.marginBottom = '10px';
+
+            const quizSheetSelectBtn = document.createElement('button');
+            quizSheetSelectBtn.textContent = '全選';
+            quizSheetSelectBtn.onclick = function(e) {
+                e.stopPropagation();
+                selectAllQuizSheets(e);
+            };
+
+            const quizSheetClearBtn = document.createElement('button');
+            quizSheetClearBtn.textContent = '清除';
+            quizSheetClearBtn.onclick = function(e) {
+                e.stopPropagation();
+                clearAllQuizSheets(e);
+            };
+
+            quizSheetButtonsRow.appendChild(quizSheetSelectBtn);
+            quizSheetButtonsRow.appendChild(quizSheetClearBtn);
+            container.appendChild(quizSheetButtonsRow);
 
             Object.entries(sheetData).forEach(([sheetName, words]) => {
                 if (Array.isArray(words)) {
@@ -3987,6 +4072,24 @@
             updateQuizDropdownButton();
         }
 
+        function selectAllQuizSheets(event) {
+            event.stopPropagation();
+            // 只全選所有 sheet checkbox
+            document.querySelectorAll('input.quiz-sheet-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateQuizDropdownButton();
+        }
+
+        function clearAllQuizSheets(event) {
+            event.stopPropagation();
+            // 只清除所有 sheet checkbox
+            document.querySelectorAll('input.quiz-sheet-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateQuizDropdownButton();
+        }
+
         function selectAllInQuizSheet(event, sheetName) {
             event.stopPropagation();
             document.querySelectorAll(`input.quiz-tag-checkbox[data-sheet="${sheetName}"]`).forEach(checkbox => {
@@ -4037,30 +4140,51 @@
             const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
             const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
             let filterByAccuracy = null;
+            let showUntested = false;
+            let showAll = false;
+
             if (accuracyCheckbox && accuracyCheckbox.checked && accuracySelect) {
-                const threshold = accuracySelect.value.replace(/[<=%]/g, '');
-                filterByAccuracy = parseInt(threshold);
+                if (accuracySelect.value === '全部') {
+                    showAll = true;
+                } else if (accuracySelect.value === '--') {
+                    showUntested = true;
+                } else {
+                    const threshold = accuracySelect.value.replace(/[<=%]/g, '');
+                    filterByAccuracy = parseInt(threshold);
+                }
             }
 
-            // 計算選中的單詞數量
+            // 參考複習模式：沒勾選星號且沒勾選正確率 => 無顯示
+            if (!filterByStar && filterByAccuracy === null && !showAll && !showUntested) {
+                btn.innerHTML = '清除 <span>▼</span>';
+                if (stats) {
+                    stats.textContent = '共 0 項';
+                }
+                return;
+            }
+
+            // 計算選中的單詞數量 - 參考複習模式的邏輯
             let selectedWords = 0;
             if (selectedSheetTags.size > 0) {
                 selectedWords = allWords.filter(word => {
+                    // 先檢查 sheet/tag 是否在選擇範圍內
                     if (!selectedSheetTags.has(word.sheet)) {
                         return false;
                     }
                     if (!selectedSheetTags.get(word.sheet).has(word.tag)) {
                         return false;
                     }
-                    // 如果勾選星號篩選，只包含有星號的單字
-                    if (filterByStar) {
-                        const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                        if (getFavoriteFromStorage(wordKey) !== true) {
-                            return false;
-                        }
+
+                    const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    const hasStar = getFavoriteFromStorage(wordKey) === true;
+
+                    // 勾選星號且沒勾選正確率 => 顯示有星號的
+                    if (filterByStar && filterByAccuracy === null && !showAll && !showUntested) {
+                        return hasStar;
                     }
-                    // 如果勾選正確率篩選，只包含符合條件的單字
-                    if (filterByAccuracy !== null) {
+
+                    // 沒勾選星號且勾選正確率 => 顯示正確率符合的
+                    if (!filterByStar && filterByAccuracy !== null) {
                         const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
                         const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                         if (!hasHistory) {
@@ -4068,11 +4192,50 @@
                         }
                         const correctCount = getQuizHistory(historyKey);
                         const accuracy = calculateAccuracy(correctCount);
-                        if (!(accuracy <= filterByAccuracy)) {
+                        return accuracy <= filterByAccuracy;
+                    }
+
+                    // 勾選星號且勾選正確率 => 顯示有星號且正確率符合的
+                    if (filterByStar && filterByAccuracy !== null) {
+                        if (!hasStar) {
                             return false;
                         }
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
+                        if (!hasHistory) {
+                            return false;
+                        }
+                        const correctCount = getQuizHistory(historyKey);
+                        const accuracy = calculateAccuracy(correctCount);
+                        return accuracy <= filterByAccuracy;
                     }
-                    return true;
+
+                    // 勾選星號且「全部」=> 顯示有星號的（所有）
+                    if (filterByStar && showAll) {
+                        return hasStar;
+                    }
+
+                    // 勾選星號且「--」=> 顯示有星號且沒測過的
+                    if (filterByStar && showUntested) {
+                        if (!hasStar) {
+                            return false;
+                        }
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        return getQuizHistoryFromStorage(historyKey) === null;
+                    }
+
+                    // 沒勾選星號且「全部」=> 顯示所有
+                    if (!filterByStar && showAll) {
+                        return true;
+                    }
+
+                    // 沒勾選星號且「--」=> 顯示沒測過的
+                    if (!filterByStar && showUntested) {
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        return getQuizHistoryFromStorage(historyKey) === null;
+                    }
+
+                    return false;
                 }).length;
             }
 
@@ -4149,6 +4312,31 @@
             const starCheckbox = document.getElementById('quiz-star-filter');
             const filterByStar = starCheckbox ? starCheckbox.checked : false;
 
+            // 檢查正確率篩選
+            const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
+            const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
+            let filterByAccuracy = null;
+            let showUntested = false; // 「--」只顯示沒測過的
+            let showAll = false; // 「全部」顯示所有
+
+            if (accuracyCheckbox && accuracyCheckbox.checked && accuracySelect) {
+                if (accuracySelect.value === '全部') {
+                    showAll = true;
+                } else if (accuracySelect.value === '--') {
+                    showUntested = true;
+                } else {
+                    // 移除 < 和 % 符號後解析
+                    const threshold = accuracySelect.value.replace(/[<=%]/g, '');
+                    filterByAccuracy = parseInt(threshold);
+                }
+            }
+
+            // 參考複習模式：沒勾選星號且沒勾選正確率 => 無顯示
+            if (!filterByStar && filterByAccuracy === null && !showAll && !showUntested) {
+                alert('請至少勾選「星號」或「正確率」其中一個');
+                return;
+            }
+
             // 只在 quiz mode 容器中查詢 sheet checkbox
             const quizContainer = document.getElementById('quizSheetGroupsContainer');
             const enabledSheets = new Set();
@@ -4175,43 +4363,77 @@
                 return;
             }
 
-            // 檢查正確率篩選
-            const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
-            const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
-            let filterByAccuracy = null;
-            if (accuracyCheckbox && accuracyCheckbox.checked && accuracySelect) {
-                // 移除 < 和 % 符號後解析
-                const threshold = accuracySelect.value.replace(/[<=%]/g, '');
-                filterByAccuracy = parseInt(threshold);
-            }
-
-            // 收集要測驗的單詞 - 根據sheet和tag過濾
+            // 收集要測驗的單詞 - 參考複習模式的邏輯
             quizWords = allWords.filter(word => {
+                // 先檢查 sheet/tag 是否在選擇範圍內
                 if (!selectedSheetTags.has(word.sheet)) {
                     return false;
                 }
                 if (!selectedSheetTags.get(word.sheet).has(word.tag)) {
                     return false;
                 }
-                // 如果勾選星號篩選，只包含有星號的單字
-                if (filterByStar) {
-                    const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                    if (getFavoriteFromStorage(wordKey) !== true) {
-                        return false;
-                    }
+
+                const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                const hasStar = getFavoriteFromStorage(wordKey) === true;
+
+                // 勾選星號且沒勾選正確率 => 顯示有星號的
+                if (filterByStar && filterByAccuracy === null && !showAll && !showUntested) {
+                    return hasStar;
                 }
-                // 如果勾選正確率篩選，只包含符合條件的單字
-                if (filterByAccuracy !== null) {
+
+                // 沒勾選星號且勾選正確率 => 顯示正確率符合的
+                if (!filterByStar && filterByAccuracy !== null) {
                     const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
                     const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                     if (!hasHistory) {
-                        return false; // 沒有歷史記錄的單字不包含
+                        return false;
                     }
                     const correctCount = getQuizHistory(historyKey);
                     const accuracy = calculateAccuracy(correctCount);
                     return accuracy <= filterByAccuracy;
                 }
-                return true;
+
+                // 勾選星號且勾選正確率 => 顯示有星號且正確率符合的
+                if (filterByStar && filterByAccuracy !== null) {
+                    if (!hasStar) {
+                        return false;
+                    }
+                    const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
+                    if (!hasHistory) {
+                        return false;
+                    }
+                    const correctCount = getQuizHistory(historyKey);
+                    const accuracy = calculateAccuracy(correctCount);
+                    return accuracy <= filterByAccuracy;
+                }
+
+                // 勾選星號且「全部」=> 顯示有星號的（所有）
+                if (filterByStar && showAll) {
+                    return hasStar;
+                }
+
+                // 勾選星號且「--」=> 顯示有星號且沒測過的
+                if (filterByStar && showUntested) {
+                    if (!hasStar) {
+                        return false;
+                    }
+                    const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    return getQuizHistoryFromStorage(historyKey) === null;
+                }
+
+                // 沒勾選星號且「全部」=> 顯示所有
+                if (!filterByStar && showAll) {
+                    return true;
+                }
+
+                // 沒勾選星號且「--」=> 顯示沒測過的
+                if (!filterByStar && showUntested) {
+                    const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    return getQuizHistoryFromStorage(historyKey) === null;
+                }
+
+                return false;
             });
 
             if (quizWords.length === 0) {
