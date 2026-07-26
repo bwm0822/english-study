@@ -2979,6 +2979,31 @@
 
             container.appendChild(accuracyFilterContainer);
 
+            // 添加 sheet 全選/清除 按鈕
+            const sheetButtonsRow = document.createElement('div');
+            sheetButtonsRow.className = 'sheet-group-header';
+            sheetButtonsRow.style.borderBottom = '1px solid #eee';
+            sheetButtonsRow.style.paddingBottom = '10px';
+            sheetButtonsRow.style.marginBottom = '10px';
+
+            const sheetSelectBtn = document.createElement('button');
+            sheetSelectBtn.textContent = '全選';
+            sheetSelectBtn.onclick = function(e) {
+                e.stopPropagation();
+                selectAllSheets(e);
+            };
+
+            const sheetClearBtn = document.createElement('button');
+            sheetClearBtn.textContent = '清除';
+            sheetClearBtn.onclick = function(e) {
+                e.stopPropagation();
+                clearAllSheets(e);
+            };
+
+            sheetButtonsRow.appendChild(sheetSelectBtn);
+            sheetButtonsRow.appendChild(sheetClearBtn);
+            container.appendChild(sheetButtonsRow);
+
             // 添加 sheet 選項
             Object.entries(sheetData).forEach(([sheetName, words]) => {
                 if (Array.isArray(words)) {
@@ -3090,6 +3115,32 @@
                     container.appendChild(sheetItem);
                 }
             });
+        }
+
+        function selectAllSheets(event) {
+            event.stopPropagation();
+            // 全選所有 sheet checkbox
+            document.querySelectorAll('input.review-sheet-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            // 全選所有 tag checkbox
+            document.querySelectorAll('input.review-tag-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateFilter();
+        }
+
+        function clearAllSheets(event) {
+            event.stopPropagation();
+            // 清除所有 sheet checkbox
+            document.querySelectorAll('input.review-sheet-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            // 清除所有 tag checkbox
+            document.querySelectorAll('input.review-tag-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateFilter();
         }
 
         function selectAllInReviewSheet(event, sheetName) {
