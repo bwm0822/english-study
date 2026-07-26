@@ -5581,8 +5581,14 @@
                 isStoryPaused = false;
             }
 
-            // 檢查特殊成語對照表
-            let pronounceText = specialIdiomPronunciationTable[text] || text;
+            // 檢查特殊成語對照表 - 比對 text 中有的特殊發音，有的話就取代
+            let pronounceText = text;
+            for (const [idiom, pronunciation] of Object.entries(specialIdiomPronunciationTable)) {
+                if (text.includes(idiom)) {
+                    pronounceText = text.replace(idiom, pronunciation);
+                    break;
+                }
+            }
 
             const utterance = new SpeechSynthesisUtterance(pronounceText);
             utterance.lang = 'zh-TW';
