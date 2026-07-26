@@ -2004,7 +2004,6 @@
         </div>
     </div>
 
-    <script src="json/pronunciation.js"></script>
     <script>
         // 注销所有Service Worker并禁用离线功能
         if ('serviceWorker' in navigator) {
@@ -5420,12 +5419,22 @@
         let currentChineseSheet = null; // 存儲當前的 sheet 名稱
 
         function loadChineseData() {
-            if (chineseData) return Promise.resolve(chineseData);
+            if (chineseData) {
+                // 確保特殊發音表已初始化
+                if (chineseData.發音) {
+                    specialIdiomPronunciationTable = chineseData.發音;
+                }
+                return Promise.resolve(chineseData);
+            }
 
             return fetch('./json/chinese.json?t=' + new Date().getTime())
                 .then(r => r.json())
                 .then(data => {
                     chineseData = data;
+                    // 從 JSON 中讀取發音數據
+                    if (data.發音) {
+                        specialIdiomPronunciationTable = data.發音;
+                    }
                     return data;
                 })
                 .catch(e => {
@@ -5592,7 +5601,8 @@
             contentDiv.innerHTML = displayHtml;
         }
 
-        // 特殊發音對照表 - 從 pronunciation.js 引入
+        // 特殊發音對照表 - 從 chinese.json 的 發音 字段讀取
+        let specialIdiomPronunciationTable = {};
 
         function pronounceChineseText(text) {
             // 停止當前的文章播放

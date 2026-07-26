@@ -150,17 +150,7 @@ if (fs.existsSync(faYinPath)) {
 
 // 輸出到文件
 const outputPath = path.join(__dirname, '..', 'json', 'chinese.json');
-const jsOutputPath = path.join(__dirname, '..', 'json', 'pronunciation.js');
 fs.writeFileSync(outputPath, JSON.stringify(output, null, 2), 'utf-8');
-
-// 生成JavaScript格式的發音文件
-if (Object.keys(output.發音).length > 0) {
-  const jsContent = `// 特殊發音對照表 - 由 convert_ch.js 自動生成
-const specialIdiomPronunciationTable = ${JSON.stringify(output.發音, null, 4)};
-`;
-  fs.writeFileSync(jsOutputPath, jsContent, 'utf-8');
-  console.log(`\n✓ 發音文件已生成: ${jsOutputPath}`);
-}
 
 console.log(`\n✓ 轉換成功！`);
 console.log(`\n統計資訊:`);
