@@ -2759,6 +2759,43 @@
             menu.classList.toggle('active');
         }
 
+        function scrollToChineseIdiom(sheetName, tag) {
+            // 關閉下拉菜單
+            const menu = document.getElementById('tagDropdownMenu');
+            if (menu) menu.classList.remove('active');
+
+            // 跳到該標題行
+            const container = document.getElementById('chineseContent');
+            if (!container) return;
+
+            // 查找具有相符 data 屬性的標題行
+            const headerRow = container.querySelector(`[data-sheet="${sheetName}"][data-tag="${tag || ''}"]`);
+
+            if (headerRow) {
+                // 快速平滑滾動到標題行
+                const rect = headerRow.getBoundingClientRect();
+                const containerRect = container.getBoundingClientRect();
+                const targetTop = container.scrollTop + (rect.top - containerRect.top);
+                const startTop = container.scrollTop;
+                const distance = targetTop - startTop;
+                const duration = 300; // 300ms動畫時間
+                const startTime = Date.now();
+
+                const animate = () => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    // 使用easeOut緩動函數
+                    const easeProgress = 1 - Math.pow(1 - progress, 3);
+                    container.scrollTop = startTop + distance * easeProgress;
+
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    }
+                };
+                animate();
+            }
+        }
+
         function toggleQuizDropdown() {
             const menu = document.getElementById('quizTagDropdownMenu');
             menu.classList.toggle('active');
@@ -5622,6 +5659,7 @@
                     checkbox.type = 'checkbox';
                     checkbox.className = 'sheet-checkbox';
                     checkbox.dataset.sheetName = sheetName;
+                    checkbox.style.display = 'none'; // 隱藏下拉菜單中的 checkbox
 
                     // 從成語模式的保存狀態恢復，或使用 chineseSheetStates
                     if (idiomModeCheckStates[sheetName] !== undefined) {
@@ -5651,34 +5689,6 @@
                     sheetSubmenu.className = 'sheet-submenu';
                     sheetSubmenu.dataset.sheetName = sheetName;
                     document.body.appendChild(sheetSubmenu);
-
-                    // 按鈕行（全選/清除）
-                    const buttonsRow = document.createElement('div');
-                    buttonsRow.className = 'sheet-group-header';
-
-                    const selectAllBtn = document.createElement('button');
-                    selectAllBtn.textContent = '全選';
-                    selectAllBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        document.querySelectorAll(`.chinese-tag-checkbox[data-sheet="${sheetName}"]`).forEach(cb => {
-                            cb.checked = true;
-                        });
-                        updateChineseIdiomFilter();
-                    };
-
-                    const clearAllBtn = document.createElement('button');
-                    clearAllBtn.textContent = '清除';
-                    clearAllBtn.onclick = (e) => {
-                        e.stopPropagation();
-                        document.querySelectorAll(`input[data-sheet="${sheetName}"]`).forEach(cb => {
-                            cb.checked = false;
-                        });
-                        updateChineseIdiomFilter();
-                    };
-
-                    buttonsRow.appendChild(selectAllBtn);
-                    buttonsRow.appendChild(clearAllBtn);
-                    sheetSubmenu.appendChild(buttonsRow);
 
                     // 該 sheet 的所有 tags
                     sheetTags.forEach(tag => {
@@ -5712,16 +5722,18 @@
 
                         const tagLabel = document.createElement('div');
                         tagLabel.className = 'tag-checkbox-item';
+                        // 隱藏下拉菜單中的 checkbox
+                        tagCheckbox.style.display = 'none';
                         tagLabel.appendChild(tagCheckbox);
                         const tagSpan = document.createElement('span');
                         tagSpan.textContent = tag || '(無)';
+                        tagSpan.style.cursor = 'pointer';
                         tagLabel.appendChild(tagSpan);
 
                         tagLabel.onclick = (e) => {
                             e.stopPropagation();
-                            tagCheckbox.checked = !tagCheckbox.checked;
-                            // 觸發 onchange 事件
-                            tagCheckbox.dispatchEvent(new Event('change', { bubbles: true }));
+                            // 點擊 tag 時滑動到標題列
+                            scrollToChineseIdiom(sheetName, tag);
                         };
 
                         sheetSubmenu.appendChild(tagLabel);
@@ -5774,7 +5786,7 @@
                         // 如果 sheet 或 tag 變化，插入標題行
                         if (sheetName !== lastSheet || item.tag !== lastTag) {
                             html += `
-                                <div style="
+                                <div data-sheet="${sheetName}" data-tag="${item.tag || ''}" style="
                                     padding: 10px 15px;
                                     background-color: #FF9800;
                                     color: #333333;
