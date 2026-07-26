@@ -2004,6 +2004,7 @@
         </div>
     </div>
 
+    <script src="json/pronunciation.js"></script>
     <script>
         // 注销所有Service Worker并禁用离线功能
         if ('serviceWorker' in navigator) {
@@ -5591,12 +5592,7 @@
             contentDiv.innerHTML = displayHtml;
         }
 
-        // 特殊發音對照表 - 針對特定成語的非常用讀法
-        const specialIdiomPronunciationTable = {
-            '學富五車': '學富五居',      // 車讀ㄐㄩ
-            '倨傲鮮腆': '倨傲顯腆',      // 鮮讀ㄒㄧㄢˇ
-            // 新增特殊成語請在此添加
-        };
+        // 特殊發音對照表 - 從 pronunciation.js 引入
 
         function pronounceChineseText(text) {
             // 停止當前的文章播放
