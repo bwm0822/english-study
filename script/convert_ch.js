@@ -6,11 +6,13 @@ const path = require('path');
 const chengYuPath = path.join(__dirname, '..', 'docs', '成語.xlsx');
 const guShiPath = path.join(__dirname, '..', 'docs', '文章.xlsx');
 const gaiCuoPath = path.join(__dirname, '..', 'docs', '改錯.xlsx');
+const faYinPath = path.join(__dirname, '..', 'docs', '特殊發音.xlsx');
 
 const output = {
   成語: {},
   文章: {},
-  改錯: {}
+  改錯: {},
+  發音: {}
 };
 
 let chengYuCount = 0;
@@ -114,6 +116,38 @@ if (fs.existsSync(gaiCuoPath)) {
   console.warn(`⚠ 改錯.xlsx 找不到！`);
 }
 
+// 處理特殊發音Excel文件
+if (fs.existsSync(faYinPath)) {
+  const workbook = XLSX.readFile(faYinPath);
+
+  workbook.SheetNames.forEach(sheetName => {
+    const worksheet = workbook.Sheets[sheetName];
+
+    // 讀取資料
+    const data = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+    // 轉換資料格式 - 第一列為文字，第二列為發音
+    data.forEach(row => {
+      const keys = Object.keys(row);
+      if (keys.length >= 2) {
+        const textKey = row[keys[0]]; // 第一列：文字
+        const pronounce = row[keys[1]]; // 第二列：發音
+
+        if (textKey && pronounce) {
+          output.發音[textKey] = pronounce;
+        }
+      }
+    });
+
+    if (Object.keys(output.發音).length > 0) {
+      console.log(`✓ Sheet: ${sheetName}`);
+      console.log(`  - 特殊發音: ${Object.keys(output.發音).length} 項`);
+    }
+  });
+} else {
+  console.warn(`⚠ 特殊發音.xlsx 找不到！`);
+}
+
 // 輸出到文件
 const outputPath = path.join(__dirname, '..', 'json', 'chinese.json');
 fs.writeFileSync(outputPath, JSON.stringify(output, null, 2), 'utf-8');
@@ -123,7 +157,8 @@ console.log(`\n統計資訊:`);
 console.log(`  - 成語: ${chengYuCount} 條`);
 console.log(`  - 文章: ${guShiCount} 條`);
 console.log(`  - 改錯: ${gaiCuoCount} 題`);
-console.log(`  - 合計: ${chengYuCount + guShiCount + gaiCuoCount} 項`);
+console.log(`  - 特殊發音: ${Object.keys(output.發音).length} 項`);
+console.log(`  - 合計: ${chengYuCount + guShiCount + gaiCuoCount + Object.keys(output.發音).length} 項`);
 console.log(`\n輸出文件: ${outputPath}`);
 console.log(`\n輸出結構:`);
 console.log(`{`);

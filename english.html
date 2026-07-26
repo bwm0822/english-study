@@ -1639,6 +1639,15 @@
                     </div>
                 </div>
             </div>
+            <div class="tag-filter" id="reviewTagFilterContainer" style="display: none;">
+                <label>選擇單元：</label>
+                <div class="tag-filter-dropdown">
+                    <button class="tag-dropdown-btn" onclick="toggleReviewDropdown()">全部 <span>▼</span></button>
+                    <div class="tag-dropdown-menu" id="reviewTagDropdownMenu">
+                        <div id="reviewSheetGroupsContainer"></div>
+                    </div>
+                </div>
+            </div>
             <div class="tag-filter" id="quizTagFilterContainer" style="display: none;">
                 <label>選擇單元：</label>
                 <div class="tag-filter-dropdown">
@@ -1922,6 +1931,9 @@
         let normalModeSheetNames = new Set(); // 記錄一般/複習模式的 sheet 名稱
         let normalModeCheckStates = {}; // 保存 normal 模式 sheet 的狀態 {sheetName: checked}
         let normalModeTagStates = {}; // 保存 normal 模式 tag 的狀態 {sheetName: {tagName: checked}}
+        let reviewModeCheckStates = {}; // 保存 review 模式 sheet 的狀態 {sheetName: checked}
+        let reviewModeTagStates = {}; // 保存 review 模式 tag 的狀態 {sheetName: {tagName: checked}}
+        let reviewModeFilterStates = {}; // 保存 review 模式的過濾狀態 {starFilter, accuracyFilter, accuracyThreshold}
         let quizModeCheckStates = {}; // 保存 quiz 模式 sheet 的狀態 {sheetName: checked}
         let quizModeTagStates = {}; // 保存 quiz 模式 tag 的狀態 {sheetName: {tagName: checked}}
         let quizModeFilterStates = {}; // 保存 quiz 模式的過濾狀態 {starFilter, accuracyFilter, accuracyThreshold}
@@ -2429,8 +2441,8 @@
             });
 
         function changeMode(mode) {
-            // 離開 normal/review 模式時，保存 checkbox 狀態
-            if (currentMode === 'normal' || currentMode === 'review') {
+            // 離開 normal 模式時，保存 checkbox 狀態
+            if (currentMode === 'normal') {
                 normalModeCheckStates = {};
                 normalModeTagStates = {};
                 document.querySelectorAll('input.normal-sheet-checkbox').forEach(checkbox => {
@@ -2443,6 +2455,36 @@
                     }
                     normalModeTagStates[sheetName][checkbox.value] = checkbox.checked;
                 });
+            }
+
+            // 離開 review 模式時，保存 checkbox 狀態和過濾器狀態
+            if (currentMode === 'review') {
+                reviewModeCheckStates = {};
+                reviewModeTagStates = {};
+                reviewModeFilterStates = {};
+                document.querySelectorAll('input.review-sheet-checkbox').forEach(checkbox => {
+                    reviewModeCheckStates[checkbox.dataset.sheetName] = checkbox.checked;
+                });
+                document.querySelectorAll('input.review-tag-checkbox').forEach(checkbox => {
+                    const sheetName = checkbox.dataset.sheet;
+                    if (!(sheetName in reviewModeTagStates)) {
+                        reviewModeTagStates[sheetName] = {};
+                    }
+                    reviewModeTagStates[sheetName][checkbox.value] = checkbox.checked;
+                });
+                // 保存過濾器狀態
+                const reviewStarCheckbox = document.getElementById('review-star-filter');
+                const reviewAccuracyCheckbox = document.getElementById('review-accuracy-filter-checkbox');
+                const reviewAccuracySelect = document.getElementById('review-accuracy-filter-select');
+                if (reviewStarCheckbox) {
+                    reviewModeFilterStates.starFilter = reviewStarCheckbox.checked;
+                }
+                if (reviewAccuracyCheckbox) {
+                    reviewModeFilterStates.accuracyFilter = reviewAccuracyCheckbox.checked;
+                }
+                if (reviewAccuracySelect) {
+                    reviewModeFilterStates.accuracyThreshold = reviewAccuracySelect.value;
+                }
             }
 
             // 離開 quiz 模式時，保存 checkbox 狀態和過濾器狀態
@@ -2499,34 +2541,28 @@
                 stopStoryPlayback();
                 wordsContainer.style.display = 'block';
                 quizContainer.style.display = 'none';
-                tagFilterContainer.style.display = 'flex';
+                tagFilterContainer.style.display = 'none';
+                const reviewTagFilterContainer = document.getElementById('reviewTagFilterContainer');
+                if (reviewTagFilterContainer) reviewTagFilterContainer.style.display = 'flex';
                 quizTagFilterContainer.style.display = 'none';
                 searchFilterContainer.style.display = 'none';
-                refreshBtn.style.display = 'block';
+                refreshBtn.style.display = 'none';
                 startQuizBtn.style.display = 'none';
                 stats.style.display = 'block';
                 document.getElementById('chineseContainer').style.display = 'none';
                 document.getElementById('chineseButtonsTop').style.display = 'none';
                 document.getElementById('addWordBtn').style.display = 'none';
                 document.getElementById('exportBtn').style.display = 'none';
-                // 改變標籤為「過濾單元」
-                tagFilterContainer.querySelector('label').textContent = '過濾單元：';
-                // 隱藏所有sheet項目，只顯示過濾器
-                document.querySelectorAll('.normal-sheet-item').forEach(item => {
-                    item.style.display = 'none';
-                });
-                // 顯示複習模式的過濾器
-                const starFilterItem = document.getElementById('review-star-filter-item');
-                const accuracyFilterItem = document.getElementById('review-accuracy-filter-item');
-                if (starFilterItem) starFilterItem.style.display = 'flex';
-                if (accuracyFilterItem) accuracyFilterItem.style.display = 'flex';
-                updateDropdownButton();
+                initReviewPanel();
+                updateReviewDropdownButton();
                 renderWords();
             } else if (mode === 'quiz') {
                 stopStoryPlayback();
                 wordsContainer.style.display = 'none';
                 quizContainer.style.display = 'flex';
                 tagFilterContainer.style.display = 'none';
+                const reviewTagFilterContainer = document.getElementById('reviewTagFilterContainer');
+                if (reviewTagFilterContainer) reviewTagFilterContainer.style.display = 'none';
                 quizTagFilterContainer.style.display = 'flex';
                 searchFilterContainer.style.display = 'none';
                 refreshBtn.style.display = 'none';
@@ -2545,6 +2581,8 @@
                 wordsContainer.style.display = 'block';
                 quizContainer.style.display = 'none';
                 tagFilterContainer.style.display = 'none';
+                const reviewTagFilterContainer2 = document.getElementById('reviewTagFilterContainer');
+                if (reviewTagFilterContainer2) reviewTagFilterContainer2.style.display = 'none';
                 quizTagFilterContainer.style.display = 'none';
                 searchFilterContainer.style.display = 'none';
                 refreshBtn.style.display = 'none';
@@ -2561,6 +2599,8 @@
                 document.getElementById('chineseContainer').style.display = 'flex';
                 document.getElementById('chineseButtonsTop').style.display = 'flex';
                 tagFilterContainer.style.display = 'none';
+                const reviewTagFilterContainer3 = document.getElementById('reviewTagFilterContainer');
+                if (reviewTagFilterContainer3) reviewTagFilterContainer3.style.display = 'none';
                 quizTagFilterContainer.style.display = 'none';
                 searchFilterContainer.style.display = 'none';
                 refreshBtn.style.display = 'none';
@@ -2576,6 +2616,8 @@
                 document.getElementById('chineseContainer').style.display = 'none';
                 document.getElementById('chineseButtonsTop').style.display = 'none';
                 tagFilterContainer.style.display = 'none';
+                const reviewTagFilterContainer4 = document.getElementById('reviewTagFilterContainer');
+                if (reviewTagFilterContainer4) reviewTagFilterContainer4.style.display = 'none';
                 quizTagFilterContainer.style.display = 'none';
                 searchFilterContainer.style.display = 'none';
                 refreshBtn.style.display = 'none';
@@ -2591,6 +2633,8 @@
                 document.getElementById('chineseContainer').style.display = 'none';
                 document.getElementById('chineseButtonsTop').style.display = 'none';
                 tagFilterContainer.style.display = 'flex';
+                const reviewTagFilterContainer5 = document.getElementById('reviewTagFilterContainer');
+                if (reviewTagFilterContainer5) reviewTagFilterContainer5.style.display = 'none';
                 quizTagFilterContainer.style.display = 'none';
                 searchFilterContainer.style.display = 'flex';
                 refreshBtn.style.display = 'none';
@@ -2604,12 +2648,6 @@
                 document.querySelectorAll('.normal-sheet-item').forEach(item => {
                     item.style.display = 'block';
                 });
-                // 隱藏複習模式的過濾器
-                const starFilterItem = document.getElementById('review-star-filter-item');
-                const accuracyFilterItem = document.getElementById('review-accuracy-filter-item');
-                if (starFilterItem) starFilterItem.style.display = 'none';
-                if (accuracyFilterItem) accuracyFilterItem.style.display = 'none';
-
                 // 恢復 normal 模式的 sheet 和 tag 狀態
                 document.querySelectorAll('input.normal-sheet-checkbox').forEach(checkbox => {
                     const sheetName = checkbox.dataset.sheetName;
@@ -2630,6 +2668,7 @@
 
                 updateDropdownButton();
                 renderWords();
+                return;
             }
         }
 
@@ -2727,22 +2766,44 @@
 
             // 先檢查sheet checkbox，如果unchecked則skip該sheet
             const enabledSheets = new Set();
-            document.querySelectorAll('input.normal-sheet-checkbox').forEach(sheetCheckbox => {
-                if (sheetCheckbox.checked) {
-                    enabledSheets.add(sheetCheckbox.dataset.sheetName);
-                }
-            });
 
-            // 只處理enabled sheets的tag checkbox（只選 normal 模式的）
-            document.querySelectorAll('input.normal-tag-checkbox').forEach(checkbox => {
-                if (checkbox.checked) {
-                    const sheetName = checkbox.dataset.sheet;
-                    if (enabledSheets.has(sheetName) && selectedTags.has(sheetName)) {
-                        selectedTags.get(sheetName).add(checkbox.value);
+            if (currentMode === 'review') {
+                document.querySelectorAll('input.review-sheet-checkbox').forEach(sheetCheckbox => {
+                    if (sheetCheckbox.checked) {
+                        enabledSheets.add(sheetCheckbox.dataset.sheetName);
                     }
-                }
-            });
-            updateDropdownButton();
+                });
+                // 只處理enabled sheets的tag checkbox
+                document.querySelectorAll('input.review-tag-checkbox').forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const sheetName = checkbox.dataset.sheet;
+                        if (enabledSheets.has(sheetName) && selectedTags.has(sheetName)) {
+                            selectedTags.get(sheetName).add(checkbox.value);
+                        }
+                    }
+                });
+            } else {
+                document.querySelectorAll('input.normal-sheet-checkbox').forEach(sheetCheckbox => {
+                    if (sheetCheckbox.checked) {
+                        enabledSheets.add(sheetCheckbox.dataset.sheetName);
+                    }
+                });
+                // 只處理enabled sheets的tag checkbox（只選 normal 模式的）
+                document.querySelectorAll('input.normal-tag-checkbox').forEach(checkbox => {
+                    if (checkbox.checked) {
+                        const sheetName = checkbox.dataset.sheet;
+                        if (enabledSheets.has(sheetName) && selectedTags.has(sheetName)) {
+                            selectedTags.get(sheetName).add(checkbox.value);
+                        }
+                    }
+                });
+            }
+
+            if (currentMode === 'review') {
+                updateReviewDropdownButton();
+            } else {
+                updateDropdownButton();
+            }
             renderWords();
         }
 
@@ -2752,36 +2813,446 @@
             selectedTags.forEach(tags => {
                 totalSelected += tags.size;
             });
-            if (currentMode === 'review') {
-                // 複習模式：根據勾選的過濾器顯示
-                const starCheckbox = document.getElementById('normal-star-filter');
-                const accuracyCheckbox = document.getElementById('normal-accuracy-filter-checkbox');
-                const accuracySelect = document.getElementById('normal-accuracy-filter-select');
-
-                let displayText = '';
-                if (starCheckbox && starCheckbox.checked) {
-                    displayText += '星號';
-                }
-                if (accuracyCheckbox && accuracyCheckbox.checked && accuracySelect) {
-                    if (displayText) displayText += ' ; ';
-                    displayText += accuracySelect.value;
-                }
-
-                btn.innerHTML = displayText ? `${displayText} <span>▼</span>` : '<span>▼</span>';
+            // 一般模式
+            if (totalSelected === 0) {
+                btn.innerHTML = '清除 <span>▼</span>';
             } else {
-                // 一般模式
-                if (totalSelected === 0) {
-                    btn.innerHTML = '清除 <span>▼</span>';
+                btn.innerHTML = `已選擇 ${totalSelected} 個 <span>▼</span>`;
+            }
+        }
+
+        function toggleReviewDropdown() {
+            const menu = document.getElementById('reviewTagDropdownMenu');
+            if (menu) menu.classList.toggle('active');
+        }
+
+        function updateReviewDropdownButton() {
+            const btn = document.querySelector('#reviewTagFilterContainer .tag-dropdown-btn');
+            if (!btn) return;
+
+            // 檢查星號篩選
+            const starCheckbox = document.getElementById('review-star-filter');
+            const reviewFilterByStar = starCheckbox ? starCheckbox.checked : false;
+
+            // 檢查正確率篩選
+            const reviewAccuracyCheckbox = document.getElementById('review-accuracy-filter-checkbox');
+            const reviewAccuracySelect = document.getElementById('review-accuracy-filter-select');
+            let reviewFilterByAccuracy = null;
+            let reviewShowAll = false;
+            let reviewShowUntested = false;
+
+            if (reviewAccuracyCheckbox && reviewAccuracyCheckbox.checked && reviewAccuracySelect) {
+                if (reviewAccuracySelect.value === '全部') {
+                    reviewShowAll = true;
+                } else if (reviewAccuracySelect.value === '--') {
+                    reviewShowUntested = true;
                 } else {
-                    btn.innerHTML = `已選擇 ${totalSelected} 個 <span>▼</span>`;
+                    const threshold = reviewAccuracySelect.value.replace(/[<=%]/g, '');
+                    reviewFilterByAccuracy = parseInt(threshold);
                 }
             }
+
+            // 沒勾選星號且沒勾選正確率 => 無顯示
+            if (!reviewFilterByStar && reviewFilterByAccuracy === null && !reviewShowAll && !reviewShowUntested) {
+                btn.innerHTML = '清除 <span>▼</span>';
+                return;
+            }
+
+            // 只在 review mode 容器中查詢 sheet checkbox
+            const reviewEnabledSheets = new Set();
+            document.querySelectorAll('input.review-sheet-checkbox').forEach(sheetCheckbox => {
+                if (sheetCheckbox.checked) {
+                    reviewEnabledSheets.add(sheetCheckbox.dataset.sheetName);
+                }
+            });
+
+            // 獲取選中的 tags（只考慮 review mode 的 enabled sheets）
+            const reviewSelectedSheetTags = new Map();
+            document.querySelectorAll('input.review-tag-checkbox').forEach(checkbox => {
+                if (checkbox.checked && reviewEnabledSheets.has(checkbox.dataset.sheet)) {
+                    const sheetName = checkbox.dataset.sheet;
+                    if (!reviewSelectedSheetTags.has(sheetName)) {
+                        reviewSelectedSheetTags.set(sheetName, new Set());
+                    }
+                    reviewSelectedSheetTags.get(sheetName).add(checkbox.value);
+                }
+            });
+
+            // 計算選中的單詞數量
+            let selectedWords = 0;
+            if (reviewSelectedSheetTags.size > 0) {
+                selectedWords = allWords.filter(word => {
+                    // 先檢查 sheet/tag 是否在選擇範圍內
+                    if (!reviewSelectedSheetTags.has(word.sheet)) {
+                        return false;
+                    }
+                    if (!reviewSelectedSheetTags.get(word.sheet).has(word.tag)) {
+                        return false;
+                    }
+
+                    const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    const hasStar = getFavoriteFromStorage(wordKey) === true;
+
+                    // 勾選星號且沒勾選正確率 => 顯示有星號的
+                    if (reviewFilterByStar && reviewFilterByAccuracy === null && !reviewShowAll && !reviewShowUntested) {
+                        return hasStar;
+                    }
+
+                    // 沒勾選星號且勾選正確率 => 顯示正確率符合的
+                    if (!reviewFilterByStar && reviewFilterByAccuracy !== null) {
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
+                        if (!hasHistory) {
+                            return false;
+                        }
+                        const correctCount = getQuizHistory(historyKey);
+                        const accuracy = calculateAccuracy(correctCount);
+                        return accuracy <= reviewFilterByAccuracy;
+                    }
+
+                    // 勾選星號且勾選正確率 => 顯示有星號且正確率符合的
+                    if (reviewFilterByStar && reviewFilterByAccuracy !== null) {
+                        if (!hasStar) {
+                            return false;
+                        }
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
+                        if (!hasHistory) {
+                            return false;
+                        }
+                        const correctCount = getQuizHistory(historyKey);
+                        const accuracy = calculateAccuracy(correctCount);
+                        return accuracy <= reviewFilterByAccuracy;
+                    }
+
+                    // 勾選星號且「全部」=> 顯示有星號的（所有）
+                    if (reviewFilterByStar && reviewShowAll) {
+                        return hasStar;
+                    }
+
+                    // 勾選星號且「--」=> 顯示有星號且沒測過的
+                    if (reviewFilterByStar && reviewShowUntested) {
+                        if (!hasStar) {
+                            return false;
+                        }
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        return getQuizHistoryFromStorage(historyKey) === null;
+                    }
+
+                    // 沒勾選星號且「全部」=> 顯示所有
+                    if (!reviewFilterByStar && reviewShowAll) {
+                        return true;
+                    }
+
+                    // 沒勾選星號且「--」=> 顯示沒測過的
+                    if (!reviewFilterByStar && reviewShowUntested) {
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        return getQuizHistoryFromStorage(historyKey) === null;
+                    }
+
+                    return false;
+                }).length;
+            }
+
+            if (selectedWords === 0) {
+                btn.innerHTML = '清除 <span>▼</span>';
+            } else {
+                btn.innerHTML = `已選擇 ${selectedWords} 個 <span>▼</span>`;
+            }
+        }
+
+        function initReviewPanel() {
+            const container = document.getElementById('reviewSheetGroupsContainer');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            // 添加星號過濾
+            const starItem = document.createElement('div');
+            starItem.className = 'tag-checkbox-item';
+            starItem.style.borderBottom = '1px solid #eee';
+            starItem.style.paddingBottom = '10px';
+            starItem.style.marginBottom = '10px';
+
+            const starCheckbox = document.createElement('input');
+            starCheckbox.type = 'checkbox';
+            starCheckbox.id = 'review-star-filter';
+            starCheckbox.addEventListener('change', updateFilter);
+
+            const starLabel = document.createElement('span');
+            starLabel.textContent = '☆ 有星號';
+
+            starItem.appendChild(starCheckbox);
+            starItem.appendChild(starLabel);
+            starCheckbox.addEventListener('change', updateFilter);
+            starItem.onclick = (e) => {
+                if (e.target !== starCheckbox) {
+                    starCheckbox.checked = !starCheckbox.checked;
+                    updateFilter();
+                }
+            };
+            container.appendChild(starItem);
+
+            // 添加正確率過濾
+            const accuracyFilterContainer = document.createElement('div');
+            accuracyFilterContainer.className = 'tag-checkbox-item';
+            accuracyFilterContainer.style.borderBottom = '1px solid #eee';
+            accuracyFilterContainer.style.paddingBottom = '10px';
+            accuracyFilterContainer.style.marginBottom = '10px';
+
+            const accuracyCheckbox = document.createElement('input');
+            accuracyCheckbox.type = 'checkbox';
+            accuracyCheckbox.id = 'review-accuracy-filter-checkbox';
+
+            const accuracyLabel = document.createElement('span');
+            accuracyLabel.textContent = '正確率';
+
+            const accuracySelect = document.createElement('select');
+            accuracySelect.id = 'review-accuracy-filter-select';
+            accuracySelect.style.padding = '4px 8px';
+            accuracySelect.style.borderRadius = '3px';
+            accuracySelect.style.border = '1px solid #ddd';
+            accuracySelect.style.cursor = 'pointer';
+            accuracySelect.style.marginLeft = '5px';
+
+            ['全部', '--', '<=100%', '<=80%', '<=60%', '<=40%', '<=20%', '<=0%'].forEach(threshold => {
+                const option = document.createElement('option');
+                option.value = threshold;
+                option.textContent = threshold;
+                accuracySelect.appendChild(option);
+            });
+
+            accuracyCheckbox.addEventListener('change', updateFilter);
+            accuracySelect.addEventListener('change', updateFilter);
+
+            accuracyFilterContainer.appendChild(accuracyCheckbox);
+            accuracyFilterContainer.appendChild(accuracyLabel);
+            accuracyFilterContainer.appendChild(accuracySelect);
+
+            accuracyFilterContainer.onclick = (e) => {
+                if (e.target !== accuracyCheckbox && e.target !== accuracySelect) {
+                    accuracyCheckbox.checked = !accuracyCheckbox.checked;
+                    updateFilter();
+                }
+            };
+
+            container.appendChild(accuracyFilterContainer);
+
+            // 添加 sheet 全選/清除 按鈕
+            const sheetButtonsRow = document.createElement('div');
+            sheetButtonsRow.className = 'sheet-group-header';
+            sheetButtonsRow.style.borderBottom = '1px solid #eee';
+            sheetButtonsRow.style.paddingBottom = '10px';
+            sheetButtonsRow.style.marginBottom = '10px';
+
+            const sheetSelectBtn = document.createElement('button');
+            sheetSelectBtn.textContent = '全選';
+            sheetSelectBtn.onclick = function(e) {
+                e.stopPropagation();
+                selectAllSheets(e);
+            };
+
+            const sheetClearBtn = document.createElement('button');
+            sheetClearBtn.textContent = '清除';
+            sheetClearBtn.onclick = function(e) {
+                e.stopPropagation();
+                clearAllSheets(e);
+            };
+
+            sheetButtonsRow.appendChild(sheetSelectBtn);
+            sheetButtonsRow.appendChild(sheetClearBtn);
+            container.appendChild(sheetButtonsRow);
+
+            // 添加 sheet 選項
+            Object.entries(sheetData).forEach(([sheetName, words]) => {
+                if (Array.isArray(words)) {
+                    const sheetTags = [...new Set(words.map(w => w.tag))];
+
+                    const sheetItem = document.createElement('div');
+                    sheetItem.className = 'sheet-item review-sheet-item';
+
+                    const sheetHeader = document.createElement('div');
+                    sheetHeader.className = 'sheet-item-header';
+                    sheetHeader.dataset.sheetName = sheetName;
+
+                    const sheetCheckbox = document.createElement('input');
+                    sheetCheckbox.type = 'checkbox';
+                    sheetCheckbox.checked = true;
+                    sheetCheckbox.setAttribute('data-sheet-name', sheetName);
+                    sheetCheckbox.className = 'review-sheet-checkbox';
+                    sheetCheckbox.onchange = updateFilter;
+                    sheetCheckbox.onclick = (e) => {
+                        e.stopPropagation();
+                    };
+
+                    const nameSpan = document.createElement('span');
+                    nameSpan.className = 'sheet-name';
+                    nameSpan.textContent = sheetName;
+
+                    sheetHeader.appendChild(sheetCheckbox);
+                    sheetHeader.appendChild(nameSpan);
+
+                    // 創建獨立的第二選單
+                    const sheetSubmenu = document.createElement('div');
+                    sheetSubmenu.className = 'sheet-submenu';
+                    sheetSubmenu.dataset.sheetName = sheetName;
+                    document.body.appendChild(sheetSubmenu);
+
+                    // 按鈕行
+                    const buttonsRow = document.createElement('div');
+                    buttonsRow.className = 'sheet-group-header';
+
+                    const selectBtn = document.createElement('button');
+                    selectBtn.textContent = '全選';
+                    selectBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        selectAllInReviewSheet(e, sheetName);
+                    };
+
+                    const clearBtn = document.createElement('button');
+                    clearBtn.textContent = '清除';
+                    clearBtn.onclick = function(e) {
+                        e.stopPropagation();
+                        clearAllInReviewSheet(e, sheetName);
+                    };
+
+                    buttonsRow.appendChild(selectBtn);
+                    buttonsRow.appendChild(clearBtn);
+                    sheetSubmenu.appendChild(buttonsRow);
+
+                    // 該sheet的所有tag
+                    sheetTags.forEach(tag => {
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = tag;
+                        checkbox.checked = true;
+                        checkbox.dataset.sheet = sheetName;
+                        checkbox.className = 'review-tag-checkbox';
+                        checkbox.addEventListener('change', updateFilter);
+                        checkbox.onclick = (e) => {
+                            e.stopPropagation();
+                        };
+
+                        const label = document.createElement('div');
+                        label.className = 'tag-checkbox-item';
+                        label.appendChild(checkbox);
+                        const span = document.createElement('span');
+                        span.textContent = tag;
+                        label.appendChild(span);
+
+                        label.onclick = (e) => {
+                            e.stopPropagation();
+                            checkbox.checked = !checkbox.checked;
+                            updateFilter();
+                        };
+
+                        sheetSubmenu.appendChild(label);
+                    });
+
+                    // Sheet展開/收起邏輯
+                    sheetHeader.onclick = (e) => {
+                        if (e.target.tagName !== 'BUTTON' && e.target.tagName !== 'INPUT') {
+                            e.stopPropagation();
+
+                            document.querySelectorAll('.sheet-submenu.expanded').forEach(submenu => {
+                                if (submenu !== sheetSubmenu) {
+                                    submenu.classList.remove('expanded');
+                                }
+                            });
+
+                            sheetSubmenu.classList.toggle('expanded');
+
+                            if (sheetSubmenu.classList.contains('expanded')) {
+                                const rect = sheetHeader.getBoundingClientRect();
+                                sheetSubmenu.style.top = rect.top + 'px';
+                                sheetSubmenu.style.left = (rect.right + 5) + 'px';
+                            }
+                        }
+                    };
+
+                    sheetItem.appendChild(sheetHeader);
+                    container.appendChild(sheetItem);
+                }
+            });
+
+            // 恢復 review 模式的 sheet 和 tag 狀態
+            document.querySelectorAll('input.review-sheet-checkbox').forEach(checkbox => {
+                const sheetName = checkbox.dataset.sheetName;
+                if (sheetName in reviewModeCheckStates) {
+                    checkbox.checked = reviewModeCheckStates[sheetName];
+                }
+            });
+            document.querySelectorAll('input.review-tag-checkbox').forEach(checkbox => {
+                const sheetName = checkbox.dataset.sheet;
+                const tagName = checkbox.value;
+                if (sheetName in reviewModeTagStates && tagName in reviewModeTagStates[sheetName]) {
+                    checkbox.checked = reviewModeTagStates[sheetName][tagName];
+                }
+            });
+
+            // 恢復過濾器狀態
+            if (Object.keys(reviewModeFilterStates).length > 0) {
+                const reviewStarCheckbox = document.getElementById('review-star-filter');
+                const reviewAccuracyCheckbox = document.getElementById('review-accuracy-filter-checkbox');
+                const reviewAccuracySelect = document.getElementById('review-accuracy-filter-select');
+
+                if (reviewStarCheckbox && 'starFilter' in reviewModeFilterStates) {
+                    reviewStarCheckbox.checked = reviewModeFilterStates.starFilter;
+                }
+                if (reviewAccuracyCheckbox && 'accuracyFilter' in reviewModeFilterStates) {
+                    reviewAccuracyCheckbox.checked = reviewModeFilterStates.accuracyFilter;
+                }
+                if (reviewAccuracySelect && 'accuracyThreshold' in reviewModeFilterStates) {
+                    reviewAccuracySelect.value = reviewModeFilterStates.accuracyThreshold;
+                }
+            }
+        }
+
+        function selectAllSheets(event) {
+            event.stopPropagation();
+            // 只全選所有 sheet checkbox
+            document.querySelectorAll('input.review-sheet-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateFilter();
+        }
+
+        function clearAllSheets(event) {
+            event.stopPropagation();
+            // 只清除所有 sheet checkbox
+            document.querySelectorAll('input.review-sheet-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateFilter();
+        }
+
+        function selectAllInReviewSheet(event, sheetName) {
+            event.stopPropagation();
+            const checkboxes = document.querySelectorAll(`input.review-tag-checkbox[data-sheet="${sheetName}"]`);
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateFilter();
+        }
+
+        function clearAllInReviewSheet(event, sheetName) {
+            event.stopPropagation();
+            const checkboxes = document.querySelectorAll(`input.review-tag-checkbox[data-sheet="${sheetName}"]`);
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateFilter();
         }
 
         document.addEventListener('click', (e) => {
             const filter = document.querySelector('#tagFilterContainer');
             if (filter && !filter.contains(e.target)) {
                 document.getElementById('tagDropdownMenu').classList.remove('active');
+            }
+            const reviewFilter = document.querySelector('#reviewTagFilterContainer');
+            if (reviewFilter && !reviewFilter.contains(e.target)) {
+                const reviewMenu = document.getElementById('reviewTagDropdownMenu');
+                if (reviewMenu) reviewMenu.classList.remove('active');
             }
             const quizFilter = document.querySelector('#quizTagFilterContainer');
             if (quizFilter && !quizFilter.contains(e.target)) {
@@ -2811,21 +3282,29 @@
 
             // 檢查enabled sheets
             const enabledSheets = new Set();
-            document.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
-                if (sheetCheckbox.checked) {
-                    enabledSheets.add(sheetCheckbox.dataset.sheetName);
-                }
-            });
+            if (currentMode === 'review') {
+                document.querySelectorAll('input.review-sheet-checkbox').forEach(sheetCheckbox => {
+                    if (sheetCheckbox.checked) {
+                        enabledSheets.add(sheetCheckbox.dataset.sheetName);
+                    }
+                });
+            } else {
+                document.querySelectorAll('input[data-sheet-name]').forEach(sheetCheckbox => {
+                    if (sheetCheckbox.checked) {
+                        enabledSheets.add(sheetCheckbox.dataset.sheetName);
+                    }
+                });
+            }
 
             // 檢查星號和正確率過濾（只在複習模式中）
             let filterByStar = false;
             let filterByAccuracy = null;
             if (currentMode === 'review') {
-                const starCheckbox = document.getElementById('normal-star-filter');
+                const starCheckbox = document.getElementById('review-star-filter');
                 filterByStar = starCheckbox ? starCheckbox.checked : false;
 
-                const accuracyCheckbox = document.getElementById('normal-accuracy-filter-checkbox');
-                const accuracySelect = document.getElementById('normal-accuracy-filter-select');
+                const accuracyCheckbox = document.getElementById('review-accuracy-filter-checkbox');
+                const accuracySelect = document.getElementById('review-accuracy-filter-select');
                 if (accuracyCheckbox && accuracyCheckbox.checked && accuracySelect) {
                     const threshold = accuracySelect.value.replace(/[<=%]/g, '');
                     filterByAccuracy = parseInt(threshold);
@@ -2835,23 +3314,74 @@
             // 根據模式和選中的sheet+tag過濾單字
             let filteredWords;
             if (currentMode === 'review') {
-                // 複習模式：根據勾選的過濾器篩選
-                // 如果都沒勾選，不顯示任何單字
-                if (!filterByStar && filterByAccuracy === null) {
+                // 複習模式：sheet/tag 決定可參與筛選的範圍，星號和正確率決定顯示
+                // 檢查星號篩選
+                const starCheckbox = document.getElementById('review-star-filter');
+                const reviewFilterByStar = starCheckbox ? starCheckbox.checked : false;
+
+                // 檢查正確率篩選
+                const reviewAccuracyCheckbox = document.getElementById('review-accuracy-filter-checkbox');
+                const reviewAccuracySelect = document.getElementById('review-accuracy-filter-select');
+                let reviewFilterByAccuracy = null;
+                let reviewShowUntested = false; // 「--」只顯示沒測過的
+                let reviewShowAll = false; // 「全部」顯示所有
+
+                if (reviewAccuracyCheckbox && reviewAccuracyCheckbox.checked && reviewAccuracySelect) {
+                    if (reviewAccuracySelect.value === '全部') {
+                        reviewShowAll = true;
+                    } else if (reviewAccuracySelect.value === '--') {
+                        reviewShowUntested = true;
+                    } else {
+                        // 移除 < 和 % 符號後解析
+                        const threshold = reviewAccuracySelect.value.replace(/[<=%]/g, '');
+                        reviewFilterByAccuracy = parseInt(threshold);
+                    }
+                }
+
+                // 沒勾選星號且沒勾選正確率 => 無顯示
+                if (!reviewFilterByStar && reviewFilterByAccuracy === null && !reviewShowAll && !reviewShowUntested) {
                     filteredWords = [];
                 } else {
-                    filteredWords = allWords.filter(word => {
-                        const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    // 只在 review mode 容器中查詢 sheet checkbox
+                    const reviewEnabledSheets = new Set();
+                    document.querySelectorAll('input.review-sheet-checkbox').forEach(sheetCheckbox => {
+                        if (sheetCheckbox.checked) {
+                            reviewEnabledSheets.add(sheetCheckbox.dataset.sheetName);
+                        }
+                    });
 
-                        // 如果勾選星號過濾，檢查是否有星號
-                        if (filterByStar) {
-                            if (getFavoriteFromStorage(wordKey) !== true) {
-                                return false;
+                    // 獲取勾選的tags - 加入到對應的sheet（只考慮 review mode 的 enabled sheets）
+                    const reviewSelectedSheetTags = new Map(); // {sheetName: Set<tag>}
+                    document.querySelectorAll('input.review-tag-checkbox').forEach(checkbox => {
+                        if (checkbox.checked && reviewEnabledSheets.has(checkbox.dataset.sheet)) {
+                            const sheetName = checkbox.dataset.sheet;
+                            if (!reviewSelectedSheetTags.has(sheetName)) {
+                                reviewSelectedSheetTags.set(sheetName, new Set());
                             }
+                            reviewSelectedSheetTags.get(sheetName).add(checkbox.value);
+                        }
+                    });
+
+                    // 根據勾選的星號和正確率條件篩選
+                    filteredWords = allWords.filter(word => {
+                        // 先檢查 sheet/tag 是否在選擇範圍內
+                        if (!reviewSelectedSheetTags.has(word.sheet)) {
+                            return false;
+                        }
+                        if (!reviewSelectedSheetTags.get(word.sheet).has(word.tag)) {
+                            return false;
                         }
 
-                        // 如果勾選正確率過濾，檢查是否符合條件
-                        if (filterByAccuracy !== null) {
+                        const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        const hasStar = getFavoriteFromStorage(wordKey) === true;
+
+                        // 勾選星號且沒勾選正確率 => 顯示有星號的
+                        if (reviewFilterByStar && reviewFilterByAccuracy === null && !reviewShowAll && !reviewShowUntested) {
+                            return hasStar;
+                        }
+
+                        // 沒勾選星號且勾選正確率 => 顯示正確率符合的
+                        if (!reviewFilterByStar && reviewFilterByAccuracy !== null) {
                             const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
                             const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                             if (!hasHistory) {
@@ -2859,28 +3389,66 @@
                             }
                             const correctCount = getQuizHistory(historyKey);
                             const accuracy = calculateAccuracy(correctCount);
-                            if (!(accuracy <= filterByAccuracy)) {
-                                return false;
-                            }
+                            return accuracy <= reviewFilterByAccuracy;
                         }
 
-                        return true;
+                        // 勾選星號且勾選正確率 => 顯示有星號且正確率符合的
+                        if (reviewFilterByStar && reviewFilterByAccuracy !== null) {
+                            if (!hasStar) {
+                                return false;
+                            }
+                            const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                            const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
+                            if (!hasHistory) {
+                                return false;
+                            }
+                            const correctCount = getQuizHistory(historyKey);
+                            const accuracy = calculateAccuracy(correctCount);
+                            return accuracy <= reviewFilterByAccuracy;
+                        }
+
+                        // 勾選星號且「全部」=> 顯示有星號的（所有）
+                        if (reviewFilterByStar && reviewShowAll) {
+                            return hasStar;
+                        }
+
+                        // 勾選星號且「--」=> 顯示有星號且沒測過的
+                        if (reviewFilterByStar && reviewShowUntested) {
+                            if (!hasStar) {
+                                return false;
+                            }
+                            const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                            return getQuizHistoryFromStorage(historyKey) === null;
+                        }
+
+                        // 沒勾選星號且「全部」=> 顯示所有
+                        if (!reviewFilterByStar && reviewShowAll) {
+                            return true;
+                        }
+
+                        // 沒勾選星號且「--」=> 顯示沒測過的
+                        if (!reviewFilterByStar && reviewShowUntested) {
+                            const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                            return getQuizHistoryFromStorage(historyKey) === null;
+                        }
+
+                        return false;
                     });
-                }
 
-                // 複習模式：如果勾選正確率過濾，按正確率從低到高排序
-                if (filterByAccuracy !== null) {
-                    filteredWords.sort((a, b) => {
-                        const historyKeyA = `${a.sheet}/${a.tag}/${a.單字}`;
-                        const correctCountA = getQuizHistory(historyKeyA);
-                        const accuracyA = calculateAccuracy(correctCountA);
+                    // 複習模式：如果勾選正確率過濾，按正確率從低到高排序
+                    if (reviewFilterByAccuracy !== null) {
+                        filteredWords.sort((a, b) => {
+                            const historyKeyA = `${a.sheet}/${a.tag}/${a.單字}`;
+                            const correctCountA = getQuizHistory(historyKeyA);
+                            const accuracyA = calculateAccuracy(correctCountA);
 
-                        const historyKeyB = `${b.sheet}/${b.tag}/${b.單字}`;
-                        const correctCountB = getQuizHistory(historyKeyB);
-                        const accuracyB = calculateAccuracy(correctCountB);
+                            const historyKeyB = `${b.sheet}/${b.tag}/${b.單字}`;
+                            const correctCountB = getQuizHistory(historyKeyB);
+                            const accuracyB = calculateAccuracy(correctCountB);
 
-                        return accuracyA - accuracyB;
-                    });
+                            return accuracyA - accuracyB;
+                        });
+                    }
                 }
             } else {
                 // 一般模式：根據sheet+tag過濾
@@ -3352,7 +3920,7 @@
             accuracySelect.style.cursor = 'pointer';
             accuracySelect.style.marginLeft = '5px';
 
-            ['<=100%', '<=80%', '<=60%', '<=40%', '<=20%', '=0%'].forEach(threshold => {
+            ['全部', '--', '<=100%', '<=80%', '<=60%', '<=40%', '<=20%', '<=0%'].forEach(threshold => {
                 const option = document.createElement('option');
                 option.value = threshold;
                 option.textContent = threshold;
@@ -3374,6 +3942,31 @@
             };
 
             container.appendChild(accuracyFilterContainer);
+
+            // 添加 sheet 全選/清除 按鈕
+            const quizSheetButtonsRow = document.createElement('div');
+            quizSheetButtonsRow.className = 'sheet-group-header';
+            quizSheetButtonsRow.style.borderBottom = '1px solid #eee';
+            quizSheetButtonsRow.style.paddingBottom = '10px';
+            quizSheetButtonsRow.style.marginBottom = '10px';
+
+            const quizSheetSelectBtn = document.createElement('button');
+            quizSheetSelectBtn.textContent = '全選';
+            quizSheetSelectBtn.onclick = function(e) {
+                e.stopPropagation();
+                selectAllQuizSheets(e);
+            };
+
+            const quizSheetClearBtn = document.createElement('button');
+            quizSheetClearBtn.textContent = '清除';
+            quizSheetClearBtn.onclick = function(e) {
+                e.stopPropagation();
+                clearAllQuizSheets(e);
+            };
+
+            quizSheetButtonsRow.appendChild(quizSheetSelectBtn);
+            quizSheetButtonsRow.appendChild(quizSheetClearBtn);
+            container.appendChild(quizSheetButtonsRow);
 
             Object.entries(sheetData).forEach(([sheetName, words]) => {
                 if (Array.isArray(words)) {
@@ -3536,6 +4129,24 @@
             updateQuizDropdownButton();
         }
 
+        function selectAllQuizSheets(event) {
+            event.stopPropagation();
+            // 只全選所有 sheet checkbox
+            document.querySelectorAll('input.quiz-sheet-checkbox').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateQuizDropdownButton();
+        }
+
+        function clearAllQuizSheets(event) {
+            event.stopPropagation();
+            // 只清除所有 sheet checkbox
+            document.querySelectorAll('input.quiz-sheet-checkbox').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateQuizDropdownButton();
+        }
+
         function selectAllInQuizSheet(event, sheetName) {
             event.stopPropagation();
             document.querySelectorAll(`input.quiz-tag-checkbox[data-sheet="${sheetName}"]`).forEach(checkbox => {
@@ -3586,30 +4197,51 @@
             const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
             const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
             let filterByAccuracy = null;
+            let showUntested = false;
+            let showAll = false;
+
             if (accuracyCheckbox && accuracyCheckbox.checked && accuracySelect) {
-                const threshold = accuracySelect.value.replace(/[<=%]/g, '');
-                filterByAccuracy = parseInt(threshold);
+                if (accuracySelect.value === '全部') {
+                    showAll = true;
+                } else if (accuracySelect.value === '--') {
+                    showUntested = true;
+                } else {
+                    const threshold = accuracySelect.value.replace(/[<=%]/g, '');
+                    filterByAccuracy = parseInt(threshold);
+                }
             }
 
-            // 計算選中的單詞數量
+            // 參考複習模式：沒勾選星號且沒勾選正確率 => 無顯示
+            if (!filterByStar && filterByAccuracy === null && !showAll && !showUntested) {
+                btn.innerHTML = '清除 <span>▼</span>';
+                if (stats) {
+                    stats.textContent = '共 0 項';
+                }
+                return;
+            }
+
+            // 計算選中的單詞數量 - 參考複習模式的邏輯
             let selectedWords = 0;
             if (selectedSheetTags.size > 0) {
                 selectedWords = allWords.filter(word => {
+                    // 先檢查 sheet/tag 是否在選擇範圍內
                     if (!selectedSheetTags.has(word.sheet)) {
                         return false;
                     }
                     if (!selectedSheetTags.get(word.sheet).has(word.tag)) {
                         return false;
                     }
-                    // 如果勾選星號篩選，只包含有星號的單字
-                    if (filterByStar) {
-                        const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                        if (getFavoriteFromStorage(wordKey) !== true) {
-                            return false;
-                        }
+
+                    const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    const hasStar = getFavoriteFromStorage(wordKey) === true;
+
+                    // 勾選星號且沒勾選正確率 => 顯示有星號的
+                    if (filterByStar && filterByAccuracy === null && !showAll && !showUntested) {
+                        return hasStar;
                     }
-                    // 如果勾選正確率篩選，只包含符合條件的單字
-                    if (filterByAccuracy !== null) {
+
+                    // 沒勾選星號且勾選正確率 => 顯示正確率符合的
+                    if (!filterByStar && filterByAccuracy !== null) {
                         const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
                         const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                         if (!hasHistory) {
@@ -3617,11 +4249,50 @@
                         }
                         const correctCount = getQuizHistory(historyKey);
                         const accuracy = calculateAccuracy(correctCount);
-                        if (!(accuracy <= filterByAccuracy)) {
+                        return accuracy <= filterByAccuracy;
+                    }
+
+                    // 勾選星號且勾選正確率 => 顯示有星號且正確率符合的
+                    if (filterByStar && filterByAccuracy !== null) {
+                        if (!hasStar) {
                             return false;
                         }
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
+                        if (!hasHistory) {
+                            return false;
+                        }
+                        const correctCount = getQuizHistory(historyKey);
+                        const accuracy = calculateAccuracy(correctCount);
+                        return accuracy <= filterByAccuracy;
                     }
-                    return true;
+
+                    // 勾選星號且「全部」=> 顯示有星號的（所有）
+                    if (filterByStar && showAll) {
+                        return hasStar;
+                    }
+
+                    // 勾選星號且「--」=> 顯示有星號且沒測過的
+                    if (filterByStar && showUntested) {
+                        if (!hasStar) {
+                            return false;
+                        }
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        return getQuizHistoryFromStorage(historyKey) === null;
+                    }
+
+                    // 沒勾選星號且「全部」=> 顯示所有
+                    if (!filterByStar && showAll) {
+                        return true;
+                    }
+
+                    // 沒勾選星號且「--」=> 顯示沒測過的
+                    if (!filterByStar && showUntested) {
+                        const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                        return getQuizHistoryFromStorage(historyKey) === null;
+                    }
+
+                    return false;
                 }).length;
             }
 
@@ -3679,11 +4350,13 @@
                     }
                 });
 
-                // 清除星號和正確率篩選
+                // 清除星號篩選，預設勾選正確率-全部
                 const starCheckbox = document.getElementById('quiz-star-filter');
                 const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
+                const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
                 if (starCheckbox) starCheckbox.checked = false;
-                if (accuracyCheckbox) accuracyCheckbox.checked = false;
+                if (accuracyCheckbox) accuracyCheckbox.checked = true;
+                if (accuracySelect) accuracySelect.value = '全部';
 
                 // 更新下拉按鈕顯示
                 updateQuizDropdownButton();
@@ -3697,6 +4370,31 @@
             // 檢查星號篩選
             const starCheckbox = document.getElementById('quiz-star-filter');
             const filterByStar = starCheckbox ? starCheckbox.checked : false;
+
+            // 檢查正確率篩選
+            const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
+            const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
+            let filterByAccuracy = null;
+            let showUntested = false; // 「--」只顯示沒測過的
+            let showAll = false; // 「全部」顯示所有
+
+            if (accuracyCheckbox && accuracyCheckbox.checked && accuracySelect) {
+                if (accuracySelect.value === '全部') {
+                    showAll = true;
+                } else if (accuracySelect.value === '--') {
+                    showUntested = true;
+                } else {
+                    // 移除 < 和 % 符號後解析
+                    const threshold = accuracySelect.value.replace(/[<=%]/g, '');
+                    filterByAccuracy = parseInt(threshold);
+                }
+            }
+
+            // 參考複習模式：沒勾選星號且沒勾選正確率 => 無顯示
+            if (!filterByStar && filterByAccuracy === null && !showAll && !showUntested) {
+                alert('請至少勾選「星號」或「正確率」其中一個');
+                return;
+            }
 
             // 只在 quiz mode 容器中查詢 sheet checkbox
             const quizContainer = document.getElementById('quizSheetGroupsContainer');
@@ -3724,43 +4422,77 @@
                 return;
             }
 
-            // 檢查正確率篩選
-            const accuracyCheckbox = document.getElementById('quiz-accuracy-filter-checkbox');
-            const accuracySelect = document.getElementById('quiz-accuracy-filter-select');
-            let filterByAccuracy = null;
-            if (accuracyCheckbox && accuracyCheckbox.checked && accuracySelect) {
-                // 移除 < 和 % 符號後解析
-                const threshold = accuracySelect.value.replace(/[<=%]/g, '');
-                filterByAccuracy = parseInt(threshold);
-            }
-
-            // 收集要測驗的單詞 - 根據sheet和tag過濾
+            // 收集要測驗的單詞 - 參考複習模式的邏輯
             quizWords = allWords.filter(word => {
+                // 先檢查 sheet/tag 是否在選擇範圍內
                 if (!selectedSheetTags.has(word.sheet)) {
                     return false;
                 }
                 if (!selectedSheetTags.get(word.sheet).has(word.tag)) {
                     return false;
                 }
-                // 如果勾選星號篩選，只包含有星號的單字
-                if (filterByStar) {
-                    const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                    if (getFavoriteFromStorage(wordKey) !== true) {
-                        return false;
-                    }
+
+                const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                const hasStar = getFavoriteFromStorage(wordKey) === true;
+
+                // 勾選星號且沒勾選正確率 => 顯示有星號的
+                if (filterByStar && filterByAccuracy === null && !showAll && !showUntested) {
+                    return hasStar;
                 }
-                // 如果勾選正確率篩選，只包含符合條件的單字
-                if (filterByAccuracy !== null) {
+
+                // 沒勾選星號且勾選正確率 => 顯示正確率符合的
+                if (!filterByStar && filterByAccuracy !== null) {
                     const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
                     const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
                     if (!hasHistory) {
-                        return false; // 沒有歷史記錄的單字不包含
+                        return false;
                     }
                     const correctCount = getQuizHistory(historyKey);
                     const accuracy = calculateAccuracy(correctCount);
                     return accuracy <= filterByAccuracy;
                 }
-                return true;
+
+                // 勾選星號且勾選正確率 => 顯示有星號且正確率符合的
+                if (filterByStar && filterByAccuracy !== null) {
+                    if (!hasStar) {
+                        return false;
+                    }
+                    const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    const hasHistory = getQuizHistoryFromStorage(historyKey) !== null;
+                    if (!hasHistory) {
+                        return false;
+                    }
+                    const correctCount = getQuizHistory(historyKey);
+                    const accuracy = calculateAccuracy(correctCount);
+                    return accuracy <= filterByAccuracy;
+                }
+
+                // 勾選星號且「全部」=> 顯示有星號的（所有）
+                if (filterByStar && showAll) {
+                    return hasStar;
+                }
+
+                // 勾選星號且「--」=> 顯示有星號且沒測過的
+                if (filterByStar && showUntested) {
+                    if (!hasStar) {
+                        return false;
+                    }
+                    const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    return getQuizHistoryFromStorage(historyKey) === null;
+                }
+
+                // 沒勾選星號且「全部」=> 顯示所有
+                if (!filterByStar && showAll) {
+                    return true;
+                }
+
+                // 沒勾選星號且「--」=> 顯示沒測過的
+                if (!filterByStar && showUntested) {
+                    const historyKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    return getQuizHistoryFromStorage(historyKey) === null;
+                }
+
+                return false;
             });
 
             if (quizWords.length === 0) {
