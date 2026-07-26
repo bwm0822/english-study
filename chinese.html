@@ -5519,9 +5519,11 @@
             const beforeText = currentArticleText.substring(0, currentCharIndex);
             const afterText = currentArticleText.substring(currentCharIndex);
 
-            // 高亮成语
-            let beforeHtml = highlightIdiomsInStory(beforeText);
-            let afterHtml = highlightIdiomsInStory(afterText);
+            // 高亮成语，保持使用者設定的顯示狀態
+            const stateKey = `${sheetName}_${localIndex}`;
+            const showBackground = idiomBackgroundStates[stateKey] !== false;
+            let beforeHtml = highlightIdiomsInStory(beforeText, showBackground);
+            let afterHtml = highlightIdiomsInStory(afterText, showBackground);
 
             // 创建反白效果 - 已读部分灰色背景，当前位置无背景
             const statusText = currentStoryPlaying === index ? (isStoryPaused ? ' ⏸ [暫停中 - 點擊繼續]' : ' ▶ [播放中 - 點擊暫停]') : '';
@@ -5556,7 +5558,9 @@
             }
 
             const story = chineseData.文章[sheetName][localIndex];
-            let displayHtml = highlightIdiomsInStory(story.文章);
+            const stateKey = `${sheetName}_${localIndex}`;
+            const showBackground = idiomBackgroundStates[stateKey] !== false;
+            let displayHtml = highlightIdiomsInStory(story.文章, showBackground);
 
             if (currentStoryPlaying === index) {
                 const statusText = isStoryPaused ? ' ⏸ [暫停中 - 點擊繼續]' : ' ▶ [播放中 - 點擊暫停]';
