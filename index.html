@@ -682,9 +682,10 @@
             }
 
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = pronunciationLang;
-            utterance.rate = pronunciationRate;
-            speechSynthesis.cancel();
+            utterance.lang = 'zh-TW';
+            const rate = localStorage.getItem('pronunciationRate') || '1.0';
+            utterance.rate = parseFloat(rate);
+            // speechSynthesis.cancel();
             speechSynthesis.speak(utterance);
         }
 
