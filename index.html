@@ -651,14 +651,37 @@
             const lang = settings.pronunciationLang || 'en-US';
             const rate = settings.pronunciationRate || 1.0;
 
-            window.speechSynthesis.cancel();
+            // WebKit 兼容性處理（iPad/Safari 需要）
+            const SpeechSynthesisUtterance = window.SpeechSynthesisUtterance || window.webkitSpeechSynthesisUtterance;
+            const speechSynthesis = window.speechSynthesis || window.webkitSpeechSynthesis;
+
+            if (!SpeechSynthesisUtterance || !speechSynthesis) {
+                alert('此設備不支援發音功能');
+                return;
+            }
+
+            speechSynthesis.cancel();
 
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = lang;
             utterance.rate = rate;
             utterance.pitch = 1.0;
+            utterance.volume = 1.0;
 
-            window.speechSynthesis.speak(utterance);
+            utterance.onerror = function(event) {
+                console.error('發音失敗:', event.error);
+            };
+
+            utterance.onend = function() {
+                console.log('發音完成');
+            };
+
+            try {
+                speechSynthesis.speak(utterance);
+                console.log('開始發音:', text, '語言:', lang, '速度:', rate);
+            } catch (e) {
+                console.error('發音錯誤:', e);
+            }
         }
 
         function closePronunciationModal() {
