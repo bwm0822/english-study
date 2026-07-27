@@ -685,7 +685,7 @@
             utterance.lang = 'zh-TW';
             const rate = localStorage.getItem('pronunciationRate') || '1.0';
             utterance.rate = parseFloat(rate);
-            // speechSynthesis.cancel();
+            speechSynthesis.cancel();
             speechSynthesis.speak(utterance);
         }
 
