@@ -511,12 +511,20 @@
                     for (const [correct, incorrect] of Object.entries(pronunciationData)) {
                         html += `
                             <div style="display: flex; padding: 10px; background: #2a2a2a; border-radius: 4px; border-left: 3px solid #667eea; gap: 10px; align-items: center;">
-                                <div style="width: 50%; text-align: left; color: #b0b0b0; cursor: pointer; padding: 8px; border-radius: 3px; transition: background 0.2s;" onmouseover="this.style.background='#3a3a3a'" onmouseout="this.style.background='transparent'" onclick="speakText('${correct}')">${correct}</div>
-                                <div style="width: 50%; text-align: left; color: #b0b0b0; cursor: pointer; padding: 8px; border-radius: 3px; transition: background 0.2s;" onmouseover="this.style.background='#3a3a3a'" onmouseout="this.style.background='transparent'" onclick="speakText('${incorrect}')">${incorrect}</div>
+                                <div class="pronunciation-text" style="width: 50%; text-align: left; color: #b0b0b0; cursor: pointer; padding: 8px; border-radius: 3px; transition: background 0.2s;" data-text="${correct}" onmouseover="this.style.background='#3a3a3a'" onmouseout="this.style.background='transparent'">${correct}</div>
+                                <div class="pronunciation-text" style="width: 50%; text-align: left; color: #b0b0b0; cursor: pointer; padding: 8px; border-radius: 3px; transition: background 0.2s;" data-text="${incorrect}" onmouseover="this.style.background='#3a3a3a'" onmouseout="this.style.background='transparent'">${incorrect}</div>
                             </div>
                         `;
                     }
                     container.innerHTML = html;
+
+                    // 添加事件委託
+                    document.getElementById('jsonPronunciationList').addEventListener('click', function(e) {
+                        if (e.target.classList.contains('pronunciation-text')) {
+                            const text = e.target.getAttribute('data-text');
+                            if (text) speakText(text);
+                        }
+                    });
                 })
                 .catch(error => {
                     console.error('加載發音數據失敗:', error);
@@ -542,14 +550,31 @@
             for (const [incorrect, correct] of Object.entries(customData)) {
                 html += `
                     <div id="item_${incorrect}" style="display: flex; padding: 10px; background: #2a2a2a; border-radius: 4px; border-left: 3px solid #667eea; gap: 10px; align-items: center;">
-                        <div style="width: 50%; text-align: left; color: #b0b0b0; cursor: pointer; padding: 8px; border-radius: 3px; transition: background 0.2s;" onmouseover="this.style.background='#3a3a3a'" onmouseout="this.style.background='transparent'" onclick="speakText('${incorrect}')">${incorrect}</div>
-                        <div style="flex: 1; text-align: left; color: #b0b0b0; cursor: pointer; padding: 8px; border-radius: 3px; transition: background 0.2s;" id="value_${incorrect}" onmouseover="this.style.background='#3a3a3a'" onmouseout="this.style.background='transparent'" onclick="speakText('${correct}')">${correct}</div>
-                        <button onclick="startEditCustomPronunciation('${incorrect}', '${correct}')" style="padding: 4px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em;">編輯</button>
-                        <button onclick="deleteCustomPronunciation('${incorrect}')" style="padding: 4px 12px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em;">刪除</button>
+                        <div class="pronunciation-text" style="width: 50%; text-align: left; color: #b0b0b0; cursor: pointer; padding: 8px; border-radius: 3px; transition: background 0.2s;" data-text="${incorrect}" onmouseover="this.style.background='#3a3a3a'" onmouseout="this.style.background='transparent'">${incorrect}</div>
+                        <div class="pronunciation-text" style="flex: 1; text-align: left; color: #b0b0b0; cursor: pointer; padding: 8px; border-radius: 3px; transition: background 0.2s;" id="value_${incorrect}" data-text="${correct}" onmouseover="this.style.background='#3a3a3a'" onmouseout="this.style.background='transparent'">${correct}</div>
+                        <button class="edit-btn" data-key="${incorrect}" data-value="${correct}" style="padding: 4px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em;">編輯</button>
+                        <button class="delete-btn" data-key="${incorrect}" style="padding: 4px 12px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em;">刪除</button>
                     </div>
                 `;
             }
             container.innerHTML = html;
+
+            // 添加事件委託
+            container.addEventListener('click', function(e) {
+                if (e.target.classList.contains('pronunciation-text')) {
+                    const text = e.target.getAttribute('data-text');
+                    if (text) speakText(text);
+                }
+                if (e.target.classList.contains('edit-btn')) {
+                    const key = e.target.getAttribute('data-key');
+                    const value = e.target.getAttribute('data-value');
+                    startEditCustomPronunciation(key, value);
+                }
+                if (e.target.classList.contains('delete-btn')) {
+                    const key = e.target.getAttribute('data-key');
+                    deleteCustomPronunciation(key);
+                }
+            });
         }
 
         function addCustomPronunciation() {
@@ -646,42 +671,21 @@
             }
         }
 
+        // 與 chinese.html 完全一致的發音函數
         function speakText(text) {
-            const settings = JSON.parse(localStorage.getItem('setting') || '{}');
-            const lang = settings.pronunciationLang || 'en-US';
-            const rate = settings.pronunciationRate || 1.0;
-
-            // WebKit 兼容性處理（iPad/Safari 需要）
             const SpeechSynthesisUtterance = window.SpeechSynthesisUtterance || window.webkitSpeechSynthesisUtterance;
             const speechSynthesis = window.speechSynthesis || window.webkitSpeechSynthesis;
 
             if (!SpeechSynthesisUtterance || !speechSynthesis) {
-                alert('此設備不支援發音功能');
+                console.log('Web Speech API not supported');
                 return;
             }
 
-            speechSynthesis.cancel();
-
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = lang;
-            utterance.rate = rate;
-            utterance.pitch = 1.0;
-            utterance.volume = 1.0;
-
-            utterance.onerror = function(event) {
-                console.error('發音失敗:', event.error);
-            };
-
-            utterance.onend = function() {
-                console.log('發音完成');
-            };
-
-            try {
-                speechSynthesis.speak(utterance);
-                console.log('開始發音:', text, '語言:', lang, '速度:', rate);
-            } catch (e) {
-                console.error('發音錯誤:', e);
-            }
+            utterance.lang = pronunciationLang;
+            utterance.rate = pronunciationRate;
+            speechSynthesis.cancel();
+            speechSynthesis.speak(utterance);
         }
 
         function closePronunciationModal() {
@@ -697,6 +701,10 @@
             settings.pronunciationRate = parseFloat(rateSelect.value);
 
             localStorage.setItem('setting', JSON.stringify(settings));
+
+            // 更新全局變量
+            pronunciationLang = settings.pronunciationLang;
+            pronunciationRate = settings.pronunciationRate;
 
             alert('發音設定已保存');
             closePronunciationModal();
@@ -953,6 +961,11 @@
 
         // 頁面加載時初始化localStorage
         initializeLocalStorage();
+
+        // 初始化發音設定全局變量（與chinese.html一致）
+        const settings = JSON.parse(localStorage.getItem('setting') || '{}');
+        let pronunciationLang = settings.pronunciationLang || 'en-US';
+        let pronunciationRate = settings.pronunciationRate || 1.0;
 
         // 初始化重測設定
         const allowRetestCheckbox = document.getElementById('allowRetestCheckbox');
