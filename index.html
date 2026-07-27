@@ -510,9 +510,9 @@
                     let html = '';
                     for (const [correct, incorrect] of Object.entries(pronunciationData)) {
                         html += `
-                            <div style="display: flex; padding: 10px; background: #2a2a2a; border-radius: 4px; border-left: 3px solid #667eea; gap: 0;">
-                                <div style="width: 50%; text-align: left; color: #b0b0b0;">${correct}</div>
-                                <div style="width: 50%; text-align: left; color: #b0b0b0;">${incorrect}</div>
+                            <div style="display: flex; padding: 10px; background: #2a2a2a; border-radius: 4px; border-left: 3px solid #667eea; gap: 10px; align-items: center;">
+                                <div style="width: 50%; text-align: left; color: #b0b0b0; cursor: pointer; padding: 8px; border-radius: 3px; transition: background 0.2s;" onmouseover="this.style.background='#3a3a3a'" onmouseout="this.style.background='transparent'" onclick="speakText('${correct}')">${correct}</div>
+                                <div style="width: 50%; text-align: left; color: #b0b0b0; cursor: pointer; padding: 8px; border-radius: 3px; transition: background 0.2s;" onmouseover="this.style.background='#3a3a3a'" onmouseout="this.style.background='transparent'" onclick="speakText('${incorrect}')">${incorrect}</div>
                             </div>
                         `;
                     }
@@ -542,8 +542,8 @@
             for (const [incorrect, correct] of Object.entries(customData)) {
                 html += `
                     <div id="item_${incorrect}" style="display: flex; padding: 10px; background: #2a2a2a; border-radius: 4px; border-left: 3px solid #667eea; gap: 10px; align-items: center;">
-                        <div style="width: 50%; text-align: left; color: #b0b0b0;">${incorrect}</div>
-                        <div style="flex: 1; text-align: left; color: #b0b0b0;" id="value_${incorrect}">${correct}</div>
+                        <div style="width: 50%; text-align: left; color: #b0b0b0; cursor: pointer; padding: 8px; border-radius: 3px; transition: background 0.2s;" onmouseover="this.style.background='#3a3a3a'" onmouseout="this.style.background='transparent'" onclick="speakText('${incorrect}')">${incorrect}</div>
+                        <div style="flex: 1; text-align: left; color: #b0b0b0; cursor: pointer; padding: 8px; border-radius: 3px; transition: background 0.2s;" id="value_${incorrect}" onmouseover="this.style.background='#3a3a3a'" onmouseout="this.style.background='transparent'" onclick="speakText('${correct}')">${correct}</div>
                         <button onclick="startEditCustomPronunciation('${incorrect}', '${correct}')" style="padding: 4px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em;">編輯</button>
                         <button onclick="deleteCustomPronunciation('${incorrect}')" style="padding: 4px 12px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 0.9em;">刪除</button>
                     </div>
@@ -644,6 +644,21 @@
                     loadCustomPronunciation();
                 }
             }
+        }
+
+        function speakText(text) {
+            const settings = JSON.parse(localStorage.getItem('setting') || '{}');
+            const lang = settings.pronunciationLang || 'en-US';
+            const rate = settings.pronunciationRate || 1.0;
+
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = lang;
+            utterance.rate = rate;
+            utterance.pitch = 1.0;
+
+            window.speechSynthesis.speak(utterance);
         }
 
         function closePronunciationModal() {
