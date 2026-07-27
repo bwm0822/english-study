@@ -5422,8 +5422,10 @@
             if (chineseData) {
                 // 確保特殊發音表已初始化
                 if (chineseData.發音) {
-                    specialIdiomPronunciationTable = chineseData.發音;
+                    specialIdiomPronunciationTable = { ...chineseData.發音 };
                 }
+                // 加載自訂發音
+                loadCustomPronunciationIntoTable();
                 return Promise.resolve(chineseData);
             }
 
@@ -5433,14 +5435,25 @@
                     chineseData = data;
                     // 從 JSON 中讀取發音數據
                     if (data.發音) {
-                        specialIdiomPronunciationTable = data.發音;
+                        specialIdiomPronunciationTable = { ...data.發音 };
                     }
+                    // 加載自訂發音
+                    loadCustomPronunciationIntoTable();
                     return data;
                 })
                 .catch(e => {
                     console.error('Failed to load chinese.json:', e);
                     return null;
                 });
+        }
+
+        function loadCustomPronunciationIntoTable() {
+            const settings = JSON.parse(localStorage.getItem('setting') || '{}');
+            const customData = settings.pronunciationCustom || {};
+            // 將自訂發音合併到表中
+            for (const [incorrect, correct] of Object.entries(customData)) {
+                specialIdiomPronunciationTable[incorrect] = correct;
+            }
         }
 
         function stopStoryPlayback() {
