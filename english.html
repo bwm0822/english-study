@@ -6420,7 +6420,19 @@
                     item.onmouseover = function() { this.style.background = '#3a3a52'; };
                     item.onmouseout = function() { this.style.background = 'transparent'; };
                     item.onclick = () => {
-                        showQuizSessionDetail(index);
+                        // 隱藏開始測驗面板
+                        const quizStartPanel = document.getElementById('quizStartPanel');
+                        if (quizStartPanel) quizStartPanel.style.display = 'none';
+
+                        // 準備該測驗的結果數據給 showQuizResult() 使用
+                        quizResults = session.results.map(r => ({
+                            word: { 單字: r.word, sheet: r.sheet, tag: r.tag },
+                            isCorrect: r.isCorrect,
+                            userAnswer: r.userAnswer
+                        }));
+
+                        // 呼叫 showQuizResult() 顯示結果
+                        showQuizResult();
                         dropdown.style.display = 'none';
                     };
 
