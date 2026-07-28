@@ -4390,6 +4390,9 @@
         }
 
         function startQuiz() {
+            // 重置為保存紀錄（正常測驗完成時會保存）
+            shouldSaveQuizSession = true;
+
             // 檢查星號篩選
             const starCheckbox = document.getElementById('quiz-star-filter');
             const filterByStar = starCheckbox ? starCheckbox.checked : false;
@@ -4626,26 +4629,32 @@
             // 只統計已測試的單字（isCorrect 不為 null）
             const testedResults = quizResults.filter(r => r.isCorrect !== null);
 
-            // 保存每個單詞的測驗結果到localStorage（新格式：只存數值）
-            testedResults.forEach(result => {
-                const word = result.word;
-                const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
-                let cnt = getQuizHistory(wordKey); // 讀取舊格式並自動轉換
+            // 只在新測驗時更新正確率，不在查看紀錄時更新
+            if (typeof shouldSaveQuizSession === 'undefined' || shouldSaveQuizSession) {
+                // 保存每個單詞的測驗結果到localStorage（新格式：只存數值）
+                testedResults.forEach(result => {
+                    const word = result.word;
+                    const wordKey = `${word.sheet}/${word.tag}/${word.單字}`;
+                    let cnt = getQuizHistory(wordKey); // 讀取舊格式並自動轉換
 
-                // 更新計數：正確加1，錯誤減1，範圍0~5
-                if (result.isCorrect) {
-                    cnt = Math.min(cnt + 1, 5); // 正確加1，最高5
-                } else {
-                    cnt = Math.max(cnt - 1, 0); // 錯誤減1，最低0
-                }
-                // 保存為數值（新格式）
-                saveQuizHistoryToStorage(wordKey, cnt.toString());
-            });
+                    // 更新計數：正確加1，錯誤減1，範圍0~5
+                    if (result.isCorrect) {
+                        cnt = Math.min(cnt + 1, 5); // 正確加1，最高5
+                    } else {
+                        cnt = Math.max(cnt - 1, 0); // 錯誤減1，最低0
+                    }
+                    // 保存為數值（新格式）
+                    saveQuizHistoryToStorage(wordKey, cnt.toString());
+                });
+            }
 
             const correctCount = testedResults.filter(r => r.isCorrect).length;
             const accuracy = testedResults.length > 0 ? Math.round((correctCount / testedResults.length) * 100) : 0;
 
-            saveQuizSession(testedResults, accuracy, correctCount);
+            // 只在真正的測驗完成時保存，不在查看紀錄時保存
+            if (typeof shouldSaveQuizSession === 'undefined' || shouldSaveQuizSession) {
+                saveQuizSession(testedResults, accuracy, correctCount);
+            }
 
             document.getElementById('resultScore').innerHTML = `正確率: ${accuracy}% (${correctCount}/${testedResults.length})`;
 
@@ -6432,6 +6441,9 @@
                             word: { 單字: r.word, sheet: r.sheet, tag: r.tag, 詞性: r.詞性, 中文: r.中文 },
                             isCorrect: r.isCorrect
                         }));
+
+                        // 不保存紀錄（只是查看已保存的紀錄）
+                        shouldSaveQuizSession = false;
 
                         // 呼叫 showQuizResult() 顯示結果
                         document.getElementById('quizSession').style.display = 'none';
