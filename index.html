@@ -428,6 +428,11 @@
 
             <div style="gap: 15px; display: flex; flex-direction: column;">
                 <div>
+                    <label style="color: white; font-weight: bold; display: block; margin-bottom: 8px;">用戶名稱</label>
+                    <input type="text" id="userInput" placeholder="輸入用戶名稱 (選填)" style="width: 100%; padding: 10px; border-radius: 4px; border: none; font-size: 1em;" />
+                    <div style="color: #999; font-size: 0.9em; margin-top: 5px;">💡 用來識別不同設備的備份</div>
+                </div>
+                <div>
                     <label style="color: white; font-weight: bold; display: block; margin-bottom: 8px;">Gist ID</label>
                     <input type="text" id="gistIdInput" placeholder="首次匯出會自動生成 ID" style="width: 100%; padding: 10px; border-radius: 4px; border: none; font-size: 1em;" />
                     <div style="color: #999; font-size: 0.9em; margin-top: 5px;">💡 在不同設備間匯入時使用</div>
@@ -493,7 +498,7 @@
         }
 
         function showAbout() {
-            alert('學習網\n版本：2026.07.27.b\n\n功能：\n• 英文學習\n• 中文成語與改錯');
+            alert('學習網\n版本：2026.07.28\n\n功能：\n• 英文學習\n• 中文成語與改錯');
         }
 
         function showPronunciationSettings() {
@@ -969,7 +974,9 @@
         function showExportDialog() {
             const modal = document.getElementById('gistSettingModal');
             const gistIdInput = document.getElementById('gistIdInput');
+            const userInput = document.getElementById('userInput');
             const savedGistId = localStorage.getItem('_gistId') || '';
+            const savedUser = localStorage.getItem('user') || '';
 
             document.getElementById('gistModalTitle').textContent = '💾 匯出到 Gist';
             document.getElementById('gistActionBtn').textContent = '💾 匯出到 Gist';
@@ -977,6 +984,8 @@
 
             gistIdInput.value = savedGistId;
             gistIdInput.placeholder = '首次匯出會自動生成 ID';
+            userInput.value = savedUser;
+            userInput.placeholder = '輸入用戶名稱 (選填)';
 
             modal.setAttribute('data-mode', 'export');
             modal.style.display = 'flex';
@@ -985,6 +994,7 @@
         function showImportDialog() {
             const modal = document.getElementById('gistSettingModal');
             const gistIdInput = document.getElementById('gistIdInput');
+            const userInput = document.getElementById('userInput');
             const savedGistId = localStorage.getItem('_gistId') || '';
 
             document.getElementById('gistModalTitle').textContent = '📥 從 Gist 匯入';
@@ -993,6 +1003,9 @@
 
             gistIdInput.value = savedGistId;
             gistIdInput.placeholder = '請輸入 Gist ID';
+
+            // 隱藏 userInput（匯入時不顯示）
+            userInput.parentElement.style.display = 'none';
 
             modal.setAttribute('data-mode', 'import');
             modal.style.display = 'flex';
@@ -1010,9 +1023,16 @@
 
         async function performExport() {
             const gistIdInput = document.getElementById('gistIdInput');
+            const userInput = document.getElementById('userInput');
             let gistId = gistIdInput.value.trim();
+            const userName = userInput.value.trim();
 
             try {
+                // 保存用戶名稱到 localStorage
+                if (userName) {
+                    localStorage.setItem('user', userName);
+                }
+
                 // 1. 收集所有 localStorage 數據
                 const allData = {};
                 for (let i = 0; i < localStorage.length; i++) {
@@ -1030,7 +1050,8 @@
 
                 const timestamp = new Date().toLocaleString('zh-TW');
                 const content = JSON.stringify(allData, null, 2);
-                const descriptionText = `英文學習備份 - ${timestamp}`;
+                const userPart = userName ? ` (${userName})` : '';
+                const descriptionText = `英文學習備份${userPart} - ${timestamp}`;
 
                 if (!gistId) {
                     // 創建新 Gist (改用 /gists 端點)
