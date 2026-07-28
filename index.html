@@ -766,9 +766,9 @@
                 const id = 'arr_' + Math.random().toString(36).substr(2, 9);
                 let html = '';
                 if (depth === 0) {
-                    html = `<span class="json-toggle" onclick="toggleJSON('${id}')">▼</span> `;
+                    html = `<span class="json-toggle" onclick="toggleJSON('${id}')">▶</span> `;
                 }
-                html += `[<br/><span id="${id}" class="json-content">`;
+                html += `[<br/><span id="${id}" class="json-content" style="display: none;">`;
                 obj.forEach((item, idx) => {
                     html += `<div style="margin-left: 20px;">${formatJSON(item, depth + 1)}</div>`;
                 });
@@ -782,8 +782,8 @@
             let html = '';
             if (depth === 0) {
                 const id = 'obj_' + Math.random().toString(36).substr(2, 9);
-                html = `<span class="json-toggle" onclick="toggleJSON('${id}')">▼</span> `;
-                html += `{<br/><span id="${id}" class="json-content">`;
+                html = `<span class="json-toggle" onclick="toggleJSON('${id}')">▶</span> `;
+                html += `{<br/><span id="${id}" class="json-content" style="display: none;">`;
 
                 keys.forEach((key, idx) => {
                     const value = obj[key];
@@ -792,14 +792,14 @@
 
                     let line = `<div style="margin-left: 20px;">`;
                     if (hasContent) {
-                        line += `<span class="json-toggle" onclick="toggleJSON('${toggleId}')">▼</span> `;
+                        line += `<span class="json-toggle" onclick="toggleJSON('${toggleId}')">▶</span> `;
                     } else {
                         line += `<span style="display: inline-block; width: 20px;"></span>`;
                     }
                     line += `<span class="json-key">"${key}"</span>: `;
 
                     if (hasContent) {
-                        line += `<span id="${toggleId}" class="json-content">`;
+                        line += `<span id="${toggleId}" class="json-content" style="display: none;">`;
                         line += formatJSON(value, depth + 1);
                         line += `</span>`;
                     } else {
