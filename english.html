@@ -6367,7 +6367,8 @@
                         sheet: r.word.sheet,
                         tag: r.word.tag,
                         isCorrect: r.isCorrect,
-                        userAnswer: r.userAnswer
+                        詞性: r.word.詞性,
+                        中文: r.word.中文
                     }))
                 };
 
@@ -6414,7 +6415,9 @@
                 dropdownList.innerHTML = '<div style="padding: 12px 16px; color: #666; text-align: center;">暫無測驗紀錄</div>';
             } else {
                 dropdownList.innerHTML = '';
-                sessions.forEach((session, index) => {
+                // 反轉順序，最新的在上面
+                const reversedSessions = [...sessions].reverse();
+                reversedSessions.forEach((session, index) => {
                     const item = document.createElement('div');
                     item.style.cssText = 'padding: 10px 16px; cursor: pointer; border-bottom: 1px solid #4a4a62; transition: background 0.2s;';
                     item.onmouseover = function() { this.style.background = '#3a3a52'; };
@@ -6426,12 +6429,12 @@
 
                         // 準備該測驗的結果數據給 showQuizResult() 使用
                         quizResults = session.results.map(r => ({
-                            word: { 單字: r.word, sheet: r.sheet, tag: r.tag },
-                            isCorrect: r.isCorrect,
-                            userAnswer: r.userAnswer
+                            word: { 單字: r.word, sheet: r.sheet, tag: r.tag, 詞性: r.詞性, 中文: r.中文 },
+                            isCorrect: r.isCorrect
                         }));
 
                         // 呼叫 showQuizResult() 顯示結果
+                        document.getElementById('quizSession').style.display = 'none';
                         showQuizResult();
                         dropdown.style.display = 'none';
                     };
