@@ -1656,6 +1656,13 @@
                         <div id="quizSheetGroupsContainer"></div>
                     </div>
                 </div>
+                <span id="quizStatsText" style="color: #b8b8b8; margin-left: 15px; font-size: 1.1em;"></span>
+                <div style="position: relative;">
+                    <button class="tag-dropdown-btn" id="quizRecordsBtn" style="display: none; background: #667eea; margin-left: 8px; padding: 6px 16px; font-size: 1.1em; min-width: auto;" onclick="toggleQuizRecordsDropdown()">紀錄 <span>▼</span></button>
+                    <div id="quizRecordsDropdown" class="tag-dropdown-menu" style="display: none; position: absolute; top: 100%; left: 0; min-width: 250px;">
+                        <div id="quizRecordsDropdownList"></div>
+                    </div>
+                </div>
             </div>
             <div class="search-filter" id="searchFilterContainer">
                 <input type="text" id="searchInput" placeholder="搜尋單字..." class="search-input">
@@ -2567,7 +2574,7 @@
                 searchFilterContainer.style.display = 'none';
                 refreshBtn.style.display = 'none';
                 startQuizBtn.style.display = 'none';
-                stats.style.display = 'block';
+                stats.style.display = 'none';
                 document.getElementById('chineseContainer').style.display = 'none';
                 document.getElementById('chineseButtonsTop').style.display = 'none';
                 document.getElementById('addWordBtn').style.display = 'none';
@@ -4127,6 +4134,20 @@
             }
 
             updateQuizDropdownButton();
+
+            // 顯示並更新紀錄按鈕
+            const quizRecordsBtn = document.getElementById('quizRecordsBtn');
+            if (quizRecordsBtn) {
+                quizRecordsBtn.style.display = 'block';
+                updateQuizRecordsCount();
+            }
+        }
+
+        function updateQuizRecordsCount() {
+            const btn = document.getElementById('quizRecordsBtn');
+            if (btn) {
+                btn.textContent = '紀錄';
+            }
         }
 
         function selectAllQuizSheets(event) {
@@ -4214,8 +4235,9 @@
             // 參考複習模式：沒勾選星號且沒勾選正確率 => 無顯示
             if (!filterByStar && filterByAccuracy === null && !showAll && !showUntested) {
                 btn.innerHTML = '清除 <span>▼</span>';
-                if (stats) {
-                    stats.textContent = '共 0 項';
+                const quizStatsText = document.getElementById('quizStatsText');
+                if (quizStatsText) {
+                    quizStatsText.textContent = '共 0 項';
                 }
                 return;
             }
@@ -4310,8 +4332,9 @@
             }
 
             // 更新統計信息 - 顯示選中的單詞數量
-            if (stats) {
-                stats.textContent = `共 ${selectedWords} 項`;
+            const quizStatsText = document.getElementById('quizStatsText');
+            if (quizStatsText) {
+                quizStatsText.textContent = `共 ${selectedWords} 項`;
             }
         }
 
@@ -4621,6 +4644,8 @@
 
             const correctCount = testedResults.filter(r => r.isCorrect).length;
             const accuracy = testedResults.length > 0 ? Math.round((correctCount / testedResults.length) * 100) : 0;
+
+            saveQuizSession(testedResults, accuracy, correctCount);
 
             document.getElementById('resultScore').innerHTML = `正確率: ${accuracy}% (${correctCount}/${testedResults.length})`;
 
@@ -5176,6 +5201,13 @@
             const btn = document.getElementById('addPosDropdownBtn');
             if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
                 menu.style.display = 'none';
+            }
+
+            // 關閉測驗紀錄下拉菜單
+            const quizRecordsDropdown = document.getElementById('quizRecordsDropdown');
+            const quizRecordsBtn = document.getElementById('quizRecordsBtn');
+            if (quizRecordsDropdown && quizRecordsBtn && !quizRecordsDropdown.contains(e.target) && !quizRecordsBtn.contains(e.target)) {
+                quizRecordsDropdown.style.display = 'none';
             }
         });
 
@@ -6311,6 +6343,196 @@
                 });
                 document.querySelectorAll('.chinese-mode-btn-top')[1].classList.add('active');
             });
+        }
+
+        // 測驗紀錄管理函數
+        function saveQuizSession(testedResults, accuracy, correctCount) {
+            try {
+                let englishData = {};
+                const stored = localStorage.getItem('english');
+                if (stored) {
+                    englishData = JSON.parse(stored);
+                }
+                if (!englishData.quizSessions) {
+                    englishData.quizSessions = [];
+                }
+
+                const session = {
+                    timestamp: new Date().toLocaleString('zh-TW'),
+                    accuracy: accuracy,
+                    correctCount: correctCount,
+                    totalCount: testedResults.length,
+                    results: testedResults.map(r => ({
+                        word: r.word.單字,
+                        sheet: r.word.sheet,
+                        tag: r.word.tag,
+                        isCorrect: r.isCorrect,
+                        userAnswer: r.userAnswer
+                    }))
+                };
+
+                englishData.quizSessions.push(session);
+                if (englishData.quizSessions.length > 5) {
+                    englishData.quizSessions.shift();
+                }
+
+                localStorage.setItem('english', JSON.stringify(englishData));
+                updateQuizRecordsCount();
+            } catch (e) {
+                console.error('保存測驗會話失敗:', e);
+            }
+        }
+
+        function loadQuizSessions() {
+            try {
+                const englishData = localStorage.getItem('english');
+                if (englishData) {
+                    const data = JSON.parse(englishData);
+                    return data.quizSessions || [];
+                }
+            } catch (e) {
+                console.error('加載測驗會話失敗:', e);
+            }
+            return [];
+        }
+
+        function toggleQuizRecordsDropdown() {
+            const dropdown = document.getElementById('quizRecordsDropdown');
+            if (dropdown.style.display === 'none') {
+                showQuizRecordsDropdown();
+            } else {
+                dropdown.style.display = 'none';
+            }
+        }
+
+        function showQuizRecordsDropdown() {
+            const sessions = loadQuizSessions();
+            const dropdown = document.getElementById('quizRecordsDropdown');
+            const dropdownList = document.getElementById('quizRecordsDropdownList');
+
+            if (sessions.length === 0) {
+                dropdownList.innerHTML = '<div style="padding: 12px 16px; color: #666; text-align: center;">暫無測驗紀錄</div>';
+            } else {
+                dropdownList.innerHTML = '';
+                sessions.forEach((session, index) => {
+                    const item = document.createElement('div');
+                    item.style.cssText = 'padding: 10px 16px; cursor: pointer; border-bottom: 1px solid #4a4a62; transition: background 0.2s;';
+                    item.onmouseover = function() { this.style.background = '#3a3a52'; };
+                    item.onmouseout = function() { this.style.background = 'transparent'; };
+                    item.onclick = () => {
+                        showQuizSessionDetail(index);
+                        dropdown.style.display = 'none';
+                    };
+
+                    item.innerHTML = `
+                        <div style="color: #b8b8b8; font-size: 0.9em; margin-bottom: 5px;">${session.timestamp}</div>
+                        <div style="color: ${session.accuracy >= 80 ? '#4CAF50' : session.accuracy >= 60 ? '#FF9800' : '#f44336'}; font-weight: bold;">
+                            正確率: ${session.accuracy}% (${session.correctCount}/${session.totalCount})
+                        </div>
+                    `;
+
+                    dropdownList.appendChild(item);
+                });
+            }
+
+            dropdown.style.display = 'block';
+        }
+
+        function showQuizRecords() {
+            const sessions = loadQuizSessions();
+            const recordsList = document.getElementById('quizRecordsList');
+
+            if (sessions.length === 0) {
+                recordsList.innerHTML = '<div style="text-align: center; color: #666; padding: 40px;">暫無測驗紀錄</div>';
+            } else {
+                recordsList.innerHTML = '';
+                sessions.forEach((session, index) => {
+                    const recordDiv = document.createElement('div');
+                    recordDiv.style.cssText = 'background: #2a2a52; padding: 15px; border-radius: 4px; cursor: pointer; border-left: 4px solid #667eea; transition: background 0.2s;';
+                    recordDiv.onmouseover = function() { this.style.background = '#3a3a62'; };
+                    recordDiv.onmouseout = function() { this.style.background = '#2a2a52'; };
+                    recordDiv.onclick = () => showQuizSessionDetail(index);
+
+                    recordDiv.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; gap: 20px;">
+                            <div style="flex: 1;">
+                                <div style="color: #b8b8b8; font-size: 0.9em;">${session.timestamp}</div>
+                                <div style="color: #999; font-size: 0.85em; margin-top: 5px;">共 ${session.totalCount} 題</div>
+                            </div>
+                            <div style="text-align: right; min-width: 100px;">
+                                <div style="font-size: 1.3em; font-weight: bold; color: ${session.accuracy >= 80 ? '#4CAF50' : session.accuracy >= 60 ? '#FF9800' : '#f44336'};">${session.accuracy}%</div>
+                                <div style="color: #999; font-size: 0.85em; margin-top: 2px;">${session.correctCount}/${session.totalCount} 正確</div>
+                            </div>
+                        </div>
+                    `;
+
+                    recordsList.appendChild(recordDiv);
+                });
+            }
+
+            document.getElementById('quizRecordsModal').style.display = 'flex';
+        }
+
+        function showQuizSessionDetail(sessionIndex) {
+            const sessions = loadQuizSessions();
+            const session = sessions[sessionIndex];
+
+            if (!session) return;
+
+            const detailContent = document.getElementById('quizDetailContent');
+            detailContent.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #4a4a4a;">
+                    <div>
+                        <div style="color: #b8b8b8; font-size: 0.95em;">測驗時間：${session.timestamp}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 1.5em; font-weight: bold; color: ${session.accuracy >= 80 ? '#4CAF50' : session.accuracy >= 60 ? '#FF9800' : '#f44336'};">${session.accuracy}%</div>
+                        <div style="color: #999; font-size: 0.9em; margin-top: 5px;">${session.correctCount}/${session.totalCount} 正確</div>
+                    </div>
+                </div>
+                <div id="sessionResultsDetail"></div>
+            `;
+
+            const resultsDetail = document.getElementById('sessionResultsDetail');
+            session.results.forEach(result => {
+                const resultDiv = document.createElement('div');
+                resultDiv.style.cssText = `
+                    padding: 10px;
+                    margin: 8px 0;
+                    border-radius: 4px;
+                    border-left: 3px solid ${result.isCorrect ? '#4CAF50' : '#f44336'};
+                    background: ${result.isCorrect ? 'rgba(76, 175, 80, 0.1)' : 'rgba(244, 67, 54, 0.1)'};
+                `;
+                resultDiv.innerHTML = `
+                    <div style="display: flex; gap: 15px; align-items: flex-start;">
+                        <div style="width: 60px; flex-shrink: 0;">
+                            <div style="color: #667eea; font-weight: bold; margin-bottom: 3px;">${result.sheet}</div>
+                            <div style="color: #999; font-size: 0.85em;">${result.tag}</div>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="color: ${result.isCorrect ? '#4CAF50' : '#f44336'}; font-weight: bold; margin-bottom: 3px;">
+                                ${result.word} ${result.isCorrect ? '✓ 正確' : '✗ 錯誤'}
+                            </div>
+                            <div style="color: #999; font-size: 0.9em;">
+                                ${result.userAnswer ? `你的答案：${result.userAnswer}` : '未作答'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                resultsDetail.appendChild(resultDiv);
+            });
+
+            document.getElementById('quizRecordsModal').style.display = 'none';
+            document.getElementById('quizDetailModal').style.display = 'flex';
+        }
+
+        function closeQuizRecordsModal() {
+            document.getElementById('quizRecordsModal').style.display = 'none';
+        }
+
+        function closeQuizDetailModal() {
+            document.getElementById('quizDetailModal').style.display = 'none';
+            showQuizRecords();
         }
     </script>
 </body>
