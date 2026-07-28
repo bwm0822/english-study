@@ -419,13 +419,39 @@
         </div>
     </div>
 
+    <!-- Gist 設定對話框 -->
+    <div id="gistSettingModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 1001; align-items: center; justify-content: center;">
+        <div style="background: #333; border-radius: 8px; padding: 30px; max-width: 500px; width: 90%; color: white;">
+            <div style="margin-bottom: 25px;">
+                <span id="gistModalTitle" style="font-weight: bold; font-size: 1.2em;">☁️ Gist 同步設定</span>
+            </div>
+
+            <div style="gap: 15px; display: flex; flex-direction: column;">
+                <div>
+                    <label style="color: white; font-weight: bold; display: block; margin-bottom: 8px;">Gist ID</label>
+                    <input type="text" id="gistIdInput" placeholder="首次匯出會自動生成 ID" style="width: 100%; padding: 10px; border-radius: 4px; border: none; font-size: 1em;" />
+                    <div style="color: #999; font-size: 0.9em; margin-top: 5px;">💡 在不同設備間匯入時使用</div>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button id="gistActionBtn" onclick="performGistAction()" style="flex: 1; padding: 12px; background: #52d273; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1.1em;">💾 匯出到 Gist</button>
+                <button onclick="closeGistSettingModal()" style="flex: 1; padding: 12px; background: #666; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">取消</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 紀錄（localStorage）視窗 -->
     <div id="storageModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 1000; align-items: center; justify-content: center;">
         <div style="background: #1a1a1a; border-radius: 8px; width: 900px; height: 100vh; color: white; display: flex; flex-direction: column; overflow: hidden;">
             <!-- 頭部 -->
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #4a4a4a;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid #4a4a4a; gap: 10px;">
                 <span style="font-weight: bold; font-size: 1.2em;">📋 localStorage 紀錄</span>
-                <button id="deleteCurrentBtn" onclick="deleteCurrentStorage()" style="padding: 8px 16px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1.2em;" disabled>🗑️</button>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="showExportDialog()" style="padding: 8px 16px; background: #52d273; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1.2em;">💾 匯出</button>
+                    <button onclick="showImportDialog()" style="padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1.2em;">📥 匯入</button>
+                    <button id="deleteCurrentBtn" onclick="deleteCurrentStorage()" style="padding: 8px 16px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1.2em;" disabled>🗑️</button>
+                </div>
             </div>
 
             <!-- 主區域 - 上下分割 -->
@@ -893,6 +919,222 @@
             document.getElementById('storageModal').style.display = 'none';
         }
 
+        function closeGistSettingModal() {
+            document.getElementById('gistSettingModal').style.display = 'none';
+        }
+
+        // GitHub Token (hard-coded)
+        const GITHUB_TOKEN = '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';
+
+        function showExportDialog() {
+            const modal = document.getElementById('gistSettingModal');
+            const gistIdInput = document.getElementById('gistIdInput');
+            const savedGistId = localStorage.getItem('_gistId') || '';
+
+            document.getElementById('gistModalTitle').textContent = '💾 匯出到 Gist';
+            document.getElementById('gistActionBtn').textContent = '💾 匯出到 Gist';
+            document.getElementById('gistActionBtn').style.background = '#52d273';
+
+            gistIdInput.value = savedGistId;
+            gistIdInput.placeholder = '首次匯出會自動生成 ID';
+
+            modal.setAttribute('data-mode', 'export');
+            modal.style.display = 'flex';
+        }
+
+        function showImportDialog() {
+            const modal = document.getElementById('gistSettingModal');
+            const gistIdInput = document.getElementById('gistIdInput');
+            const savedGistId = localStorage.getItem('_gistId') || '';
+
+            document.getElementById('gistModalTitle').textContent = '📥 從 Gist 匯入';
+            document.getElementById('gistActionBtn').textContent = '📥 從 Gist 匯入';
+            document.getElementById('gistActionBtn').style.background = '#3498db';
+
+            gistIdInput.value = savedGistId;
+            gistIdInput.placeholder = '請輸入 Gist ID';
+
+            modal.setAttribute('data-mode', 'import');
+            modal.style.display = 'flex';
+        }
+
+        async function performGistAction() {
+            const mode = document.getElementById('gistSettingModal').getAttribute('data-mode');
+
+            if (mode === 'export') {
+                await performExport();
+            } else if (mode === 'import') {
+                await performImport();
+            }
+        }
+
+        async function performExport() {
+            const gistIdInput = document.getElementById('gistIdInput');
+            let gistId = gistIdInput.value.trim();
+
+            try {
+                // 1. 收集所有 localStorage 數據
+                const allData = {};
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (!key.startsWith('_')) {
+                        const val = localStorage.getItem(key);
+                        try {
+                            // 若原本就是 JSON 字串則轉回物件，避免雙重轉義
+                            allData[key] = JSON.parse(val);
+                        } catch (e) {
+                            allData[key] = val;
+                        }
+                    }
+                }
+
+                const timestamp = new Date().toLocaleString('zh-TW');
+                const content = JSON.stringify(allData, null, 2);
+                const descriptionText = `英文學習備份 - ${timestamp}`;
+
+                if (!gistId) {
+                    // 創建新 Gist (改用 /gists 端點)
+                    const response = await fetch('https://api.github.com/gists', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            description: descriptionText,
+                            public: false,
+                            files: {
+                                'english-study-backup.json': {
+                                    content: content
+                                }
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error('API 錯誤:', response.status, errorData);
+                        if (response.status === 401) {
+                            throw new Error('Token 無效或已過期。請檢查 Token 設定');
+                        } else if (response.status === 403) {
+                            throw new Error('Token 權限不足。需要 "gist" 權限');
+                        } else {
+                            throw new Error(`API 錯誤 ${response.status}: ${errorData.message || '創建 Gist 失敗'}`);
+                        }
+                    }
+
+                    const data = await response.json();
+                    gistId = data.id;
+                } else {
+                    // 更新現有 Gist
+                    const response = await fetch(`https://api.github.com/gists/${gistId}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            description: descriptionText,
+                            files: {
+                                'english-study-backup.json': {
+                                    content: content
+                                }
+                            }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        console.error('API 錯誤:', response.status, errorData);
+                        if (response.status === 404) {
+                            throw new Error(`Gist ID "${gistId}" 不存在。請檢查 ID 是否正確`);
+                        } else if (response.status === 401) {
+                            throw new Error('Token 無效或已過期。請檢查 Token 設定');
+                        } else {
+                            throw new Error(`API 錯誤 ${response.status}: ${errorData.message || '更新 Gist 失敗'}`);
+                        }
+                    }
+                }
+
+                // 保存 gist id
+                localStorage.setItem('_gistId', gistId);
+
+                alert(`✅ 匯出成功！\n\nGist ID: ${gistId}\n\n💡 請妥善保管此 ID\n用於在其他設備匯入`);
+                closeGistSettingModal();
+                showStorageRecords();
+            } catch (error) {
+                alert('❌ 匯出失敗：\n' + error.message);
+            }
+        }
+
+        async function performImport() {
+            const gistId = document.getElementById('gistIdInput').value.trim();
+
+            if (!gistId) {
+                alert('❌ 請輸入 Gist ID');
+                return;
+            }
+
+            try {
+                const response = await fetch(`https://api.github.com/gists/${gistId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('API 錯誤:', response.status, errorData);
+                    if (response.status === 404) {
+                        throw new Error(`Gist ID "${gistId}" 不存在。請檢查 ID 是否正確`);
+                    } else if (response.status === 401) {
+                        throw new Error('Token 無效或已過期。請檢查 token.txt 中的 Token');
+                    } else {
+                        throw new Error(`API 錯誤 ${response.status}: ${errorData.message || '讀取 Gist 失敗'}`);
+                    }
+                }
+
+                const gist = await response.json();
+                const file = gist.files['english-study-backup.json'];
+
+                if (!file) {
+                    alert('❌ 找不到備份文件');
+                    return;
+                }
+
+                const data = JSON.parse(file.content);
+
+                if (confirm('🔄 即將匯入所有數據，現有數據會被覆蓋。確認嗎？')) {
+                    // 清除現有 localStorage（除了特殊標記）
+                    const keysToDelete = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (!key.startsWith('_')) {
+                            keysToDelete.push(key);
+                        }
+                    }
+                    keysToDelete.forEach(key => localStorage.removeItem(key));
+
+                    // 匯入新數據
+                    Object.entries(data).forEach(([key, value]) => {
+                        localStorage.setItem(key, value);
+                    });
+
+                    // 保存 gist id
+                    localStorage.setItem('_gistId', gistId);
+
+                    alert('✅ 匯入成功！');
+                    closeGistSettingModal();
+                    location.reload();
+                }
+            } catch (error) {
+                alert('❌ 匯入失敗：\n' + error.message);
+            }
+        }
+
         function updateApp() {
             if (confirm('即將清除快取並更新應用。確認更新嗎？')) {
                 if ('caches' in window) {
@@ -1005,6 +1247,7 @@
             const storageModal = document.getElementById('storageModal');
             const pronunciationModal = document.getElementById('pronunciationModal');
             const specialPronunciationModal = document.getElementById('specialPronunciationModal');
+            const gistSettingModal = document.getElementById('gistSettingModal');
             if (event.target === storageModal) {
                 closeStorageModal();
             }
@@ -1013,6 +1256,9 @@
             }
             if (event.target === specialPronunciationModal) {
                 closeSpecialPronunciationModal();
+            }
+            if (event.target === gistSettingModal) {
+                closeGistSettingModal();
             }
         });
     </script>
