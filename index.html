@@ -1067,7 +1067,7 @@
                             description: descriptionText,
                             public: false,
                             files: {
-                                'english-study-backup.json': {
+                                'study-system-backup.json': {
                                     content: content
                                 }
                             }
@@ -1101,7 +1101,7 @@
                         body: JSON.stringify({
                             description: descriptionText,
                             files: {
-                                'english-study-backup.json': {
+                                'study-system-backup.json': {
                                     content: content
                                 }
                             }
@@ -1162,10 +1162,10 @@
                 }
 
                 const gist = await response.json();
-                const file = gist.files['english-study-backup.json'];
+                const file = gist.files['study-system-backup.json'];
 
                 if (!file) {
-                    alert('❌ 找不到備份文件 (english-study-backup.json)');
+                    alert('❌ 找不到備份文件 (study-system-backup.json)');
                     return;
                 }
 
